@@ -42,7 +42,7 @@
 4. 网页相关问题查 `browser.md`，Win32 查 `win32.md`，Excel / WPS 查 `excel.md`；不机械加载与当前改动无关的全文。
 5. 网页业务默认使用 `xbot.web`；等待明确异步条件，不靠不断增加固定 `sleep`。
 6. 影刀日志使用 `from xbot.app import logging`；动态内容使用完整 f-string，异常堆栈使用 `traceback.format_exc()`。
-7. 读取旧版可视化项目时使用 `.agents/skills/xbot-visual-flow-reader/SKILL.md`，纯 Python 任务不触发。
+7. 读取 / 迁移旧版可视化项目，或排查“应用文件已损坏”、flow 文件缺失、`package.sigstore` 等项目级问题时，使用 `.agents/skills/xbot-project-diagnostics/SKILL.md`；普通 Python 业务 bug 不触发。
 
 ## 验证与同步
 

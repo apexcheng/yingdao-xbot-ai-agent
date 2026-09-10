@@ -109,7 +109,7 @@ def inspect_project(project_root: Path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Read-only inventory of a ShadowBot visual project")
+    parser = argparse.ArgumentParser(description="Read-only inventory of a ShadowBot project")
     parser.add_argument("project_root", nargs="?", default=".", help="Directory containing package.json")
     args = parser.parse_args()
 

@@ -14,7 +14,7 @@
 - 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[coding-style.md](docs/coding-style.md)
 - 多个必需数据源写入同一工作簿：[multi-source-report-safety.md](docs/multi-source-report-safety.md)
 - 跨数据、API、环境或市场指令的通用排错：[troubleshooting.md](docs/troubleshooting.md)
-- 读取旧版可视化编排项目：[xbot-visual-flow-reader](project-template/.agents/skills/xbot-visual-flow-reader/SKILL.md)
+- 旧版可视化项目解析 / 迁移、应用文件损坏与 Sigstore 排查：[xbot-project-diagnostics](project-template/.agents/skills/xbot-project-diagnostics/SKILL.md)
 - 元素库、图像库、资源文件、全局变量：[package.md](xbot-api-docs/docs/package.md)
 - 浏览器、网页元素、输入、下载、Cookie、网络监听：[browser.md](xbot-api-docs/docs/browser.md)
 - Excel / WPS 工作簿、Sheet、区域、读写和格式：[excel.md](xbot-api-docs/docs/excel.md)
