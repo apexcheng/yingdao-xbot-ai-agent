@@ -233,20 +233,23 @@ class SyncToolTests(unittest.TestCase):
             self.assertEqual(flows["run"]["kind"], "Code")
             self.assertEqual(flows["config"]["kind"], "Code")
 
-    def test_base_config_is_isolated_by_project_and_ignores_working_directory(self):
+    def test_base_config_uses_user_xbot_directory_and_is_isolated_by_project_function(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             temporary_root = Path(temp_dir).resolve()
             user_dir = temporary_root / "user"
-            legacy_config = user_dir / ".xbot" / "project_config.json"
-            legacy_config.parent.mkdir(parents=True)
-            legacy_config.write_text("legacy-config", encoding="utf-8")
             project_dirs = [
                 temporary_root / "project_a" / "xbot_robot",
                 temporary_root / "project_b" / "xbot_robot",
             ]
-            for project_dir in project_dirs:
+            project_functions = ["功能A", "功能B"]
+            for project_dir, project_function in zip(project_dirs, project_functions):
                 project_dir.mkdir(parents=True)
                 shutil.copy2(PROJECT_TEMPLATE_DIR / "config.py", project_dir / "config.py")
+                config_code = (project_dir / "config.py").read_text(encoding="utf-8")
+                (project_dir / "config.py").write_text(
+                    config_code.replace("项目功能名", project_function),
+                    encoding="utf-8",
+                )
 
             original_cwd = Path.cwd()
             config_paths = []
@@ -255,8 +258,10 @@ class SyncToolTests(unittest.TestCase):
                 with patch.object(Path, "home", return_value=user_dir):
                     for index, project_dir in enumerate(project_dirs):
                         config_path = runpy.run_path(str(project_dir / "config.py"))["CONFIG_PATH"]
-                        self.assertTrue(config_path.is_relative_to(project_dir))
-                        self.assertNotEqual(config_path, legacy_config)
+                        self.assertEqual(
+                            config_path,
+                            user_dir / ".xbot" / project_functions[index] / "project_config.json",
+                        )
                         config_path.parent.mkdir(parents=True, exist_ok=True)
                         config_path.write_text(f"project-{index}", encoding="utf-8")
                         config_paths.append(config_path)
@@ -271,8 +276,6 @@ class SyncToolTests(unittest.TestCase):
                     self.assertEqual(reloaded_path.read_text(encoding="utf-8"), "project-0")
             finally:
                 os.chdir(original_cwd)
-
-            self.assertEqual(legacy_config.read_text(encoding="utf-8"), "legacy-config")
 
 
 if __name__ == "__main__":

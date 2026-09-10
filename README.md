@@ -88,7 +88,7 @@ shadowbot_sync_tool.py
 .claude/skills/xbot-visual-flow-reader/
 ```
 
-模板使用“增强工具2026”的加密配置能力，配置文件按项目分开保存。依赖前提以及路径和发布边界，见 [最小 base 骨架](docs/base-project-skeleton.md)。
+模板使用“增强工具2026”的加密配置能力，配置文件默认保存在当前用户目录 `.xbot/<项目功能名>/project_config.json`，按项目功能分目录隔离。依赖前提和路径规则见 [最小 base 骨架](docs/base-project-skeleton.md)。
 
 ### 4. 告诉 AI Agent 两个目录
 

@@ -19,7 +19,7 @@ config   Code     配置路径
 将 `project-template/` 中缺失的文件复制到已存在 `package.json` 的真实项目根目录。目标已有同名文件时，先保留原文件和用户改动，再按当前需求最小合并；不得整份覆盖已有 `run.py`、`config.py`、`.gitignore` 或规则文件。其中的 base 代码是：
 
 - `run.py`：通过 `main(args)` 进入业务，首次运行显示配置对话框。
-- `config.py`：保存当前项目 `.dev/project_config.json` 的加密配置路径。
+- `config.py`：保存当前项目的加密配置路径；默认放在当前 Windows 用户目录下的 `.xbot/<项目功能名>/project_config.json`。
 - `shadowbot_sync_tool.py`：登记和编译新增 Code 流。
 
 `run.py` 依赖项目已安装“增强工具2026”市场指令，使用其公开 `market_config` 能力：
@@ -32,11 +32,9 @@ load_secret_config()
 → 进入业务流程
 ```
 
-模板按 `config.py` 所在目录定位 `.dev/project_config.json`，各项目使用自己的配置文件。新位置没有配置时，沿用初始化流程。
+模板使用 `Path.home() / ".xbot" / "<项目功能名>" / "project_config.json"` 定位配置。复制到真实项目时，必须把 `<项目功能名>` 换成能直接识别当前项目用途的目录名，例如 `拼多多库存监控`；不要直接使用项目文件夹名、应用 ID 或所有项目共用的固定目录。不同项目功能使用不同目录，避免配置串用。新位置没有配置时，沿用初始化流程。
 
-`.dev/` 已被项目模板的 `.gitignore` 忽略，但 Git 忽略不代表影刀发布时自动排除。加密仍使用与当前 Windows 用户绑定的 DPAPI，更换用户或机器后不能直接复用配置。详细 API 事实见 [增强工具2026](../xbot-api-docs/docs/extensions/xbot-enhance-tools.md)。
-
-**当前未核验：**影刀 Code 流运行时 `__file__` 的实际位置，以及 `.dev` 是否进入影刀打包或发布。若 `config.py` 不位于真实项目根目录，配置路径验收不通过，不回退共享路径或猜测其他目录。
+配置加密仍使用与当前 Windows 用户绑定的 DPAPI，更换用户或机器后不能直接复用配置。详细 API 事实见 [增强工具2026](../xbot-api-docs/docs/extensions/xbot-enhance-tools.md)。
 
 ## Agent 实现规则
 
@@ -48,6 +46,6 @@ load_secret_config()
 ## 最小验收
 
 1. 仅新增缺失文件；已有入口、配置与用户改动保留。按项目规则需要同步时，先备份 `package.json`，再确认新增 Code 流已登记；用户要求暂不同步时记录未执行。
-2. 在影刀 Code 流中确认配置实际位于当前项目 `.dev/project_config.json`，并核查 `.dev` 的打包、发布边界。
+2. 在影刀 Code 流中确认配置实际位于当前 Windows 用户目录的 `.xbot/<项目功能名>/project_config.json`，且目录名能明确对应当前项目功能，不与其他项目共用。
 3. 首次运行显示初始化对话框，取消时流程正常结束；保存后再次运行能加载本项目配置。
 4. 同一 Windows 用户下两个项目互不串用配置。
