@@ -60,6 +60,7 @@
 2. `shadowbot_sync_tool.py` 与 `package.json` 位于项目根目录。新增 `.py` 文件后默认运行 `python shadowbot_sync_tool.py`；只修改已有 `.py` 文件时，仅在用户明确要求同步时运行。
 3. 同步脚本自动扫描 Python 文件，不接收文件列表或 `prepare` 子命令；同步不是 Git 操作，成功也不等于影刀编辑器内运行验证。
 4. 验证失败时先区分代码、环境、依赖和路径问题，不为通过无关检查扩大修改。
+5. 用户说 'push' 时指的是 git commit 并 push 到 GitHub / Gitee 远程仓库。执行前确认有改动需要提交，并使用清晰的 commit 信息。
 
 ## 安全与汇报
 
