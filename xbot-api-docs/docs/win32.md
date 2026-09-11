@@ -44,15 +44,34 @@
 
 ### 3.4 `get_by_selector(selector=None, *, timeout=5)`
 
-按选择器获取窗口，返回 `Win32Window`。
+根据元素库中的窗口选择器名称获取窗口，返回 `Win32Window`。
 
 当前存根明确：超时未找到窗口时抛出 `xbot.errors.UIAError`。需要把“窗口不存在”作为业务分支时，只捕获该异常，不要用裸 `except Exception` 把其它 Win32 / 引擎异常也误判成“窗口不存在”。
 
-`selector` 直接传元素库选择器名称字符串。
+普通业务代码直接传窗口选择器名称字符串：
 
 ```python
 window = win32.get_by_selector("ERP主窗口", timeout=10)
 ```
+
+获取窗口后，通过窗口对象查找其内部元素。窗口和内部元素分别使用各自的元素库名称：
+
+```text
+非执行调用说明（不可直接运行）：
+
+window = win32.get_by_selector("ERP主窗口", timeout=10)
+query_button = window.find("按钮_查询", timeout=10)
+query_button.click()
+```
+
+如果调用方只需要窗口对象，可以直接返回 `get_by_selector()` 的结果：
+
+```python
+def get_window(name, timeout):
+    return win32.get_by_selector(name, timeout=timeout)
+```
+
+普通窗口和元素定位直接传元素库名称字符串，不需要调用 `package.selector()`；`package.selector()` 仅用于读取或处理选择器对象本身的元数据。
 
 ### 3.5 `get_by_element(element)`
 
@@ -260,7 +279,7 @@ search_input = window.find("输入框_关键词", timeout=10)
 search_input.input("影刀")
 ```
 
-更不要用同一个具体元素选择器先定位窗口、再在该窗口内重复查找同一元素。窗口定位和窗口内元素定位应保持清晰的两层语义。
+窗口选择器用于取得 `Win32Window`，元素选择器用于在该窗口中取得 `Win32Element`；两者分别使用各自的元素库名称。
 
 ### 6.7 推荐代码结构
 
