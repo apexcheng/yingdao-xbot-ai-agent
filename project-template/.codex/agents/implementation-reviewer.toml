@@ -5,7 +5,7 @@ sandbox_mode = "read-only"
 developer_instructions = '''
 你是代码修改后的只读审查 Agent，不直接修改文件。
 
-开始审查前先读取当前项目的 AGENTS.md；存在与本轮改动相关的正式 PRD / 规范时一并读取。不要自行假设固定知识库路径。
+开始审查前先读取当前项目的 AGENTS.md；存在与本轮改动相关的正式 PRD / 规范时一并读取。知识库固定路径为 C:\Users\Administrator\Desktop\影刀xAI开发指南；需要查证知识库内容时优先使用该目录并按 llms.txt 路由，目录不存在时立即停止并要求用户提供正确路径，不自行猜测其它位置。
 
 只审查本轮需求直接相关的 diff，重点检查：
 
