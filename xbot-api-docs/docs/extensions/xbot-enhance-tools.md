@@ -192,39 +192,61 @@ username = config["username"]
 - 输入控件使用 `VariableName` 作为返回字段名，之后通过 `dialog_result_to_dict()` 转换。
 - 用户点击的按钮在返回结果中以 `pressed_button` 作为 key，不是 `button`；经 `dialog_result_to_dict()` 转换后的 dict 同样按 `pressed_button` 读取。
 - 初始化配置场景通常流程：`load_secret_config()` → 无配置时 `show_custom_dialog(dialog_settings)` → `dialog_result_to_dict()` → `save_secret_config()`。
-- 按钮行为建议明确区分：保存并启动（保存配置并继续）、启动（使用当前输入但不保存）、取消（终止当前流程）。
+- 加密保存也可以由 `CheckBox` 编辑器控制：底部保留“启动 / 取消”按钮，用户勾选“持久化加密”后再调用 `save_secret_config()`。
+- 原生“记住内容”与“持久化加密”可以同时提供，但两者职责不同：前者通过 `canRememberContent + storage_key` 在下次打开对话框时回填输入，不能视为加密；后者由业务代码调用 DPAPI 保存。具体控件配置见[对话框与通知](../notification.md)。
+- 对话框包含密码、Token 等敏感输入时，应提示用户不要勾选原生“记住内容”；勾选“持久化加密”不影响原生记忆功能，也不会把原生记忆产生的副本改为密文。
 
 示例：
 
 ```text
 非执行调用说明（不可直接运行）：
 
+saved_config = load_secret_config(str(project_config.CONFIG_PATH)) or {}
+
 dialog_settings = {
     "dialogTitle": "初始化配置",
+    "canRememberContent": True,
     "settings": {
         "editors": [
             {
-                "type": "TextBox",
-                "label": "账号",
-                "VariableName": "username",
-                "value": None,
-                "nullText": "请输入账号",
+                "type": "TextArea",
+                "label": "平台店铺配置",
+                "VariableName": "platform_configs",
+                "value": saved_config.get("platform_configs"),
+                "nullText": "请输入平台店铺配置 JSON",
+                "height": 300,
+            },
+            {
+                "type": "CheckBox",
+                "content": "持久化加密",
+                "VariableName": "persist_encrypted",
+                "value": False,
             },
         ],
         "buttons": [
             {
                 "type": "Button",
-                "label": "保存并启动",
+                "label": "启动",
+                "theme": "red",
+            },
+            {
+                "type": "Button",
+                "label": "取消",
+                "theme": "white",
             },
         ],
     },
 }
 
-dialog_result = show_custom_dialog(dialog_settings)
+dialog_result = show_custom_dialog(dialog_settings, storage_key="platform_config_dialog")
 config = dialog_result_to_dict(dialog_result)
 
 # 用户点击的按钮 key 是 pressed_button，不是 button
-pressed_button = config["pressed_button"]
+pressed_button = config.pop("pressed_button")
+persist_encrypted = config.pop("persist_encrypted", False)
+
+if pressed_button != "取消" and persist_encrypted:
+    save_secret_config(str(project_config.CONFIG_PATH), config)
 ```
 
 **注意事项：**

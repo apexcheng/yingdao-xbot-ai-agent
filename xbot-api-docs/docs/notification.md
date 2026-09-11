@@ -57,16 +57,24 @@
 | 参数名 | 类型 | 是否必填 | 说明 |
 |---|---|---|---|
 | `settings` | `dict` / `json串` | 是 | 对话框配置 |
-| `storage_key` | `str` / `None` | 否 | 记忆输入内容的存储键 |
+| `storage_key` | `str` / `None` | 否 | 记忆输入内容的存储键；同一应用内不同对话框应使用不同且稳定的键 |
+
+需要在对话框中显示“记住内容”选项时，同时设置：
+
+- `settings` 顶层的 `"canRememberContent": True`
+- `show_custom_dialog(..., storage_key="...")` 的非空 `storage_key`
 
 ### 返回值
 
 - 成功时返回对话框数据字典
 - 失败时抛异常
+- Code 流通过字典键读取结果，例如 `result["pressed_button"]` 或 `result.get("pressed_button")`；不要写成 `result.pressed_button`
 
 ### 注意事项
 
 - `storage_key` 不为空时，源码会尝试读取/保存历史输入。
+- “记住内容”用于下次打开同一对话框时回填输入，不等于“保存配置后以后不再弹窗”。
+- “记住内容”保存的输入不能视为加密配置，密码、Token 等敏感内容存在明文暴露风险。敏感配置应使用经过核验的加密持久化方案；若同一对话框同时提供两种方式，应明确提示用户不要对敏感内容勾选“记住内容”。
 - 对话框配置结构较复杂，建议按源码注释逐项填写。
 - 下拉/列表控件的 `options` 结构存在版本差异：6.3.12 / 6.3.13 的 Python 存根仍给出字符串数组示例，而部分运行时版本使用 `{"value": ..., "display": ...}` 对象数组。不能把任一写法泛化为所有版本；按当前客户端做最小运行验证。
 
@@ -97,6 +105,23 @@
 - 文件选择控件不能替代业务校验；使用前仍应确认路径指向实际存在的文件。
 - 需要与其他配置项一起收集时使用本节的 `File` 编辑器；只需要单独选择文件时，也可以使用本页的 `show_select_file_dialog()`。
 
+### `CheckBox` 复选框编辑器
+
+当前源码确认的复选框配置如下：
+
+```text
+非执行调用说明（不可直接运行）：
+
+{
+    "type": "CheckBox",
+    "content": "持久化加密",
+    "VariableName": "persist_encrypted",
+    "value": False,
+}
+```
+
+用户是否勾选通过结果字典的 `VariableName` 读取，例如 `result.get("persist_encrypted")`。这是普通自定义编辑器；它本身不负责加密，调用方仍需根据返回值调用已核验的加密保存能力。
+
 ### 示例
 
 当前运行时要求对象数组时，可使用以下写法；其他版本需运行验证：
@@ -108,6 +133,7 @@ from xbot.app.dialog import show_custom_dialog
 
 dialog_settings = {
     "dialogTitle": "采集参数",
+    "canRememberContent": True,
     "settings": {
         "editors": [
             {"type": "TextBox", "label": "链接", "VariableName": "url",
@@ -123,8 +149,9 @@ dialog_settings = {
         ],
     },
 }
-result = show_custom_dialog(dialog_settings)
+result = show_custom_dialog(dialog_settings, storage_key="collect_params_dialog")
 # result["browser_type"] 取到选项的 value（如 "chrome"）
+# result.get("pressed_button") 取到用户点击的按钮文案
 ```
 
 ---
