@@ -43,6 +43,7 @@
 5. 网页业务默认使用 `xbot.web`；等待明确异步条件，不靠不断增加固定 `sleep`。
 6. 影刀日志使用 `from xbot.app import logging`；动态内容使用完整 f-string，异常堆栈使用 `traceback.format_exc()`。
 7. 读取 / 迁移旧版可视化项目，或排查“应用文件已损坏”、flow 文件缺失、`package.sigstore` 等项目级问题时，使用 `.agents/skills/xbot-project-diagnostics/SKILL.md`；普通 Python 业务 bug 不触发。
+8. `selectorsV2.xml` 是由影刀编辑器维护的元素库文件，Agent 不得创建、编辑、格式化、覆盖或补丁修改该文件，否则影刀编辑器会提示应用文件损坏。需要调整元素库时应通过影刀编辑器操作；业务代码只读取并使用项目中已有的元素库名称。
 
 ## 验证与同步
 
