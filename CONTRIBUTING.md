@@ -50,4 +50,4 @@ API Python 片段须注明前置对象和适用条件，不声称可独立运行
 
 提交前检查：链接有效、事实等级清楚、示例最小、内容已脱敏、没有新增重复规则。
 
-修改真实项目开发行为的核心约束时，只在 `project-template/AGENTS.md` 维护其正文，并检查 `tests/test_agent_rule_consistency.py` 的关键不变量；不要把同一规则复制回根 `AGENTS.md`。
+修改真实项目开发行为的核心约束时，只在 `project-template/AGENTS.md` 维护其正文；不要把同一规则复制回根 `AGENTS.md`。

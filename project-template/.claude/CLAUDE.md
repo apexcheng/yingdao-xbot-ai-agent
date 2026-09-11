@@ -6,6 +6,6 @@
 
 需要确认 xbot API、市场指令、base 骨架或排错资料时，使用用户或项目提供的知识库路径，再按其 `llms.txt` 直达对应页面；路径未提供时不猜测。
 
-读取旧版影刀可视化编排项目时，使用 `.claude/skills/xbot-visual-flow-reader/SKILL.md`；纯 Python 任务不触发该 Skill。
+读取 / 迁移旧版影刀可视化项目，或排查“应用文件已损坏”、flow 文件缺失、`package.sigstore` 等项目级问题时，使用 `.claude/skills/xbot-project-diagnostics/SKILL.md`；普通 Python 业务 bug 不触发该 Skill。
 
 影刀同步的触发条件、执行方式及验证边界统一遵守当前项目的 [AGENTS.md](../AGENTS.md)。

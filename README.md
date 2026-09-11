@@ -124,7 +124,6 @@ README.md                    # 项目介绍与使用入口
 CONTRIBUTING.md              # 事实证据、内容边界与脱敏规则
 docs/                        # 编程风格详解、base 骨架、多数据源安全与通用排错
 project-template/            # 真实影刀项目 base 模板、Skill 与同步工具
-tests/                       # 影刀同步工具回归测试
 xbot-api-docs/
   AGENTS.md                  # API 文档维护边界
   docs/                      # xbot API 和市场指令事实页
