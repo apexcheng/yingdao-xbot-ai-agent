@@ -193,6 +193,7 @@ username = config["username"]
 - 用户点击的按钮在返回结果中以 `pressed_button` 作为 key，不是 `button`；经 `dialog_result_to_dict()` 转换后的 dict 同样按 `pressed_button` 读取。
 - 初始化配置场景通常流程：`load_secret_config()` → 无配置时 `show_custom_dialog(dialog_settings)` → `dialog_result_to_dict()` → `save_secret_config()`。
 - 加密保存也可以由 `CheckBox` 编辑器控制：底部保留“启动 / 取消”按钮，用户勾选“持久化加密”后再调用 `save_secret_config()`。下次启动应先调用 `load_secret_config()`；仅在返回 `None` 时显示对话框，读取成功则直接使用已解密的配置。
+- `init_config()` 应统一负责读取、弹窗、编辑器值的类型转换、业务字段校验和持久化；`main()` 只使用其返回的配置。`pressed_button` 与 `persist_encrypted` 可以保留在配置中并一同保存；前者只用于记录本次点击结果，不影响下次读取。
 - 原生“记住内容”与“持久化加密”可以同时提供，但两者职责不同：前者通过 `canRememberContent + storage_key` 在下次打开对话框时回填输入，不能视为加密；后者由业务代码调用 DPAPI 保存。具体控件配置见[对话框与通知](../notification.md)。
 - 对话框包含密码、Token 等敏感输入时，应提示用户不要勾选原生“记住内容”；勾选“持久化加密”不影响原生记忆功能，也不会把原生记忆产生的副本改为密文。
 
@@ -201,54 +202,77 @@ username = config["username"]
 ```text
 非执行调用说明（不可直接运行）：
 
-config = load_secret_config(str(project_config.CONFIG_PATH))
-if config is None:
-    dialog_settings = {
-        "dialogTitle": "初始化配置",
-        "settings": {
-            "editors": [
-                {
-                    "type": "TextArea",
-                    "label": "平台店铺配置",
-                    "VariableName": "platform_configs",
-                    "value": None,
-                    "nullText": "请输入平台店铺配置 JSON",
-                    "height": 300,
-                },
-                {
-                    "type": "CheckBox",
-                    "content": "持久化加密",
-                    "VariableName": "persist_encrypted",
-                    "value": False,
-                },
-            ],
-            "buttons": [
-                {
-                    "type": "Button",
-                    "label": "启动",
-                    "theme": "red",
-                },
-                {
-                    "type": "Button",
-                    "label": "取消",
-                    "theme": "white",
-                },
-            ],
-        },
-    }
+import json
+from pathlib import Path
 
-    dialog_result = show_custom_dialog(dialog_settings)
-    config = dialog_result_to_dict(dialog_result)
+from xbot.app.dialog import show_custom_dialog
+from xbot_extensions.xbot_enhance_tools.market_config import (
+    dialog_result_to_dict,
+    load_secret_config,
+    save_secret_config,
+)
 
-    # 用户点击的按钮 key 是 pressed_button，不是 button
-    pressed_button = config.pop("pressed_button")
-    persist_encrypted = config.pop("persist_encrypted", False)
 
-    if pressed_button == "取消":
-        config = None
-    elif persist_encrypted:
-        save_secret_config(str(project_config.CONFIG_PATH), config)
+config_path = Path.home() / ".xbot" / "平台店铺配置示例" / "config.json"
 
+
+def init_config():
+    config = load_secret_config(str(config_path))
+    is_first_run = config is None
+
+    if is_first_run:
+        dialog_settings = {
+            "dialogTitle": "初始化配置",
+            "settings": {
+                "editors": [
+                    {
+                        "type": "TextArea",
+                        "label": "平台店铺配置",
+                        "VariableName": "platform_configs",
+                        "value": None,
+                        "nullText": "请输入平台店铺配置 JSON",
+                        "height": 300,
+                    },
+                    {
+                        "type": "CheckBox",
+                        "content": "持久化加密",
+                        "VariableName": "persist_encrypted",
+                        "value": False,
+                    },
+                ],
+                "buttons": [
+                    {"type": "Button", "label": "启动", "theme": "red"},
+                    {"type": "Button", "label": "取消", "theme": "white"},
+                ],
+            },
+        }
+
+        config = dialog_result_to_dict(show_custom_dialog(dialog_settings))
+        if config.get("pressed_button") == "取消":
+            return None
+
+    # 已转换的值保持原样；其余 JSON 字符串统一还原为 dict、list、数字或 bool。
+    for key, value in config.items():
+        if isinstance(value, str) and value.strip():
+            try:
+                config[key] = json.loads(value)
+            except json.JSONDecodeError:
+                pass
+
+    platform_configs = config.get("platform_configs")
+    if platform_configs is None or platform_configs == "":
+        config["platform_configs"] = {}
+    elif not isinstance(platform_configs, dict):
+        raise RuntimeError("平台店铺配置必须是 JSON 对象")
+
+    # 只在本次展示对话框且用户勾选持久化时保存；保留全部结果字段。
+    if is_first_run and config.get("persist_encrypted"):
+        save_secret_config(str(config_path), config)
+
+    return config
+
+
+config = init_config()
 if config is not None:
     platform_configs = config["platform_configs"]
 ```
