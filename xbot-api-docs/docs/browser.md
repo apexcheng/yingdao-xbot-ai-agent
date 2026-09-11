@@ -798,8 +798,8 @@ path = element.screenshot(
 # 开始监听必须放在触发页面请求之前；URL 不需要写完整，尽量用通配符提高命中率
 browser.start_monitor_network(url="*client.action*", use_wildcard=True, resource_type="XHR|Fetch")
 
-# 已在 start_monitor_network 里限定 URL 时，读取时通常只按资源类型取数即可
-responses = browser.get_responses(resource_type="XHR|Fetch")
+# 已在 start_monitor_network 里限定采集范围，直接读取当前监听结果
+responses = browser.get_responses()
 browser.stop_monitor_network()
 
 result = browser.http_request(
@@ -832,7 +832,8 @@ result = browser.http_request(
 - 两个方法都支持 `url`、`use_wildcard`、`resource_type` 过滤；`resource_type` 可用 `|` 连接多个类型，例如 `"XHR|Fetch"`。
 - 监听要在点击、刷新、滚动、加载更多等触发请求动作之前开启。
 - 指定 URL 时优先使用通配符，例如 `url="*client.action*", use_wildcard=True`；不要强依赖完整 URL，避免查询参数或域名变化导致匹配不到。
-- 如果 `start_monitor_network()` 已经指定了 URL 过滤，后续 `get_responses(resource_type="XHR|Fetch")` 通常不必重复传 URL。
+- `start_monitor_network()` 用于确定本次采集范围。已经在开始监听时限定目标 URL 和资源类型时，后续直接调用 `get_responses()` 读取当前监听结果。
+- 只有开始监听时有意保留较宽范围，并且读取阶段需要进一步划分结果时，才给 `get_responses()` 传入过滤参数。
 - `get_responses()` 返回 `list[dict]`。单条记录常见键包括：`url`、`type`、`headers`、`body`、`base64Encoded`、`status`、`requestHeaders`、`requestBody`、`method`，读取方式如 `item["body"]`。
 - `body` 的具体内容形态、非 JSON 响应和异常请求表现，仍建议以真实运行日志为准，需运行验证。
 
