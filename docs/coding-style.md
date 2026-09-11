@@ -38,6 +38,8 @@ record = records[0]
 
 - 单次使用的字面量、简单属性、简单表达式或立即调用结果直接写在使用位置。
 - 只有值会复用、后续还要读取或判断、表达式较复杂、命名能解释业务含义，或必须保留对象状态时才提取变量。
+- 只为紧接着调用一次方法、读取一次属性或继续一次简单转换而创建的中间变量没有额外语义，直接链式表达；不要为了“步骤清楚”把一次性连续操作拆成多个变量。
+- 简单赋值不要先初始化占位值，再用紧接着的短 `if` 覆盖同一变量。若只是清晰的二选一结果，直接用一次条件赋值；分支包含多个业务动作、异常处理、副作用，或条件表达式明显降低可读性时再展开 `if`。
 - 能在使用位置直接读取或计算的值就地处理，不为了“统一管理”放入全局变量、字典或长期中间状态。
 - 函数和方法调用在保持可读时写在一行；参数很多或结构复杂时正常换行，不把“一行”当成损害可读性的硬格式。
 
@@ -50,6 +52,16 @@ page.find_by_xpath("//button[contains(., '下一页')]", timeout=3).click()
 # next_xpath = "//button[contains(., '下一页')]"
 # page.find_by_xpath(next_xpath, timeout=3).click()
 # def click_next(page): ...
+
+# 一次性元素对象继续读取文本时直接链式调用
+serial_text = row.find_by_xpath(
+    ".//*[contains(@class, 'sku-serial-number')]",
+    timeout=3,
+).get_text().strip()
+
+# 简单二选一结果直接一次赋值
+erp_match = re.search(r"商家编码\s*[:：]\s*(\S+)", serial_text)
+erp_code = erp_match.group(1).strip() if erp_match else ""
 ```
 
 ## 4. 函数、模块与类
