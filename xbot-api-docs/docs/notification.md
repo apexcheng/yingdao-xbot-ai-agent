@@ -297,7 +297,7 @@ result = show_custom_dialog(dialog_settings, storage_key="collect_params_dialog"
 
 ---
 
-## 12. `show_notifycation(message, *, placement='rightbottom', level='info', timeout=3)`
+## 12. `show_notifycation(message, *, placement='top', level='info', timeout=3)`
 
 ### 作用
 
@@ -308,7 +308,7 @@ result = show_custom_dialog(dialog_settings, storage_key="collect_params_dialog"
 | 参数名 | 类型 | 是否必填 | 说明 |
 |---|---|---|---|
 | `message` | `str` | 是 | 通知内容 |
-| `placement` | `str` | 否 | `top` / `bottom` / `rightbottom`，默认 `rightbottom` |
+| `placement` | `str` | 否 | `top` / `bottom` / `rightbottom`，默认 `top` |
 | `level` | `str` | 否 | `info` / `warning` / `error` |
 | `timeout` | `int` / `float` | 否 | 显示时长，默认 3 秒 |
 
@@ -319,6 +319,7 @@ result = show_custom_dialog(dialog_settings, storage_key="collect_params_dialog"
 ### 注意事项
 
 - `placement` 和 `level` 的可选值已按 ShadowBot 6.3.13 存根核对；与 6.3.12 对应源码一致，其他版本应复核当前实现。
+- 普通通知保持默认顶部显示即可，不要为了指定位置额外传 `placement`；只有用户明确要求其他位置时再设置。
 
 ### 示例
 
@@ -327,7 +328,7 @@ result = show_custom_dialog(dialog_settings, storage_key="collect_params_dialog"
 
 from xbot.app.dialog import show_notifycation
 
-show_notifycation("✅ 完成", placement="rightbottom", level="info")
+show_notifycation("✅ 完成", level="info")
 ```
 
 ---

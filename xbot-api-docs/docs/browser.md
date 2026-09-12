@@ -105,6 +105,8 @@ glv['my_var'] = 'value'
 
 重点：不要默认把 `xbot.web` 理解成带有 `wait_for_element` 一类的等待元素能力。单次等待元素出现可直接使用原生 `find_by_xpath(..., timeout=...)`；项目已安装“增强工具2026”、且需要等待 XPath 出现 / 消失或下载完成时，再按 [增强工具 2026](extensions/xbot-enhance-tools.md) 使用对应公开函数，不要仅因为文档示例给项目新增未安装依赖。
 
+同样不要因为原生源码内部出现 `is_cross_frame_element` 就推断 `xbot.web` 提供公开 iframe 切换 API。当前已核验的 XPath 跨 iframe 能力来自市场指令 [`iframe2 / XPath跨域获取网页元素`](iframe2-extension.md)；项目未安装该市场指令时，不能直接引用 `xbot_extensions.iframe2`。
+
 ---
 
 ## 4. 浏览器类型 `mode`

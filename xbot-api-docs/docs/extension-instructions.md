@@ -62,6 +62,7 @@ print(inspect.signature(your_extension_module.some_function))
 ## 相近能力如何选
 
 - 普通网页打开、元素查找、点击、输入、Cookie、下载和网络监听先用原生 [`xbot.web`](browser.md)；只有目标能力属于扩展特性时，再进入 `web_action`、`iframe2` 或增强工具事实页。
+- `iframe2` 是市场指令「XPath跨域获取网页元素」，不是原生 `xbot.web` 的 iframe API。原生源码中的 `is_cross_frame_element` 属于内部 selector 辅助能力，不能当作公开调用入口；跨 iframe XPath 操作按 [`iframe2`](iframe2-extension.md) 的当前安装版本事实页处理。
 - `activity_7bca6d` 是完整登录扩展，包含多平台 Visual 登录、验证码和滑块等入口；`xbot_enhance_tools.shop_utils` 是轻量商家后台登录辅助，是否适用以其 [事实页](extensions/xbot-enhance-tools.md) 的能力边界为准，不要把两者当成同一套登录 API。
 - `guanyi_erp_api` 面向 C-ERP Direct Python 查询；`activity_a90a8311` 面向 ERP 初始化和报表下载等 Flow 能力。需要查询接口数据时看 [C-ERP API](extensions/guanyi-erp-api.md)，需要下载 ERP 报表时看 [C-ERP 市场指令](extensions/activity-a90a8311-cerp-visual.md)。
 - 普通工作簿、Sheet、区域读写和格式先查原生 [`xbot.excel`](excel.md)；只有原生能力不足、且项目已安装 Excel 扩展操作时，再查 [`activity_excel_v2`](extensions/activity-excel-v2.md)。
