@@ -30,7 +30,7 @@
 
 ### AI Agent 开发规则
 
-- [AGENTS.md](AGENTS.md)：执行任务时常驻的跨项目核心约束，完整保留过程式编程、文件职责、变量内联和少封装规则。
+- [AGENTS.md](AGENTS.md)：执行任务时常驻的跨项目核心约束，完整保留过程式主流程、文件职责、变量内联和函数封装边界规则。
 - [llms.txt](llms.txt)：给 AI Agent 使用的精简文档导航。
 - [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口、可视化流程读取 Skill 和同步工具。
 
