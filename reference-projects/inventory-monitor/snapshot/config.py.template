@@ -1,0 +1,47 @@
+from pathlib import Path
+
+
+# 此文件基于来源项目 config.py.template 脱敏，只保留理解模块依赖所需的配置类别。
+
+PROJECT_DIR = Path.home() / ".xbot" / "库存监控参考项目"
+CONFIG_PATH = PROJECT_DIR / "project_config.json"
+DATABASE_PATH = PROJECT_DIR / "inventory_monitor.db"
+SQLITE_RETENTION_DAYS = 365
+
+TMALL_EXISTING_MESSAGE_STOP_COUNT = 10
+TMALL_SCROLL_UNITS = 10
+TMALL_SCROLL_REQUEST_ATTEMPTS = 10
+
+ERP_USERNAME = ""
+ERP_PASSWORD = ""
+ERP_PROFILE = "Default"
+ERP_WAREHOUSE_NAME = "正品仓"
+COMBINE_IGNORE_ITEM_CODES = []
+
+ERP_MIN_QTY = 5
+TARGET_DIVISOR = 10
+TARGET_MAX = 20
+STOCK_UPDATE_MAX_ATTEMPTS = 3
+PDD_SCROLL_UNITS = 8
+
+DINGTALK_WEBHOOK_URL = ""
+DINGTALK_WEBHOOK_SECRET = ""
+OPS_MOBILES = []
+RUN_SUMMARY_TIMES = ("08:00", "13:30", "18:00")
+
+SKU_IGNORE_LIST = {
+    "拼多多": [],
+    "天猫": [],
+}
+
+PLATFORM_CONFIGS = {
+    "拼多多": [
+        {
+            "name": "示例店铺",
+            "profile": "Default",
+            "username": "",
+            "password": "",
+            "manager_mobiles": [],
+        },
+    ],
+}
