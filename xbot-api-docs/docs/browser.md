@@ -319,6 +319,8 @@ buttons = row.find_all_by_xpath('.//button[contains(@class, "action")]', timeout
 | `find_by_xpath()` | 抛异常 | 抛异常 |
 | `find_all_by_xpath()` | 返回空列表 | 返回列表 |
 
+当业务只是判断 XPath 元素是否存在、不存在或等待状态变化时，优先使用 `find_all_by_xpath(..., timeout=...)` 根据返回列表判断。不要通过捕获 `find_by_xpath()` 异常来表达“元素不存在”，因为 `find_by_xpath()` 在未找到和匹配多个元素时都会抛异常，容易把定位到多个元素等问题误判为“不存在”。
+
 ---
 
 ## 11. 等待元素
