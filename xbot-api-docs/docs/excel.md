@@ -695,6 +695,37 @@ workbook = xbot.excel.open(
 )
 ```
 
+### 16.4 WPS 主窗口获取与最大化
+
+WPS 表格的可见 UI 主窗口由 `wps.exe` 承载，不要只按 `et.exe` 查找表格窗口。`et.exe` 可存在于 WPS 表格运行过程中，但不能据此判断拿到的是用户当前看到的主窗口。
+
+WPS 窗口标题也不是稳定定位条件。打开或创建 WPS 工作簿后，如果下一步就是操作刚出现的表格窗口，优先使用 `win32.get_active()` 获取当前激活窗口，并校验其进程确实为 `wps.exe`，再执行窗口操作。
+
+```text
+非执行调用说明（不可直接运行）：
+
+from xbot import win32
+import xbot.excel
+
+
+workbook = xbot.excel.open(
+    file_name=r"C:\path\demo.xlsx",
+    kind="wps",
+    visible=True,
+)
+
+wps_window = win32.get_active(timeout=5)
+process_name = str(wps_window.get_detail("process_name") or "").lower()
+if process_name not in ("wps", "wps.exe"):
+    raise RuntimeError("当前激活窗口不是 WPS 表格窗口")
+
+wps_window.set_state("maximize")
+```
+
+这里 `set_state("maximize")` 本身就是正确的最大化调用；如果调用后没有视觉效果，应先确认取得的是否是真正的 WPS 可见主窗口，而不是辅助进程窗口或其他前台窗口。`get_active()` 与 `set_state()` 的窗口 API 事实见 [Win32 自动化](win32.md)。
+
+如果业务允许清理本机残留 WPS 进程，可在打开工作簿前使用 `xbot.excel.kill_excel_process("wps", True)` 清场；它不是“最大化 WPS”的必要步骤，不应为了最大化窗口默认强制关闭用户现有的 WPS 进程。
+
 ---
 
 ## 17. 排错速查
