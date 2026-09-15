@@ -20,7 +20,7 @@ config   Code     配置路径
 
 - `run.py`：通过 `main(args)` 进入业务，首次运行显示配置对话框。
 - `config.py`：保存当前项目的加密配置路径；默认放在当前 Windows 用户目录下的 `.xbot/<项目功能名>/project_config.json`。
-- `shadowbot_sync_tool.py`：登记和编译新增 Code 流。
+- `shadowbot_sync_tool.py`：同步 Code 流注册，并编译当前项目 Python 文件；新增文件会登记，删除文件会移除对应注册。
 
 `run.py` 依赖项目已安装“增强工具2026”市场指令，使用其公开 `market_config` 能力：
 

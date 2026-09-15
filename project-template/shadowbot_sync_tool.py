@@ -206,14 +206,27 @@ def find_flow(package_data, file_name):
 def sync_project(args):
     """Sync externally edited code into ShadowBot.
 
-    It scans root Python files, ensures Code flows exist and compiles all valid files.
+    It scans root Python files, removes stale Code flow registrations, ensures current
+    Code flows exist and compiles all valid files.
     """
     project_dir = resolve_project_dir(args.project_dir)
     package_data = load_package_json(project_dir)
     scanned_files, excluded_files, valid_files = scan_project_python_files(project_dir)
     created_flows = []
+    removed_flows = []
     updated_flows = []
     package_changed = False
+
+    # 删除已不存在 Python 文件对应的 Code flow 注册；Visual 等其它流程不处理。
+    kept_flows = []
+    for flow in package_data.get("flows", []):
+        flow_name = flow.get("filename")
+        if flow.get("kind") == "Code" and flow_name and not (project_dir / f"{flow_name}.py").exists():
+            removed_flows.append(flow_name)
+            package_changed = True
+            continue
+        kept_flows.append(flow)
+    package_data["flows"] = kept_flows
 
     for file_name in valid_files:
         existing_flow = find_flow(package_data, file_name)
@@ -238,6 +251,7 @@ def sync_project(args):
     print(f"scanned_files={len(scanned_files)}")
     print(f"excluded_files={excluded_files}")
     print(f"created_flows={created_flows}")
+    print(f"removed_flows={removed_flows}")
     print(f"updated_flows={updated_flows}")
     print(f"compiled_files={valid_files}")
     print(f"compiled_with={python_exe}")
