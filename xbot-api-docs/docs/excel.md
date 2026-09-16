@@ -695,11 +695,11 @@ workbook = xbot.excel.open(
 )
 ```
 
-### 16.4 WPS 主窗口获取与最大化
+### 16.4 WPS 工作簿激活与应用窗口最大化
 
-WPS 表格的可见 UI 主窗口由 `wps.exe` 承载，不要只按 `et.exe` 查找表格窗口。`et.exe` 可存在于 WPS 表格运行过程中，但不能据此判断拿到的是用户当前看到的主窗口。
+已经通过 `xbot.excel.open(..., kind="wps")` 取得 `workbook` 时，优先直接操作该工作簿对应的 WPS COM 对象，不要再依赖系统当前前台窗口，也不要通过枚举 `wps.exe` / `et.exe` 进程窗口来猜当前工作簿对应的 UI 窗口。
 
-WPS 窗口标题也不是稳定定位条件。打开或创建 WPS 工作簿后，如果下一步就是操作刚出现的表格窗口，优先使用 `win32.get_active()` 获取当前激活窗口，并校验其进程确实为 `wps.exe`，再执行窗口操作。
+当前运行验证表明：`xbot.excel.open(..., visible=True)` 返回后，WPS 不保证已经成为系统前台窗口，因此此处使用 `win32.get_active()` 可能取得影刀、桌面或其他程序窗口。按 `wps.exe` 枚举窗口同样不能保证拿到当前工作簿对应的正确窗口对象。
 
 ```text
 非执行调用说明（不可直接运行）：
@@ -714,15 +714,13 @@ workbook = xbot.excel.open(
     visible=True,
 )
 
-wps_window = win32.get_active(timeout=5)
-process_name = str(wps_window.get_detail("process_name") or "").lower()
-if process_name not in ("wps", "wps.exe"):
-    raise RuntimeError("当前激活窗口不是 WPS 表格窗口")
-
-wps_window.set_state("maximize")
+workbook.workbook.Activate()
+workbook.workbook.Application.WindowState = -4137  # xlMaximized
 ```
 
-这里 `set_state("maximize")` 本身就是正确的最大化调用；如果调用后没有视觉效果，应先确认取得的是否是真正的 WPS 可见主窗口，而不是辅助进程窗口或其他前台窗口。`get_active()` 与 `set_state()` 的窗口 API 事实见 [Win32 自动化](win32.md)。
+`workbook.workbook.Activate()` 用于激活当前工作簿；`workbook.workbook.Application.WindowState = -4137` 用于最大化 WPS 应用窗口。当前环境已验证这组用法可以正确最大化 WPS。
+
+不要改成 `workbook.workbook.Windows.Item(1).WindowState = -4137` 作为最大化方案：当前环境实测该赋值可以正常执行但外层 WPS 窗口没有视觉上的最大化效果。
 
 如果业务允许清理本机残留 WPS 进程，可在打开工作簿前使用 `xbot.excel.kill_excel_process("wps", True)` 清场；它不是“最大化 WPS”的必要步骤，不应为了最大化窗口默认强制关闭用户现有的 WPS 进程。
 
