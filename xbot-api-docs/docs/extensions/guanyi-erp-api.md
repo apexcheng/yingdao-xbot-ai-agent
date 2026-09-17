@@ -11,7 +11,7 @@
 
 **调用方式：** direct python
 
-**用途：** 管易 ERP / C-ERP 的库存、商品、订单、发货、退货、仓库查询，以及商品 / SKU / 条码新增
+**用途：** 管易 ERP / C-ERP 的库存、商品、订单、发货、退货、调拨、其他出库、仓库查询，以及商品 / SKU / 条码新增
 
 **调用入口：**
 - `xbot_extensions.guanyi_erp_api.select_stock.main(args)`
@@ -22,6 +22,8 @@
 - `xbot_extensions.guanyi_erp_api.select_item_by_sku_code.main(args)`
 - `xbot_extensions.guanyi_erp_api.select_delivery.main(args)`
 - `xbot_extensions.guanyi_erp_api.select_return.main(args)`
+- `xbot_extensions.guanyi_erp_api.select_stock_transfer.main(args)`
+- `xbot_extensions.guanyi_erp_api.select_stock_other_out.main(args)`
 - `xbot_extensions.guanyi_erp_api.select_warehouse.main(args)`
 - `xbot_extensions.guanyi_erp_api.add_item.main(args)`
 - `xbot_extensions.guanyi_erp_api.add_item_sku.main(args)`
@@ -40,6 +42,8 @@
 | `select_item_by_sku_code.main(args)` | 按商品条码查询商品 | `商品条码` | 写入 `args['items']`；无显式返回值 |
 | `select_delivery.main(args)` | 查询发货单 / 销售出库单 | `page_no`、`page_size`、`code`、`outer_code`、`warehouse_code`、`shop_code`、`mail_no`、创建 / 发货 / 修改时间范围、`del`、`delivery`、`wms` | 写入 `args['result']`、`args['deliverys']`，并返回原始响应 |
 | `select_return.main(args)` | 查询退货单 | `page_no`、`page_size`、`code`、`platform_code`、`shop_code`、`return_type`、`express_no`、`warehousein_code`、`warehouseout_code`、创建 / 入库 / 修改时间范围等 | 写入 `args['result']`，并返回原始响应；退货列表字段为 `tradeReturns` |
+| `select_stock_transfer.main(args)` | 查询调拨单 | `page_no`、`page_size`、`code`、`start_date`、`end_date`、`start_create`、`end_create`、`start_operation`、`end_operation`、`warehouse_out`、`warehouse_in`、`status_out`、`status_in` | 写入 `args['result']`，并返回原始响应 |
+| `select_stock_other_out.main(args)` | 查询其他出库单 | `page_no`、`page_size`、`code`、`start_date`、`end_date`、`date_type`、`approve`、`status`、`del`、`warehouse_code`、`type_code` | 写入 `args['result']`，并返回原始响应 |
 | `select_warehouse.main(args)` | 查询仓库 | `page_no`、`page_size`、`start_date`、`end_date`、`date_type`、`has_del_data`、`code` | 写入 `args['result']`，并返回原始响应；仓库列表字段为 `warehouses` |
 | `add_item.main(args)` | 新增商品，可同时带 `skus` 新增规格 | `code`、`name`、品牌 / 类目 / 供应商 / 税务 / 尺寸 / 价格 / 库存状态字段、`skus` 等 | 写入 `args['result']`，并返回原始响应 |
 | `add_item_sku.main(args)` | 给已有商品新增规格 | `item_id` 或 `item_code` 二选一，另有 `code`、`name`、库存状态、重量、价格、备注等 | 写入 `args['result']`，并返回原始响应 |
@@ -54,14 +58,18 @@
 - `outer_code`：发货查询中的平台单号
 - `mail_no`：发货查询中的物流单号
 - `warehouse_code`：仓库代码
+- `warehouse_out` / `warehouse_in`：调拨单查询中的调出 / 调入仓库代码
+- `status_out` / `status_in`：调拨单查询中的出库 / 入库状态筛选
+- `type_code`：其他出库单查询中的出库类型编码
+- `approve` / `status`：其他出库单查询中的审核 / 出库状态筛选
 - `item_id` / `item_code`：`add_item_sku` 用于定位已有商品；真实接口验证表明二者必须至少传一项
 - `barcode`：`add_item_barcode` 的必填条码字段
 
 不同入口的参数并不通用。例如库存查询有 `item_code` / `item_sku_code` / `warehouse_code`，订单列表有 `date_type` / `shop_code` / `has_cancel_data`。调用时按目标入口的真实参数使用，不要把上面的概括参数列表当成所有函数都支持的公共参数集。
 
-**返回值约定：** 旧入口多数 Code 流通过修改传入的 `args` 写回输出；`translation.main(args)`、`select_order_dteail.main(args)` 以及本次新增的 `select_delivery`、`select_return`、`select_warehouse`、`add_item`、`add_item_sku`、`add_item_barcode` 都有显式 `return`。查询类新增入口返回 C-ERP 原始响应 Dict，不直接返回列表；列表需从 `deliverys`、`tradeReturns`、`warehouses` 等字段读取。
+**返回值约定：** 旧入口多数 Code 流通过修改传入的 `args` 写回输出；`translation.main(args)`、`select_order_dteail.main(args)` 以及后续新增的 `select_delivery`、`select_return`、`select_stock_transfer`、`select_stock_other_out`、`select_warehouse`、`add_item`、`add_item_sku`、`add_item_barcode` 都有显式 `return`。查询类新增入口返回 C-ERP 原始响应 Dict，不直接返回列表；已真实核验入口的列表需从 `deliverys`、`tradeReturns`、`warehouses` 等字段读取。调拨单与其他出库单的真实响应列表字段尚未在本知识库中完成运行核验，不应先行假定字段名。
 
-**真实请求核验（2026-09-12）：**
+**真实请求核验（截至 2026-09-12）：**
 - `gy.erp.warehouse.get`：真实请求成功，返回 `success=true`、`warehouses`，当次返回 `total=20`。
 - `gy.erp.trade.deliverys.get`：真实请求成功，返回 `success=true`、`deliverys`。
 - `gy.erp.trade.return.get`：真实请求成功，返回 `success=true`、`tradeReturns`。
@@ -69,12 +77,16 @@
 - `gy.erp.item.sku.add`：同样采用无落库校验请求；服务端返回 `PARAM ERR / 商品ID和商品CODE必填一项`，据此确认 `item_id` / `item_code` 的定位规则。
 - `gy.erp.item.barcode.add`：同样采用无落库校验请求；服务端返回 `PARAM ERR / 商品barcode必填`，确认接口可达且 `barcode` 为必填字段。
 
+**源码核验（2026-09-17）：**
+- `gy.erp.stock.transfer.get`：当前扩展已增加 `select_stock_transfer.main(args)` 包装入口；已按当前项目源码核对方法名和参数透传，尚未做真实账号请求核验。
+- `gy.erp.stock.other.out.order.get`：当前扩展已增加 `select_stock_other_out.main(args)` 包装入口；已按当前项目源码核对方法名和参数透传，尚未做真实账号请求核验。
+
 **注意事项：**
 - `core.py` 提供共享 API 签名和请求封装，但当前 `__init__.py` 没有把它作为业务入口导出；业务代码默认调用上表模块，不直接绕到 `core.py`。
 - `select_item.main(args)` 当前源码虽然读取了 `item_sku_code`，但没有把它传给实际商品查询函数，因此本页不把它列为有效筛选参数；不要因为看到局部变量就假定该筛选已生效。
 - `select_order_list` 的底层查询函数支持更多筛选条件，包括 `platform_code`，但当前 `main(args)` 没有向下传递这些额外参数；调用 `main(args)` 时只按上表已确认参数使用。
 - 模块文件名 `select_order_dteail` 是扩展现有拼写，调用时不要自行改成 `detail`。
-- `select_delivery.main(args)` 的接口字段名确实包含 `del`；Python 调用层通过 Dict 展开传递该字段，业务侧传参键仍使用字符串 `"del"`。
+- `select_delivery.main(args)` 和 `select_stock_other_out.main(args)` 的接口字段名都包含 `del`；Python 调用层通过 Dict 展开传递该字段，业务侧传参键仍使用字符串 `"del"`。
 - `add_item`、`add_item_sku`、`add_item_barcode` 会真实写入 ERP。知识库只记录入口和参数契约，不提供可直接运行的新增脚本；运行验证优先使用不会落库的参数校验请求。
 
 **典型调用方式：**
