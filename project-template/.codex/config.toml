@@ -6,3 +6,8 @@ sandbox_mode = "danger-full-access"
 
 [agents]
 max_concurrent_threads_per_session = 3
+
+[mcp_servers.qmd]
+command = "qmd"
+args = ["mcp"]
+cwd = "C:/Users/Administrator/Desktop/影刀xAI开发指南"

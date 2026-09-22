@@ -1,0 +1,29 @@
+collections:
+  yingdao-docs:
+    path: ./docs
+    pattern: "**/*.md"
+    includeByDefault: true
+    context:
+      /: 影刀跨 API 的正式开发知识：稳定开发方法、代码风格、项目骨架、排错方法等。属于正式知识层；API 具体事实仍以 yingdao-api 为更高优先级来源。
+  yingdao-api:
+    path: ./xbot-api-docs/docs
+    pattern: "**/*.md"
+    includeByDefault: true
+    context:
+      /: 影刀 xbot API、市场指令、参数、返回值与已核验行为。涉及 API 事实时属于高优先级正式事实来源。
+  yingdao-skills:
+    path: ./project-template/.agents/skills
+    pattern: "**/*.md"
+    includeByDefault: true
+    context:
+      /: 影刀项目专项 Agent 工作流。只在对应任务触发时使用；不替代正式 API 事实、AGENTS 规则或 docs 正式知识。
+  yingdao-reference:
+    path: ./reference-projects
+    pattern: "**/*.md"
+    includeByDefault: true
+    context:
+      /: 真实影刀项目的冻结实现参考，只用于参考实际落地方式。属于参考层，不能覆盖正式 API 事实、AGENTS 规则或 docs 正式知识。
+models:
+  embed: hf:ggml-org/embeddinggemma-300M-GGUF/embeddinggemma-300M-Q8_0.gguf
+  generate: hf:tobil/qmd-query-expansion-1.7B-gguf/qmd-query-expansion-1.7B-q4_k_m.gguf
+  rerank: hf:ggml-org/Qwen3-Reranker-0.6B-Q8_0-GGUF/qwen3-reranker-0.6b-q8_0.gguf

@@ -7,3 +7,5 @@ __pycache__/
 shadowbot_winro_extracted/
 .DS_Store
 Thumbs.db
+.qmd/index.sqlite
+.qmd/index.sqlite-*

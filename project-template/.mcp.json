@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "qmd": {
+      "type": "stdio",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "C:\\Users\\Administrator\\Desktop\\影刀xAI开发指南\\scripts\\qmd-mcp.ps1"
+      ]
+    }
+  }
+}
