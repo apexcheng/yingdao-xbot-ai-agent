@@ -121,5 +121,6 @@ except Exception as e:
 - 群通知里更推荐 `title` 和 `content` 分离，正文统一传 Markdown。
 - 如果通知失败只影响提醒链路，不影响主业务，可只记录日志，不中断主流程。
 - 老项目继续使用 `process1()` / `process2()` 时无需强制改造；新增代码直接使用 `py_api`，调用链更短、参数更明确。
+- 业务通知的标题、状态 emoji、信息层级、@ 人策略和 Markdown 排版偏好见 [钉钉通知文案与排版偏好](../../../docs/dingtalk-notification-style.md)。本页只维护市场指令调用事实，不重复维护文案规范。
 
 ---

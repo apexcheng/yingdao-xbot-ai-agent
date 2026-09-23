@@ -41,7 +41,7 @@
 | `select_order_dteail.main(args)` | 查询订单详情 | `code`、`platform_code` | 写入 `args['order_detail']`，并返回订单详情 |
 | `select_order_list.main(args)` | 查询订单列表 | `date_type`、`shop_code`、`code`、`has_cancel_data`、`start_date`、`end_date` | 写入 `args['orders']`；无显式返回值 |
 | `select_item_by_sku_code.main(args)` | 按商品条码查询商品 | `商品条码` | 写入 `args['items']`；无显式返回值 |
-| `select_delivery.main(args)` | 查询发货单 / 销售出库单 | `page_no`、`page_size`、`code`、`outer_code`、`warehouse_code`、`shop_code`、`mail_no`、创建 / 发货 / 修改时间范围、`del`、`delivery`、`wms` | 写入 `args['result']`、`args['deliverys']`，并返回原始响应 |
+| `select_delivery.main(args)` | 查询发货单 / 销售出库单 | `page_no`、`page_size`、`code`、`outer_code`、`warehouse_code`、`shop_code`、`mail_no`、创建 / 发货 / 修改时间范围、`del`、`delivery`、`wms`、`detail_flag` | 写入 `args['result']`、`args['deliverys']`，并返回原始响应 |
 | `select_return.main(args)` | 查询退货单 | `page_no`、`page_size`、`code`、`platform_code`、`shop_code`、`return_type`、`express_no`、`warehousein_code`、`warehouseout_code`、创建 / 入库 / 修改时间范围等 | 写入 `args['result']`，并返回原始响应；退货列表字段为 `tradeReturns` |
 | `select_stock_transfer.main(args)` | 查询调拨单 | `page_no`、`page_size`、`code`、`start_date`、`end_date`、`start_create`、`end_create`、`start_operation`、`end_operation`、`warehouse_out`、`warehouse_in`、`status_out`、`status_in` | 写入 `args['result']`，并返回原始响应；调拨列表字段为 `stockTransfers`，每条调拨记录可内嵌 `details` |
 | `select_stock_other_out.main(args)` | 查询其他出库单 | `page_no`、`page_size`、`code`、`start_date`、`end_date`、`date_type`、`approve`、`status`、`del`、`warehouse_code`、`type_code` | 写入 `args['result']`，并返回原始响应；其他出库单列表字段为 `order_list` |
@@ -59,6 +59,9 @@
 - `max_page_no`：最大页码
 - `outer_code`：发货查询中的平台单号
 - `mail_no`：发货查询中的物流单号
+- `detail_flag`：发货查询是否返回完整发货单明细；仅在调用方显式传入 `True` 时开启，封装层不设置固定值
+- `select_delivery` 的 `page_no`、`page_size` 默认分别为 `1`、`50`；`page_size` 最大为 `100`
+- `select_delivery` 的 `start_delivery_date` 至 `end_delivery_date` 单次查询时间跨度最大为 24 小时
 - `warehouse_code`：仓库代码
 - `warehouse_out` / `warehouse_in`：调拨单查询中的调出 / 调入仓库代码
 - `status_out` / `status_in`：调拨单查询中的出库 / 入库状态筛选
@@ -74,7 +77,7 @@
 
 **真实请求核验（截至 2026-09-12）：**
 - `gy.erp.warehouse.get`：真实请求成功，返回 `success=true`、`warehouses`，当次返回 `total=20`。
-- `gy.erp.trade.deliverys.get`：真实请求成功，返回 `success=true`、`deliverys`。
+- `gy.erp.trade.deliverys.get`：真实请求成功，返回 `success=true`、`deliverys`。未开启 `detail_flag` 时仅返回发货单摘要；调用方显式传入 `detail_flag=true` 时返回完整发货单，包含 `shop_name`、`shop_code`、`delivery_date` 与 `details[]`。已观察到 `details[]` 包含 `id`、`qty`、`item_code`、`sku_code`、`platform_item_name`、`platform_sku_name`、`is_gift`、`refund`、`platform_code` 等字段。
 - `gy.erp.trade.return.get`：真实请求成功，返回 `success=true`、`tradeReturns`。
 - `gy.erp.item.add`：为避免制造测试商品，真实请求故意不传必填业务字段；服务端返回 `PARAM ERR / 商品CODE必填`，确认鉴权、签名、方法名和接口路由可达。
 - `gy.erp.item.sku.add`：同样采用无落库校验请求；服务端返回 `PARAM ERR / 商品ID和商品CODE必填一项`，据此确认 `item_id` / `item_code` 的定位规则。

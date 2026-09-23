@@ -12,6 +12,7 @@
 
 - 新建或补全影刀编码版项目：[base-project-skeleton.md](docs/base-project-skeleton.md)
 - 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[coding-style.md](docs/coding-style.md)
+- 钉钉业务通知的文案结构、排版偏好、状态 emoji 与示例：[dingtalk-notification-style.md](docs/dingtalk-notification-style.md)
 - 多个必需数据源写入同一工作簿：[multi-source-report-safety.md](docs/multi-source-report-safety.md)
 - 跨数据、API、环境或市场指令的通用排错：[troubleshooting.md](docs/troubleshooting.md)
 - 多平台、多店铺、SQLite 状态 / 重试、日志与通知组成的真实影刀项目实现参考：[库存监控真实实现参考](reference-projects/inventory-monitor/README.md)
@@ -32,6 +33,7 @@
 - Win32 窗口 / 元素层级、图像点击、焦点、键鼠与坐标问题：[win32.md](xbot-api-docs/docs/win32.md)
 - WPS `set_range()`、`=` 开头文本、长数字精度、只读 / 文件占用：[excel.md](xbot-api-docs/docs/excel.md)
 - 市场指令的 Visual / Code / Direct Python 入口、参数名和返回值不明确：[extension-instructions.md](xbot-api-docs/docs/extension-instructions.md)
+- 钉钉群机器人调用方式看市场指令事实页；业务通知怎么写、怎么排版：[dingtalk-notification-style.md](docs/dingtalk-notification-style.md)
 - 已安装“增强工具2026”后的 XPath 等待、下载等待、共享文件占用者识别：[xbot-enhance-tools.md](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
 
 文档贡献的证据和脱敏要求见 [CONTRIBUTING.md](CONTRIBUTING.md)。
