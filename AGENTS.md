@@ -14,6 +14,7 @@
 4. `xbot-api-docs/AGENTS.md` 是 API 文档维护的专项规则。进入 `xbot-api-docs/` 修改内容时，同时遵守该目录规则。
 5. `.claude/CLAUDE.md` 只负责让 Claude Code 加载本仓库根规则，不维护第二套知识库规则。
 6. `project-template/.claude/CLAUDE.md` 只负责真实项目中的 Claude Code 规则入口，不与知识库根 `.claude/CLAUDE.md` 混用。
+7. 本仓库只维护与影刀 xbot / 编码版 / RPA 开发直接相关的稳定知识、规则、API 事实和专项工作流。ChatGPT、Claude Code、Codex 等宿主本身提供的插件、Connector、MCP、DevSpace、Computer Use、设备连接、模型能力和工具路由规则不属于本知识库；即使这些能力被用于开发影刀，也不得把其使用说明或路由策略沉淀到本仓库。只有与影刀本身直接相关的 CLI、API、项目格式、Studio / Flow / Console 行为和运行机制可以进入知识库。
 
 ## 2. 知识库结构与路由
 
