@@ -47,7 +47,7 @@ When the user asks which ShadowBot project contains a feature, webhook, task, or
 
 Before running, discover the app and inspect its detail when inputs may be required.
 
-Starting an app or task is a real business execution, not a read-only inspection technique. Do not start a workflow merely to discover runtime variables, configuration values, Sheet names, credentials, account lists, or other data that can be obtained by static source analysis or a direct minimal API request. Execute only when the user has explicitly requested it or the task has reached an agreed run/test stage.
+Starting an app or task is a real business execution, not a read-only inspection technique. Do not start a workflow merely to discover runtime variables, configuration values, Sheet names, credentials, account lists, or other data that can be obtained by static source analysis or a direct minimal API request. **Only run an app or task when the user explicitly asks to run it.** Do not infer permission to run from “development completed”, “ready for testing”, “needs verification”, or similar states.
 
 Help:
 `"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" console task run -h`
@@ -106,7 +106,7 @@ Run `ui -h` before use. Supported actions include Studio/Console minimize/maximi
 - Read/query operations are safe defaults.
 - Prefer Windows DevSpace for source inspection, file operations, project-local Python / PowerShell commands, and temporary diagnostic or migration scripts. Escalate to this CLI only when a ShadowBot-specific capability is actually needed.
 - Treat `console app recycle`, permanent delete, publish, collaborator changes, `config set`, task stop, forced mode switches, and similar state-changing operations as explicit user-intent actions.
-- Treat all app/task execution commands as real execution with possible business side effects even when the goal is only to inspect variables. Do not execute workflows for discovery.
+- Treat all app/task execution commands as real execution with possible business side effects. Only execute when the user explicitly requests a run; do not make app execution a default development, verification, or completion step.
 - Never invent an app UUID or silently pick the first search result when multiple apps match. Use names and returned metadata to disambiguate.
 - Prefer CLI outputs as the source of truth for current ShadowBot app IDs, task state, account state, and supported command parameters.
 - If a command fails because the local REST API is unavailable, verify `system health`, ShadowBot process/runtime state, and authentication before attempting alternate methods.
