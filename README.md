@@ -32,7 +32,7 @@
 
 - [AGENTS.md](AGENTS.md)：执行任务时常驻的跨项目核心约束，完整保留过程式主流程、文件职责、变量内联和函数封装边界规则。
 - [llms.txt](llms.txt)：给 AI Agent 使用的精简文档导航。
-- [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口、可视化流程读取 Skill 和同步工具。
+- [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口、可视化流程读取 Skill，以及 `xbot-app-lifecycle` 内置的 Code flow 同步 helper。
 
 ### 开发与排错专题
 
@@ -81,14 +81,17 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
 AGENTS.md
 config.py
 run.py
-shadowbot_sync_tool.py
 .gitignore
 .agents/skills/xbot-project-diagnostics/
+.agents/skills/shadowbot-cli/
+.agents/skills/xbot-app-lifecycle/
 .claude/CLAUDE.md
 .claude/skills/xbot-project-diagnostics/
+.claude/skills/shadowbot-cli/
+.claude/skills/xbot-app-lifecycle/
 ```
 
-模板使用“增强工具2026”的加密配置能力，配置文件默认保存在当前用户目录 `.xbot/<项目功能名>/project_config.json`，按项目功能分目录隔离。依赖前提和路径规则见 [最小 base 骨架](docs/base-project-skeleton.md)。
+模板默认由 `config.py` 管理项目配置。`shadowbot-cli` Skill 保留安装版 CLI 用法，`xbot-app-lifecycle` Skill 维护本项目的创建、开发、Code flow 同步、发布和试运行流程，其 `scripts/sync_codeflows.py` 是内部同步 helper；更新 CLI Skill 时可直接替换其文件。使用时需本机已安装影刀 CLI。骨架和配置约定见 [最小 base 骨架](docs/base-project-skeleton.md)。
 
 ### 4. 告诉 AI Agent 两个目录
 
@@ -123,7 +126,7 @@ llms.txt                     # AI / LLM 文档索引
 README.md                    # 项目介绍与使用入口
 CONTRIBUTING.md              # 事实证据、内容边界与脱敏规则
 docs/                        # 编程风格详解、base 骨架、多数据源安全与通用排错
-project-template/            # 真实影刀项目 base 模板、Skill 与同步工具
+project-template/            # 真实影刀项目 base 模板与 Skill
 xbot-api-docs/
   AGENTS.md                  # API 文档维护边界
   docs/                      # xbot API 和市场指令事实页

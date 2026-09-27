@@ -5,7 +5,6 @@ import sys
 from pathlib import Path
 
 
-ROOT_DIR = Path(__file__).resolve().parent
 EXCLUDED_PYTHON_FILES = {"__init__.py", "package.py", "shadowbot_sync_tool.py"}
 
 
@@ -140,13 +139,14 @@ def ensure_code_flow(package_data, file_name, group_name=None):
     }
 
 
-def find_shadowbot_python():
-    """Locate the ShadowBot Python interpreter.
+def find_shadowbot_python(project_dir):
+    """Locate the ShadowBot Python interpreter for the target project.
 
+    :param pathlib.Path project_dir: Target ShadowBot project directory.
     :return pathlib.Path: Python executable path.
     """
     candidates = [
-        ROOT_DIR.parent / "venv310" / "Scripts" / "python.exe",
+        project_dir.parent / "venv310" / "Scripts" / "python.exe",
         Path(sys.executable),
     ]
 
@@ -164,7 +164,7 @@ def compile_files(project_dir, files):
     :param list[str] files: Files to compile.
     :return pathlib.Path: Python executable used for compilation.
     """
-    python_exe = find_shadowbot_python()
+    python_exe = find_shadowbot_python(project_dir)
     if files:
         command = [str(python_exe), "-m", "py_compile", *files]
         subprocess.run(command, cwd=project_dir, check=True)
@@ -204,11 +204,7 @@ def find_flow(package_data, file_name):
 
 
 def sync_project(args):
-    """Sync externally edited code into ShadowBot.
-
-    It scans root Python files, removes stale Code flow registrations, ensures current
-    Code flows exist and compiles all valid files.
-    """
+    """Sync externally edited code into ShadowBot."""
     project_dir = resolve_project_dir(args.project_dir)
     package_data = load_package_json(project_dir)
     scanned_files, excluded_files, valid_files = scan_project_python_files(project_dir)
@@ -228,6 +224,7 @@ def sync_project(args):
         kept_flows.append(flow)
     package_data["flows"] = kept_flows
 
+    # 登记当前项目根目录中的 Code flow，并保留同名非 Code flow。
     for file_name in valid_files:
         existing_flow = find_flow(package_data, file_name)
         if existing_flow and existing_flow.get("kind") != "Code":
@@ -244,6 +241,7 @@ def sync_project(args):
         else:
             updated_flows.append(file_name)
 
+    # 使用目标影刀应用自己的 Python 环境编译，再按需保存 manifest。
     python_exe = compile_files(project_dir, valid_files)
     if package_changed:
         save_package_json(project_dir, package_data)
@@ -263,7 +261,7 @@ def build_parser():
     :return argparse.ArgumentParser: Configured parser instance.
     """
     parser = argparse.ArgumentParser(
-        description="将外部修改的影刀项目代码同步到影刀编辑器的工具。"
+        description="同步影刀项目根目录中的 Code flow 注册并执行编译检查。"
     )
     parser.add_argument(
         "--project-dir",

@@ -17,6 +17,8 @@
 - 跨数据、API、环境或市场指令的通用排错：[troubleshooting.md](docs/troubleshooting.md)
 - 多平台、多店铺、SQLite 状态 / 重试、日志与通知组成的真实影刀项目实现参考：[库存监控真实实现参考](reference-projects/inventory-monitor/README.md)
 - 旧版可视化项目解析 / 迁移、应用文件损坏与 Sigstore 排查：[xbot-project-diagnostics](project-template/.agents/skills/xbot-project-diagnostics/SKILL.md)
+- 单项 CLI 命令、参数与登录恢复：[shadowbot-cli](project-template/.agents/skills/shadowbot-cli/SKILL.md)
+- CLI 创建、开发、发布、试运行影刀应用的完整流程：[xbot-app-lifecycle](project-template/.agents/skills/xbot-app-lifecycle/SKILL.md)
 - 元素库、图像库、资源文件、全局变量：[package.md](xbot-api-docs/docs/package.md)
 - 浏览器、网页元素、输入、下载、Cookie、网络监听：[browser.md](xbot-api-docs/docs/browser.md)
 - Excel / WPS 工作簿、Sheet、区域、读写和格式：[excel.md](xbot-api-docs/docs/excel.md)
