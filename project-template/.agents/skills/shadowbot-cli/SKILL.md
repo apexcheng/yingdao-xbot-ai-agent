@@ -7,7 +7,7 @@ description: Use the locally installed ShadowBot/Yingdao RPA shell CLI to inspec
 
 Use the installed ShadowBot agent-oriented CLI for ShadowBot-specific app lifecycle and runtime operations instead of guessing internal APIs or manually automating the ShadowBot UI.
 
-This CLI is a **supplementary tool, not the default way to inspect or develop a project**. For source files, configuration tracing, code search, temporary scripts, and ordinary command execution, use Windows DevSpace first. Do not use CLI flow/block inspection as a substitute for reading the actual project when the source can answer the question directly.
+This CLI is a **supplementary ShadowBot tool, not the default way to inspect or develop project source**. Read and analyze the actual project directly for source files, configuration tracing, code search, temporary scripts, and ordinary project commands. Do not use CLI flow/block inspection as a substitute for source analysis when the project can answer the question directly.
 
 ## Executable
 
@@ -104,7 +104,7 @@ Run `ui -h` before use. Supported actions include Studio/Console minimize/maximi
 ## Safety and modification rules
 
 - Read/query operations are safe defaults.
-- Prefer Windows DevSpace for source inspection, file operations, project-local Python / PowerShell commands, and temporary diagnostic or migration scripts. Escalate to this CLI only when a ShadowBot-specific capability is actually needed.
+- Use ordinary project workspace capabilities for source inspection, file operations, project-local commands, and temporary diagnostic or migration scripts. Use this CLI only when a ShadowBot-specific capability is actually needed.
 - Treat `console app recycle`, permanent delete, publish, collaborator changes, `config set`, task stop, forced mode switches, and similar state-changing operations as explicit user-intent actions.
 - Treat all app/task execution commands as real execution with possible business side effects. Only execute when the user explicitly requests a run; do not make app execution a default development, verification, or completion step.
 - Never invent an app UUID or silently pick the first search result when multiple apps match. Use names and returned metadata to disambiguate.
