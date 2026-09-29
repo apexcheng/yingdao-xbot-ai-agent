@@ -3,7 +3,7 @@
 > 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../../AGENTS.md)。
 
 > 调用类型：`direct python`  
-> 主要入口：直接调用 browser_utils.py、exception_utils.py、shop_utils.py、win_utils.py、excel_utils.py、ntfy_message.py、market_config.py 中的公开函数；__init__.py 不提供 processN 包装入口。
+> 主要入口：直接调用各功能模块中的公开函数；__init__.py 不提供 processN 包装入口。
 > 证据边界：入口以当前安装版本公开模块为准；网页登录和下载等待需运行验证。
 > 返回：[市场指令索引](../extension-instructions.md)
 
@@ -13,7 +13,7 @@
 
 **调用方式：** direct python
 
-**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化、商家后台登录辅助、Windows 元素可点击判断、Excel / WPS 共享文件占用者识别、ntfy 消息发送与接收，以及影刀自定义对话框初始化配置的 DPAPI 加密持久化。
+**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化、商家后台登录辅助、Windows 元素可点击判断、Excel / WPS 共享文件占用者识别、ntfy 消息发送与接收、钉钉消息与 Markdown 表格，以及影刀自定义对话框初始化配置的 DPAPI 加密持久化。
 
 **调用入口：**
 - `from xbot_extensions.xbot_enhance_tools import exception_utils, browser_utils, shop_utils, win_utils, ntfy_message`
@@ -33,6 +33,9 @@
 - `from xbot_extensions.xbot_enhance_tools.market_config import dialog_result_to_dict`
 - `from xbot_extensions.xbot_enhance_tools.market_config import save_secret_config`
 - `from xbot_extensions.xbot_enhance_tools.market_config import load_secret_config`
+- `from xbot_extensions.xbot_enhance_tools.dingtalk_message import send_dingtalk_group, send_dingtalk_private`
+- `from xbot_extensions.xbot_enhance_tools.dingtalk_table import to_markdown_table`
+- `from xbot_extensions.xbot_enhance_tools.dingtalk_core import DingTalkRobotV2`
 
 **当前能力：**
 - `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_all_by_xpath(xpath, timeout=1)`，匹配到一个及以上元素即返回第一个元素，超时返回 `None`
@@ -51,6 +54,38 @@
 - `dialog_result_to_dict(dialog_result, ignore_attr=None)`：将 `xbot.app.dialog.show_custom_dialog()` 的返回对象转换为普通 `dict`；字符串值会尽量还原为 bool、数字、list、dict 等 Python 基础对象
 - `save_secret_config(json_path, config_obj, entropy="", description="my_app")`：使用当前 Windows 用户的 DPAPI 加密配置，并以 `{"token": "..."}` 形式持久化到磁盘；父目录不存在时自动创建
 - `load_secret_config(json_path, entropy="")`：读取并解密配置；成功返回 `dict`，文件不存在、格式错误、token 无效或解密失败时返回 `None`
+- `send_dingtalk_group(message_type, content, *, ...)`：发送群聊 `text` / `markdown` / 本地 `image`；文本和 Markdown 优先使用传入的 webhook，图片使用企业机器人；支持 Webhook 加签与 @ 人
+- `send_dingtalk_private(message_type, content, *, ...)`：通过企业机器人发送私聊 `text` / `markdown` / 本地 `image`；支持 `user_ids` 或通过 `user_mobiles` 查询接收人
+- `to_markdown_table(data, headers=None, max_cell_length=None)`：将字典或列表行转换为 Markdown 表格
+
+## 钉钉机器人
+
+`send_dingtalk_group()` 和 `send_dingtalk_private()` 的 `message_type` 支持 `text`、`markdown`、`image`，返回钉钉接口结果；发送失败会抛出异常。`content` 分别传文本、Markdown 正文或本地图片路径。`title` 仅用于 Markdown。凭据和目标均由调用方传入，模块不提供内置默认值。
+
+- 群聊文本和 Markdown：传 `webhook_url` 时使用 Webhook，可选 `webhook_secret` 加签，并用 `at_mobiles` 或 `at_all` 指定 @；不传 Webhook 时，需传 `app_key`、`app_secret`、`open_conversation_id`，使用企业机器人且不支持 @。
+- Webhook 群聊 Markdown 使用 `at_all=True` 时，会在 Markdown 消息后再发送一条“请查看上方消息”的 @ 全员文本。
+- 群聊图片：传 `app_key`、`app_secret`、`open_conversation_id`，使用企业机器人；`content` 必须是本地图片路径，不支持 @。
+- 私聊：传 `app_key`、`app_secret`，并通过 `user_ids` 或 `user_mobiles` 指定接收人；手机号会先换取 userId。可选 `robot_code`；不传时使用 `app_key`。
+- 图片支持 PNG、JPEG、GIF、BMP、WebP，文件最大 20 MiB。三个消息类型均可通过 `timeout` 设置请求超时秒数，默认 10 秒。
+- `to_markdown_table()` 接收字典行或列表行；`headers` 可指定表头，`max_cell_length` 可限制单元格长度，空数据返回空字符串。
+
+群聊 Markdown 与表格：
+
+```python
+from xbot_extensions.xbot_enhance_tools.dingtalk_message import send_dingtalk_group, send_dingtalk_private
+from xbot_extensions.xbot_enhance_tools.dingtalk_table import to_markdown_table
+
+# 将字典行 data 转为钉钉 Markdown 表格。
+message = to_markdown_table([{"项目": "示例", "状态": "完成"}])
+# 发送群 Markdown：message_type 指定类型，message 是正文，title 是标题，webhook_url 是目标机器人地址。
+result = send_dingtalk_group("markdown", message, title="任务结果", webhook_url=webhook_url)
+
+# 发送私聊文本：message_type 指定类型，content 是正文，app_key/app_secret 是企业应用凭据，user_mobiles 是接收人手机号列表。
+result = send_dingtalk_private("text", "任务已完成", app_key=app_key, app_secret=app_secret, user_mobiles=[mobile])
+
+# 发送群聊本地图片：message_type 指定类型，content 是图片路径，企业应用凭据和 open_conversation_id 指定目标群。
+result = send_dingtalk_group("image", image_path, app_key=app_key, app_secret=app_secret, open_conversation_id=group_id)
+```
 
 **适用场景：**
 - Agent 编码场景里只有 XPath 字符串，没有元素库选择器

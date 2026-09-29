@@ -58,7 +58,7 @@
 
 [市场指令索引](xbot-api-docs/docs/extension-instructions.md) 用于确认当前安装版本的公开入口、参数和返回结构，目前包括：
 
-- 钉钉 AI 表格和钉钉企业机器人消息。
+- 钉钉 AI 表格，以及增强工具中的钉钉机器人消息。
 - Excel 扩展操作、离线 OCR、广告处理和网页增强。
 - C-ERP 市场指令、ERP 订单查询与字段翻译。
 - 登录扩展、iframe 和其他已核验扩展能力。
@@ -93,7 +93,7 @@ run.py
 .claude/skills/xbot-app-lifecycle/
 ```
 
-模板默认由 `config.py` 管理项目配置。`shadowbot-cli` Skill 保留安装版 CLI 用法，`xbot-app-lifecycle` Skill 维护本项目的创建、开发、Code flow 同步、发布和试运行流程，其 `scripts/sync_codeflows.py` 是内部同步 helper；更新 CLI Skill 时可直接替换其文件。使用时需本机已安装影刀 CLI。骨架和配置约定见 [最小 base 骨架](docs/base-project-skeleton.md)。
+模板默认由 `config.py` 管理项目配置。`shadowbot-cli` Skill 保留安装版 CLI 用法，`xbot-app-lifecycle` Skill 维护本项目的创建、开发、Code Flow 同步、发布和试运行流程：`scripts/sync_codeflows.py` 只处理新增 / 删除 Code Flow，`scripts/publish_app.py` 统一处理外部修改后的保存、同步、发布与版本校验。使用时需本机已安装影刀 CLI。骨架和配置约定见 [最小 base 骨架](docs/base-project-skeleton.md)。
 
 ### 4. 告诉 AI Agent 两个目录
 

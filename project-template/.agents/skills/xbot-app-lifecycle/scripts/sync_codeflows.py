@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 
-EXCLUDED_PYTHON_FILES = {"__init__.py", "package.py", "shadowbot_sync_tool.py"}
+EXCLUDED_PYTHON_FILES = {"__init__.py", "package.py"}
 
 
 def resolve_project_dir(project_dir=None):

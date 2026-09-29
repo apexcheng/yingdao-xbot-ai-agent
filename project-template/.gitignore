@@ -25,3 +25,4 @@ __init__.py
 *.db
 *.pdb
 workspace.state.json
+config.py

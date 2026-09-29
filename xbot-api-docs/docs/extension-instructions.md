@@ -59,7 +59,6 @@ print(inspect.signature(your_extension_module.some_function))
 |---|---|---|
 | `activity_47680f64` | Visual / Code | [小工具指令集](extensions/activity-47680f64.md) |
 | `activity_5b77c4ce` | Direct Python | [钉钉 AI 表格](extensions/activity-5b77c4ce.md) |
-| `dingtalk_bot_message` | Direct Python | [钉钉企业机器人消息](extensions/dingtalk-bot-message.md) |
 | `activity_7bca6d` | Visual / Code | [登录扩展操作](extensions/activity-7bca6d.md) |
 | `guanyi_erp_api` | Direct Python | [C-ERP API](extensions/guanyi-erp-api.md) |
 | `activity_a90a8311` | Flow | [C-ERP 市场指令](extensions/activity-a90a8311-cerp-visual.md) |
@@ -68,7 +67,7 @@ print(inspect.signature(your_extension_module.some_function))
 | `iframe2` | Visual / Direct Python | [iframe2](iframe2-extension.md) |
 | `ad_killer` | Visual / Direct Python | [广告杀手](extensions/ad-killer.md) |
 | `web_action` | Visual / Direct Python | [网页扩展操作](extensions/web-action.md) |
-| `xbot_enhance_tools` | Direct Python | [增强工具 2026](extensions/xbot-enhance-tools.md) |
+| `xbot_enhance_tools` | Direct Python | [增强工具 2026（含钉钉机器人）](extensions/xbot-enhance-tools.md) |
 | `activity_excel_v2` | Flow | [Excel 扩展操作](extensions/activity-excel-v2.md) |
 
 ## 相近能力如何选

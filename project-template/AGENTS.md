@@ -64,10 +64,11 @@
 ## 验证与同步
 
 1. 按风险做最小必要验证；默认不新增测试或运行无关全量检查。高风险写入先确认范围和回退方式。
-2. Code flow 同步 helper 属于 `.agents/skills/xbot-app-lifecycle/scripts/sync_codeflows.py`，不再作为项目根目录的独立工具。新增或删除项目根目录 `.py` 文件后默认运行 `python .agents/skills/xbot-app-lifecycle/scripts/sync_codeflows.py`；新增文件会登记对应 Code flow，删除文件会移除对应 Code flow 注册。只修改已有 `.py` 文件时，仅在用户明确要求同步时运行。
-3. 同步 helper 自动扫描项目根目录 Python 文件并同步 Code flow 注册，不接收文件列表或 `prepare` 子命令；它是 `xbot-app-lifecycle` 的内部确定性步骤，不是 Git 操作，成功也不等于影刀编辑器内保存、同步或运行验证。
-4. 验证失败时先区分代码、环境、依赖和路径问题，不为通过无关检查扩大修改。
-5. 用户说 'push' 时指的是 git commit 并 push 到 GitHub / Gitee 远程仓库。执行前确认有改动需要提交，并使用清晰的 commit 信息。
+2. Code flow 同步 helper 属于 `.agents/skills/xbot-app-lifecycle/scripts/sync_codeflows.py`，不再作为项目根目录的独立工具。只有新增或删除项目根目录 `.py` 文件时才运行；新增文件会登记对应 Code flow，删除文件会移除对应 Code flow 注册。只修改已有 `.py` 文件时不要运行 Code flow 同步 helper。
+3. 用户明确要求发布外部修改后的影刀应用时，优先运行 `.agents/skills/xbot-app-lifecycle/scripts/publish_app.py`。它负责打开已有应用、重新载入磁盘修改、保存编译、同步、发布并校验线上 `versionId` 已变化；不要手工拆成多条 CLI 命令，也不要仅凭 `console app publish` 返回成功就认定新代码已上线。新增 / 删除 `.py` 时先单独运行 `sync_codeflows.py`，普通已有文件修改直接发布即可。
+4. 同步 helper 自动扫描项目根目录 Python 文件并同步 Code flow 注册，不接收文件列表或 `prepare` 子命令；它是 `xbot-app-lifecycle` 的内部确定性步骤，不是 Git 操作，成功也不等于影刀编辑器内保存、同步或运行验证。
+5. 验证失败时先区分代码、环境、依赖和路径问题，不为通过无关检查扩大改动。
+6. 用户说 'push' 时指的是 git commit 并 push 到 GitHub / Gitee 远程仓库。执行前确认有改动需要提交，并使用清晰的 commit 信息。
 
 ## 安全与汇报
 

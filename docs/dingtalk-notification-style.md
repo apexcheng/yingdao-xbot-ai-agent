@@ -1,6 +1,6 @@
 # 钉钉通知文案与排版偏好
 
-本页约束业务自动化项目中的钉钉通知**怎么写得清楚、像正式业务通知、方便快速处理**。API 调用方式、参数和返回值仍以 [钉钉企业机器人消息](../xbot-api-docs/docs/extensions/dingtalk-bot-message.md) 为准。
+本页约束业务自动化项目中的钉钉通知**怎么写得清楚、像正式业务通知、方便快速处理**。API 调用方式、参数和返回值以 [增强工具的钉钉机器人说明](../xbot-api-docs/docs/extensions/xbot-enhance-tools.md) 为准。
 
 ## 1. 总体风格
 

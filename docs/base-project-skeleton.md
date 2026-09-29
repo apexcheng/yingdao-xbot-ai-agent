@@ -20,7 +20,8 @@ config   Code     配置路径
 
 - `run.py`：通过 `main(args)` 进入业务，按真实业务顺序编写主流程。
 - `config.py`：集中定义当前项目实际需要的配置变量，业务模块直接导入所需值。
-- `.agents/skills/xbot-app-lifecycle/scripts/sync_codeflows.py`：`xbot-app-lifecycle` 的内部 helper，用于同步 Code 流注册并编译当前项目 Python 文件；新增文件会登记，删除文件会移除对应注册，不作为项目根目录独立工具。
+- `.agents/skills/xbot-app-lifecycle/scripts/sync_codeflows.py`：仅在新增 / 删除项目根目录 `.py` 时使用，用于同步 Code Flow 注册并编译当前项目 Python 文件；普通已有文件修改不需要执行。
+- `.agents/skills/xbot-app-lifecycle/scripts/publish_app.py`：发布外部修改后的已有应用，统一执行打开应用、重新载入磁盘、保存编译、同步、发布和线上版本校验；不负责 Code Flow 注册。
 
 模板不预设业务字段，也不创建影刀“运行应用时需要传入的参数”。在真实项目的 `config.py` 中按需求定义配置；凭据等敏感值从本地安全来源读取，不在 Git 中保存明文。需要交互式配置或加密持久化的项目，可按[增强工具2026](../xbot-api-docs/docs/extensions/xbot-enhance-tools.md)的已核验 API 单独实现。
 
