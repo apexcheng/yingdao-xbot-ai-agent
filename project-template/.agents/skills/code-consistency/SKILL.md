@@ -5,7 +5,7 @@ description: Maintain implementation consistency when modifying or adding code i
 
 # 代码实现一致性
 
-修改或新增已有项目代码时，先从当前项目学习已有实现，不为同类问题重新设计另一套等价写法。
+修改或新增已有项目代码时，从当前项目学习业务实现和代码风格，不为同类问题重新设计另一套等价写法。影刀 API 和市场指令的调用事实以知识库正式页面为准。
 
 ## 修改前
 
@@ -32,7 +32,7 @@ description: Maintain implementation consistency when modifying or adding code i
 
 ## 有成熟先例时
 
-场景相同时，沿用已有实现模式。
+场景相同时，沿用已有业务实现模式；涉及影刀 API 或市场指令调用时，以知识库正式页面核对入口和参数。
 
 不要仅因为另一种写法同样正确，就引入第二套表达方式。
 
@@ -57,7 +57,7 @@ except Exception:
 
 ## 没有成熟先例时
 
-当前项目找不到相近实现时，再按项目 `AGENTS.md` 查询知识库、真实参考项目或 API 文档。
+当前项目找不到相近业务实现时，按项目 `AGENTS.md` 查询知识库或真实参考项目；API 用法始终查知识库正式事实页。
 
 不要为了保持一致而模仿明显错误、已经废弃或与当前场景不同的代码。
 
