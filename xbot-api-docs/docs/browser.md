@@ -185,7 +185,7 @@ for profile in dict.fromkeys(profiles):
 
 | 方法 | 主要参数 | 说明 |
 |---|---|---|
-| `get(title=None, url=None, mode='cef', ...)` | `title` / `url` / `mode` / `open_page` / `page_url` | 按标题或网址匹配已打开网页 |
+| `get(title=None, url=None, mode='cef', ...)` | `title` / `url` / `mode` / `open_page` / `page_url` | 按标题或网址匹配已打开网页；找不到匹配页面时直接抛异常，不会返回 `None`（2026-09-30 运行验证） |
 | `get_active(mode='cef', ...)` | `mode` | 获取当前激活网页 |
 | `get_all(mode='cef', ...)` | `title` / `url` / `use_wildcard` | 获取所有网页 |
 
