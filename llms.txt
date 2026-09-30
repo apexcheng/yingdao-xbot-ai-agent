@@ -36,6 +36,8 @@
 - Win32 窗口 / 元素层级、图像点击、焦点、键鼠与坐标问题：[win32.md](xbot-api-docs/docs/win32.md)
 - WPS `set_range()`、`=` 开头文本、长数字精度、只读 / 文件占用：[excel.md](xbot-api-docs/docs/excel.md)
 - 市场指令的 Visual / Code / Direct Python 入口、参数名和返回值不明确：[extension-instructions.md](xbot-api-docs/docs/extension-instructions.md)
+- 网页数英验证码图片识别、云码 token 与元素库参数：[activity-jfbym.md](xbot-api-docs/docs/extensions/activity-jfbym.md)
+- C-ERP 初始化、图形 / 短信验证码登录与报表下载：[c-erp-python.md](xbot-api-docs/docs/extensions/c-erp-python.md)
 - 钉钉群机器人、XPath 等待、下载等待、共享文件占用者识别：[xbot-enhance-tools.md](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
 - 钉钉业务通知怎么写、怎么排版：[dingtalk-notification-style.md](docs/dingtalk-notification-style.md)
 
