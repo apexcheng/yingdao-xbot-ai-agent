@@ -131,6 +131,30 @@ python .agents/skills/xbot-project-diagnostics/scripts/inspect_visual_project.py
 
 如果修了 `package.json`、flow 文件或其他参与完整性校验的项目文件，**最后再重新做 Sigstore 校验 / 写入**；不要先重签名、再继续改文件，否则签名会再次失效。
 
+### 4. flow 重名导致的假“损坏”
+
+日志没有 Sigstore 失败、校验 `before=True`，但出现以下错误时，是流程重名，不是签名问题（运行验证：影刀 Studio，2026-10）：
+
+```text
+Failed to load app
+System.ArgumentException: An item with the same key has already been added. Key: <活动代码>.<流程名>
+   at ShadowBot.Runtime.Development.FlowCollection..ctor(...)
+```
+
+Studio 按 `<活动代码>.<流程名>` 建 flow 字典，`package.json` 的 `flows` 中只要有两个同名 flow，加载即崩溃，界面就弹“应用文件已损坏”。常见来源：`sync_codeflows.py` 登记新 `.py` 时 flow 名 = 文件名去扩展名，与已有 Visual flow 名撞车，例如项目已有名为 `init` 的 Visual flow 时新建了 `init.py`。
+
+指令项目（`robot_type: "activity"`）还要同时检查 `prototype.block.json`：其 `blocks[].name` 同样是 `<活动代码>.<流程名>`、`function` 指向流程文件名；影刀打开项目时只重写 `package.json`，不会自动修复重复的 block。
+
+修复顺序：
+
+1. `git mv` 重命名撞名的 `.py`（不要改 Visual flow 的名字），并更新引用它的 import。
+2. 运行 `sync_codeflows.py`，让 `package.json` 移除旧注册、登记新文件名。
+3. 把 `prototype.block.json` 中对应 block 的 `name`、`function`、`title` 一并改为新名。
+4. 最后做 Sigstore 只读校验；`before=True` 则无需重签。
+5. 重新打开 Studio 验证日志中不再出现 `Failed to load app`。
+
+预防：新增项目根目录 `.py` 前，先确认文件名去扩展名后不与 `package.json` 中任何已有 flow 的 `name` 重复；不要新建 `init.py` 这类与既有 Visual flow 名相同的文件。
+
 ## 安全与输出
 
 - 排查默认先只读。只有用户明确要求修复 / 迁移时才修改项目文件。
