@@ -11,6 +11,8 @@
 
 本页按本机可见 ShadowBot 6.3.13 内置 `xbot/win32/__init__.py`、`window.py`、`element.py` 和 `image.py` 核对；与 6.3.12 对应源码哈希一致。安装目录随版本变化；其他版本用 `inspect.getfile(xbot.win32)` 定位当前实现，不复制固定绝对路径。
 
+2026-10 复核 6.3.13 / 6.3.21 / 6.3.22 运行时 `Win32Element` 方法：`is_displayed()` / `is_enabled()` 不存在，已从本页移除；`get_bounding` / `get_anchor_position` 签名见 7.5，滚动容器可见性判断见 7.6，其中矩形包含写法已在真实桌面流程验证。
+
 ---
 
 ## 2. 使用范围说明
@@ -345,11 +347,10 @@ if "成功" in str(result.get_text() or ""):
 | `check(mode='check', delay_after=1)` | 复选框选中 / 取消 / 取反 |
 | `select(item, mode='fuzzy', delay_after=1)` | 下拉框选择 |
 | `find_related_element(selector, timeout=20)` | 查找当前元素内部的相关元素 |
-| `is_displayed()` | 判断元素是否显示 |
-| `is_enabled()` | 判断元素是否可用 |
 | `get_text()` | 获取文本 |
 | `get_value()` | 获取值 |
-| `get_bounding()` | 获取矩形 |
+| `get_bounding(to96dpi=True, relative_to='screen')` | 获取元素矩形，返回 `(x, y, width, height)` |
+| `get_anchor_position(anchor=None, to96dpi=True)` | 获取元素锚点坐标，默认中心点，返回 `(x, y)` |
 
 ### 7.1 点击与悬停
 
@@ -371,25 +372,45 @@ if "成功" in str(result.get_text() or ""):
 
 - `find_related_element(selector, timeout=20)`：在当前元素内部继续找子元素
 
-### 7.5 判断元素是否在屏幕可点击范围内
+### 7.5 位置与矩形
 
-适用场景：元素能通过选择器定位到，但可能在滚动区域外、窗口外或当前屏幕外，直接点击容易失败。
+- `get_bounding(to96dpi=True, relative_to='screen') -> tuple`：返回元素矩形 `(x, y, width, height)`。
+    - `relative_to`：`'screen'` 相对屏幕左上角（默认），`'window'` 相对元素所在窗口左上角。
+    - `to96dpi`：是否把矩形转换为 96dpi 下的值，默认 `True`。比较两个元素的矩形时保持同一默认值即可，DPI 口径自动一致。
+- `get_anchor_position(anchor=None, to96dpi=True) -> tuple`：返回元素锚点坐标 `(x, y)`，`anchor=None` 时默认取元素中心点。
 
-判断思路：
+以上签名与返回结构按 6.3.13 / 6.3.21 / 6.3.22 内置运行时源码核对一致。`Win32Element` **没有** `is_displayed()` / `is_enabled()` 方法（三个版本源码均无），不要照网页元素的习惯调用。
+
+### 7.6 判断元素是否在滚动容器可见范围内
+
+适用场景：元素能通过 `find()` 定位到，但位于滚动容器（表单、列表、面板）的可见范围之外；此时直接 `click()` 可能无效或点到错误位置，且不一定抛错。
+
+可见性用矩形包含判断：把目标元素的 `get_bounding()` 矩形与滚动容器元素的矩形比较，不在范围内时先用容器元素 `hover()` 把鼠标移入滚动区域，再 `win32.mouse_wheel()` 滚动后重查，滚动次数要有上限：
 
 ```text
 非执行调用说明（不可直接运行）：
 
 window = win32.get_active()
-element = window.find("你的元素选择器", timeout=3)
+element = window.find("目标元素", timeout=10)
+container = window.find("滚动容器元素", timeout=10)
 
-if element.is_displayed() and element.is_enabled():
-    element.click()
+for _ in range(5):
+    _, c_y, _, c_h = container.get_bounding()
+    _, e_y, _, e_h = element.get_bounding()
+    if c_y <= e_y and e_y + e_h <= c_y + c_h:
+        break
+    container.hover(delay_after=0.1)
+    win32.mouse_wheel(wheel_direction="down", wheel_times=1, delay_after=0.2)
 else:
-    win32.mouse_wheel(wheel_direction="down", wheel_times=3)
+    raise RuntimeError("滚动后仍看不到目标元素")
+element.click(delay_after=0.1)
 ```
 
-如需进一步判断元素是否在屏幕范围内，可结合 `element.get_bounding()` 和 `win32.get_screen_size()` 计算元素中心点是否落在屏幕内。该判断只能说明“元素自身状态正常、位置大致可点”，不能保证元素没有被弹窗、遮罩或其他窗口覆盖；遮挡场景仍需结合实际页面状态处理。`Win32Element.get_bounding()` 返回结构需在当前影刀版本中运行验证。
+要点：
+
+- 滚轮作用于鼠标当前位置（见 4.8），滚动前先 `hover()` 容器元素，避免滚动落到错误容器。
+- 例子只比较纵向；横向溢出按同样方式扩展 x 轴比较。
+- 该写法已在真实桌面流程中验证（2026-10，影刀 6.3.x）。矩形包含只能说明元素在容器可见范围内，不能保证没有被弹窗、遮罩或其他窗口覆盖；遮挡场景仍需结合实际页面状态处理。
 
 ---
 
