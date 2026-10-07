@@ -143,7 +143,7 @@ xbot-api-docs/
 如果你在使用过程中遇到问题，或有影刀 RPA、AI 编码相关的交流需求：
 
 - QQ：`1677880403`
-- 邮箱：`chengrip@foxmail.com`
+- 邮箱：`apexc@qq.com`
 - 技术问题 / Bug：请优先提交 GitHub Issue
 
 ## 许可证
