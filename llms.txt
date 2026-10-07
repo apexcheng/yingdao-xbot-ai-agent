@@ -14,7 +14,7 @@
 - 新建或补全影刀编码版项目：[base-project-skeleton.md](docs/base-project-skeleton.md)
 - 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[coding-style.md](docs/coding-style.md)
 - 钉钉业务通知的文案结构、排版偏好、状态 emoji 与示例：[dingtalk-notification-style.md](docs/dingtalk-notification-style.md)
-- 多个必需数据源写入同一工作簿：[multi-source-report-safety.md](docs/multi-source-report-safety.md)
+- 多数据源 / 多 Sheet 写同一工作簿、强一致或独立任务提交、异步导出任务绑定：[multi-source-report-safety.md](docs/multi-source-report-safety.md)
 - 跨数据、API、环境或市场指令的通用排错：[troubleshooting.md](docs/troubleshooting.md)
 - 多平台、多店铺、SQLite 状态 / 重试、日志与通知组成的真实影刀项目实现参考：[库存监控真实实现参考](reference-projects/inventory-monitor/README.md)
 - 旧版可视化项目解析 / 迁移、应用文件损坏与 Sigstore 排查：[xbot-project-diagnostics](project-template/.agents/skills/xbot-project-diagnostics/SKILL.md)
