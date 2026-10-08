@@ -1,0 +1,8 @@
+"""本地路径仅用于说明，需要在独立测试项目中自行配置。"""
+
+from pathlib import Path
+
+DEMO_DIR = Path(r"C:\example\rpa-demo")
+TARGET_WORKBOOK_PATH = str(DEMO_DIR / "report.xlsx")
+SOURCE_CSV_PATH = str(DEMO_DIR / "sales.csv")
+EXCEL_KIND = "wps"
