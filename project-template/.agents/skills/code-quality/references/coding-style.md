@@ -46,23 +46,6 @@ if len(records) != 1:
 record = records[0]
 ```
 
-### Django / PostgreSQL JSONField 的缺失键筛选
-
-如果影刀项目的数据获取层使用 Django ORM 查询 PostgreSQL `jsonb`，对可选 JSON 字段进行 `exclude()`、`~Q()`、`__in` 筛选时，要同时考虑**键不存在**、JSON `null` 与 SQL `NULL` 的区别。尤其是新增 metadata 字段后，历史记录可能根本没有对应键；简单的取反条件在 PostgreSQL 下可能把这些记录一同排除。
-
-当业务规则要求“排除指定动作，但保留没有动作键的旧记录”时，明确把缺失键作为允许条件，例如：
-
-```python
-from django.db.models import Q
-
-records = records.filter(
-    Q(metadata__action__isnull=True)
-    | ~Q(metadata__action__in=["sheet_create", "sheet_update"])
-)
-```
-
-`__isnull` 的具体行为应以实际字段结构和数据库验证为准；不要仅凭 SQLite 测试通过就认定 PostgreSQL 查询语义一致。对历史兼容性敏感的筛选，至少验证：**键不存在、键有正常值、命中排除值**，并在生产使用的数据库引擎上做针对性回归。业务是否保留显式 JSON `null` 由当前接口契约决定，不要与缺失键混为一谈。
-
 ## 3. 变量与内联
 
 变量内联、XPath 单行与函数调用格式遵守项目 `AGENTS.md`；以下仅示例说明一次性中间变量、连续操作和简单二选一结果的写法。
