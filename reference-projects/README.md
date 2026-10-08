@@ -42,4 +42,5 @@
 
 ## 当前参考项目
 
+- [跨境补货表](cross-border-replenishment/README.md)：当前推荐的多 Sheet WPS 更新真实源码参考，固定任务顺序、单 Page 过程式、下载任务绑定、独立持久化和三国销量整体保存。
 - [库存监控](inventory-monitor/README.md)：多平台 / 多店铺库存自动化，包含 SQLite 幂等与重试、ERP 数据刷新、业务日志、通知和网页库存修改闭环。

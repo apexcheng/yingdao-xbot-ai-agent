@@ -29,7 +29,7 @@ config   Code     配置路径
 
 入口、参数、敏感信息与同步遵守[项目开发规则](../project-template/AGENTS.md)；过程式主流程、`run.py / config.py / tool.py（或 utils.py）` 职责、变量内联和函数边界的详细判断见[编程风格详解](coding-style.md)。`main(args)` 是影刀调用 Code 流的入口约定；其他 Python 文件按正常 Python 语法导入和调用，无需都定义 `main(args)`。
 
-涉及多个更新模块共同处理一份 Excel、需要显式展示工作簿对象的打开 / 传递 / 保存 / 关闭时，按需参考 [多 Sheet 工作簿最小 Demo](examples/multi-sheet-workbook/README.md)。它不是要整体复制的项目模板，也不意味着所有 RPA 都要一次打开、整轮统一提交；提交策略先根据实际业务在 [多数据源报表安全边界](multi-source-report-safety.md) 确认。
+涉及多个更新模块共同处理一份 Excel，优先参考[跨境补货表真实实现案例](../reference-projects/cross-border-replenishment/README.md)的固定业务编排、独立保存与失败隔离；仅需“整轮统一保存”的最小代码时再看 [多 Sheet 工作簿教学 Demo](examples/multi-sheet-workbook/README.md)。二者都不是要整体复制的项目模板；提交策略先根据实际业务在 [多数据源报表安全边界](multi-source-report-safety.md) 确认。
 
 ## 最小验收
 

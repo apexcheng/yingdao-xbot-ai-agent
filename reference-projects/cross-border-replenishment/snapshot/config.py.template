@@ -1,0 +1,22 @@
+"""参考项目脱敏配置字段示例：请根据自己的工作簿和平台账号重新配置。"""
+
+TARGET_WORKBOOK_PATH = r"C:\example\replenishment.xlsx"
+SNAPSHOT_DIR = r"C:\example\snapshots"
+SNAPSHOT_KEEP_COUNT = 30
+STATUS_SHEET = "RPA配置区"
+BROWSER_PROFILE = "ExampleProfile"
+
+# 仅是说明两个地区的结构；这些占位值不是可访问的真实店铺 ID。
+SHOPEE_OFFICIAL_WAREHOUSE_URLS = [
+    "https://seller.shopee.cn/portal/fbs/inventory/current/v2?cnsc_shop_id=EXAMPLE_MY_STOCK_SHOP_ID",
+    "https://seller.shopee.cn/portal/fbs/inventory/current/v2?cnsc_shop_id=EXAMPLE_PH_STOCK_SHOP_ID",
+]
+
+DINGTALK_CLIENT_ID = ""
+DINGTALK_CLIENT_SECRET = ""
+DINGTALK_BASE_ID = ""
+DINGTALK_USER_ID = ""
+SHEET_ID_SHOPEE_CRED = ""
+SHEET_ID_SEAYA_CRED = ""
+DINGTALK_WEBHOOK_URL = ""
+DINGTALK_WEBHOOK_SECRET = ""

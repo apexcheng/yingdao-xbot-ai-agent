@@ -32,7 +32,7 @@
 
 两种提交模式都应保留必要的上一次成功时间与失败原因；**最近成功时间只能代表已成功落盘的数据**。最终结果通知优先在完整流程结束后统一发送，各模块不单独发送最终汇总。
 
-单工作簿过程式写法可参阅 [完整最小 Demo](examples/multi-sheet-workbook/README.md)；该 Demo 不是实时 ERP 导出实现，也不证明特定版本 WPS 的公式自动重算行为。
+多 Sheet 实际项目参考：[跨境补货表真实源码快照](../reference-projects/cross-border-replenishment/README.md)（逐任务保存、失败恢复）；仅当业务要求整轮统一保存时，参考 [最小教学 Demo](examples/multi-sheet-workbook/README.md)。后者不是实时 ERP 导出实现，两者都不能替代特定版本 WPS 的保存、自动重算等实机验证。
 
 ## 主流程
 
