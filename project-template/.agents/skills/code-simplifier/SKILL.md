@@ -21,6 +21,7 @@ description: Simplify recently modified code while preserving behavior and proje
 
 - 没有额外语义、只服务下一行调用的一次性临时变量。
 - 为当前单次业务步骤新增的薄函数、包装层或中转参数。
+- 同一个 Page 的切换、筛选、任务中心、导出、下载等连续动作被拆到多个函数；优先还原为一个主函数内自上而下的业务过程，保留复杂动态日期筛选等真正独立的辅助能力。
 - 可以直接表达却被拆成初始化再覆盖、重复判断或多余状态的逻辑。
 - 不必要的嵌套、重复分支、重复转换或重复读取。
 - 只为形式分层新增的 Service、Manager、Context、Helper 等业务抽象。
