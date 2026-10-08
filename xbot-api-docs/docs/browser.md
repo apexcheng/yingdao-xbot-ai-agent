@@ -27,33 +27,7 @@
 
 ---
 
-## 2. 参数传值总规则
-
-### 2.1 字符串可选值区分大小写
-
-```python
-mode="chrome"
-mode="cef"
-button="left"
-simulative=True
-```
-
-### 2.2 布尔值必须传 Python 布尔值
-
-```python
-visible=True
-wait_complete=True
-ignore_beforeunload=False
-```
-
-### 2.3 路径建议使用原始字符串
-
-```python
-file_folder = r"C:\Downloads"
-file_name = r"C:\test.txt"
-```
-
-### 2.4 元素库与 XPath / CSS
+## 2. 元素库与 XPath / CSS
 
 项目已有元素库名称时，可直接使用 `browser.find("元素名")`。没有可复用元素时，再按真实 DOM 使用 XPath / CSS；不要自行猜测或转换选择器。
 
@@ -61,28 +35,6 @@ file_name = r"C:\test.txt"
 element = browser.find("搜索框", timeout=10)
 element = browser.find_by_xpath('//div[@class="item"]', timeout=10)
 element = browser.find_by_css('.item', timeout=10)
-```
-
-### 2.5 运行日志
-
-```python
-from xbot.app import logging
-
-logging.info("第1页采集中...")
-```
-
-真实影刀项目里的运行日志优先使用 `xbot.app.logging`，不要使用 Python 内置 `print()`。`xbot.print()` 属于历史兼容写法，普通新代码不再优先推荐。
-
-### 2.6 全局变量 `package.variables`
-
-更完整的 `package` 用法见 [`package.md`](package.md)。
-
-```text
-非执行调用说明（不可直接运行）：
-
-from .package import variables as glv
-client_id = glv['client_id']
-glv['my_var'] = 'value'
 ```
 
 ---

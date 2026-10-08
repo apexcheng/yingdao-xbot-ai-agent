@@ -16,35 +16,9 @@
 
 新增影刀 Excel / WPS 操作默认优先使用 `xbot.excel`。涉及公式刷新、界面交互、宏、格式或文件占用时，不为了图快改用其他后台读写库；项目已有稳定实现路线时遵守[项目开发规则](../../project-template/AGENTS.md)。真实 Office / WPS 行为需要对应环境运行证据，静态检查不能代替。
 
-## 2. 参数传值总规则
+## 2. 参数取值
 
-### 2.1 字符串可选值区分大小写
-
-```python
-kind="wps"
-kind="office"
-kind="openpyxl"
-```
-
-### 2.2 布尔值必须传 Python 布尔值
-
-```python
-visible=True
-ignore_formula=False
-update_links=False
-```
-
-### 2.3 路径建议使用原始字符串
-
-```python
-file_name = r"C:\path\demo.xlsx"
-```
-
-或者使用双反斜杠：
-
-```python
-file_name = "C:\\path\\demo.xlsx"
-```
+各参数的类型、默认值与可选值见下方对应接口表；`kind` 的实际可选值详见下一节。
 
 ---
 

@@ -20,27 +20,19 @@
 - 跨数据、API、环境或市场指令的通用排错：[rpa-practices / 通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 - 多平台、多店铺、SQLite 状态 / 重试、日志与通知的历史真实参考：[库存监控源码快照](reference-projects/inventory-monitor/README.md)。此案例不作为当前函数拆分与过程式编程的默认标准。
 - 代码一致性、简化与只读审查：[code-quality](project-template/.agents/skills/code-quality/SKILL.md)
-- 影刀 CLI、应用创建与发布、旧版可视化迁移、项目损坏及 Sigstore 排查：[xbot-tools](project-template/.agents/skills/xbot-tools/SKILL.md)
+- 影刀 CLI、应用创建与发布：[xbot-tools](project-template/.agents/skills/xbot-tools/SKILL.md)
+- 旧版可视化迁移、项目损坏、Sigstore 及 flow 重名排查：[项目诊断与迁移](project-template/.agents/skills/xbot-tools/references/project-diagnostics.md)
 - 影刀开发经验与模板、多 Sheet、异步导出、钉钉通知、通用排错：[rpa-practices](project-template/.agents/skills/rpa-practices/SKILL.md)
-- 元素库、图像库、资源文件、全局变量：[package.md](xbot-api-docs/docs/package.md)
-- 浏览器、网页元素、输入、下载、Cookie、网络监听：[browser.md](xbot-api-docs/docs/browser.md)
-- Excel / WPS 工作簿、Sheet、区域、读写和格式：[excel.md](xbot-api-docs/docs/excel.md)
-- Windows 窗口、桌面自动化、键盘与鼠标：[win32.md](xbot-api-docs/docs/win32.md)
+- 元素库、图像库、`package.image_selector()`、`package.resources`、全局变量：[package.md](xbot-api-docs/docs/package.md)
+- 浏览器、Chrome Profile、`get_all()`、页面加载后等待、Code 106、网页元素、输入、下载、Cookie、网络监听：[browser.md](xbot-api-docs/docs/browser.md)
+- Excel / WPS 工作簿、`kind="wps", visible=True`、`set_range()`、长数字精度、公式文本、文件占用、openpyxl 差异：[excel.md](xbot-api-docs/docs/excel.md)
+- Windows 窗口、元素层级、桌面自动化、图像点击、焦点、键盘与鼠标：[win32.md](xbot-api-docs/docs/win32.md)
 - 影刀日志：[logging.md](xbot-api-docs/docs/logging.md)
 - 对话框与通知：[notification.md](xbot-api-docs/docs/notification.md)
 - 压缩与解压：[xzip.md](xbot-api-docs/docs/xzip.md)
-- 市场指令、扩展能力及其已核验事实页：[extension-instructions.md](xbot-api-docs/docs/extension-instructions.md)
-
-## 高频问题直达
-
-- Chrome Profile、`set_user_environment()`、`get_all()`、Page 加载后统一等待 3 秒、Code 106 动态元素失效、动态 `get_text()`、网页下载等待：[browser.md](xbot-api-docs/docs/browser.md)
-- 元素库、`package.image_selector()`、资源文件与 `package.resources`：[package.md](xbot-api-docs/docs/package.md)
-- Win32 窗口 / 元素层级、图像点击、焦点、键鼠与坐标问题：[win32.md](xbot-api-docs/docs/win32.md)
-- 业务 WPS 工作簿 `kind="wps", visible=True`、`set_range()`、`=` 开头文本、长数字精度、文件占用及 openpyxl 后端差异：[excel.md](xbot-api-docs/docs/excel.md)
-- 市场指令的 Visual / Code / Direct Python 入口、参数名和返回值不明确：[extension-instructions.md](xbot-api-docs/docs/extension-instructions.md)
+- 市场指令、Visual / Code / Direct Python 入口、扩展能力及已核验参数和返回值：[extension-instructions.md](xbot-api-docs/docs/extension-instructions.md)
 - 网页数英验证码图片识别、云码 token 与元素库参数：[activity-jfbym.md](xbot-api-docs/docs/extensions/activity-jfbym.md)
 - C-ERP 初始化、图形 / 短信验证码登录与报表下载：[c-erp-python.md](xbot-api-docs/docs/extensions/c-erp-python.md)
 - 钉钉群机器人、XPath 等待、下载等待、共享文件占用者识别：[xbot-enhance-tools.md](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
-- 钉钉业务通知怎么写、怎么排版：[rpa-practices / 钉钉通知](project-template/.agents/skills/rpa-practices/references/dingtalk-notification-style.md)
 
 文档贡献的证据和脱敏要求见 [CONTRIBUTING.md](CONTRIBUTING.md)。
