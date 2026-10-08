@@ -33,7 +33,7 @@ description: Review changed code for high-confidence bugs, behavior regressions,
 ### 3. xbot / 外部能力
 
 - 不根据通用 Python、Selenium、Playwright 经验猜 xbot API。
-- 影刀 API 和市场指令的入口、参数、返回值与用法按知识库正式事实页核验；项目成熟实现用于核对业务位置与既有行为，不覆盖正式调用事实。
+- 对本次新增或改变的影刀 API / 市场指令调用，以及有争议或出现异常的用法，按知识库正式事实页核验；未改变契约且项目已有相同用法时可直接核对现有实现。项目成熟实现不覆盖正式 API 事实。
 - 检查 XPath、字段、请求响应结构、页面状态或 Profile 等是否被本次改动错误假设。
 
 ### 4. 异常与失败语义

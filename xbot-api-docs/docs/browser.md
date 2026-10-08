@@ -4,7 +4,7 @@
 
 > 定位：影刀 / xbot 操作浏览器的开发者参数手册。
 > 重点：把 `xbot.web` 常用方法、参数、默认值、可选值写清楚。
-> 规则：字符串参数必须按文档中的值原样传入，例如 `mode="chrome"`，不是 `Chrome` / `CHROME`。
+> 规则：字符串参数必须按文档中的值原样传入，例如 `mode="chrome"`。
 
 网页实现路线及 HTTP 例外统一遵守[项目开发规则](../../project-template/AGENTS.md)：默认使用 `xbot.web` 和浏览器对象能力；用户明确要求接口方式，或项目已有稳定接口实现时，沿用对应路线。
 
@@ -36,15 +36,6 @@ mode="chrome"
 mode="cef"
 button="left"
 simulative=True
-```
-
-错误：
-
-```python
-mode="Chrome"
-mode="CHROME"
-button="Left"
-simulative="True"
 ```
 
 ### 2.2 布尔值必须传 Python 布尔值
@@ -103,9 +94,9 @@ glv['my_var'] = 'value'
 | `xbot.web` | 普通网页自动化主线 | 原生 `WebBrowser` / `WebElement` |
 | `xbot_visual.web` | 影刀可视化组件内部 | 多数为原生对象 |
 
-重点：不要默认把 `xbot.web` 理解成带有 `wait_for_element` 一类的等待元素能力。单次等待元素出现可直接使用原生 `find_by_xpath(..., timeout=...)`；项目已安装“增强工具2026”、且需要等待 XPath 出现 / 消失或下载完成时，再按 [增强工具 2026](extensions/xbot-enhance-tools.md) 使用对应公开函数，不要仅因为文档示例给项目新增未安装依赖。
+单次等待元素出现使用原生 `find_by_xpath(..., timeout=...)`；项目已安装“增强工具2026”、且需要等待 XPath 出现 / 消失或下载完成时，按 [增强工具 2026](extensions/xbot-enhance-tools.md) 使用对应公开函数。
 
-同样不要因为原生源码内部出现 `is_cross_frame_element` 就推断 `xbot.web` 提供公开 iframe 切换 API。当前已核验的 XPath 跨 iframe 能力来自市场指令 [`iframe2 / XPath跨域获取网页元素`](iframe2-extension.md)；项目未安装该市场指令时，不能直接引用 `xbot_extensions.iframe2`。
+需要跨 iframe XPath 定位时，项目安装对应市场指令后按 [`iframe2 / XPath跨域获取网页元素`](iframe2-extension.md) 的公开接口调用。
 
 ---
 
@@ -759,7 +750,7 @@ file_path = browser.dowload_url(
 | `wait_complete` | `bool` | `False` | 是否等待下载完成 |
 | `wait_complete_timeout` | `int` / `float` | `300` | 下载完成超时 |
 
-注意：方法名是 `dowload_url`，不是 `download_url`。
+方法名：`dowload_url`。
 
 项目已安装“增强工具2026”时，下载文件后等待结果优先按 [增强工具 2026](extensions/xbot-enhance-tools.md) 使用 `wait_download_file()`；未安装时继续使用本节原生下载接口的 `wait_complete` / `wait_complete_timeout`，不要仅为复用示例新增市场指令依赖。
 
@@ -904,11 +895,6 @@ web.set_user_environment(
 
 | 报错 / 现象 | 常见原因 | 处理 |
 |---|---|---|
-| `ChromiumBrowser` 没有 `wait_for_element` | 当前对象没有该方法，不代表 `get_active_page()` 入口不存在 | 单次等待用原生 `find_by_xpath(..., timeout=...)`；项目已有增强工具时再用其 XPath 等待能力 |
-| `mode="Chrome"` 不稳定或报错 | 字符串大小写错误 | 改成 `mode="chrome"` |
-| `download_url` 不存在 | 源码拼写是 `dowload_url` | 调用 `browser.dowload_url(...)` |
-| `dowload_timeout` 拼写奇怪 | 源码就是这个拼写 | 按源码传 `dowload_timeout` |
 | 元素匹配多个 | 单元素查找要求唯一 | 改选择器，或用 `find_all*` 后自己取 |
 | 中文输入异常 | 输入法干扰 | 改用 `clipboard_input()` |
 | 下载后文件还没生成 | 没等下载完成 | 先使用原生下载等待参数；项目已有增强工具时可按其事实页使用 `wait_download_file()` |
-| `dialog_result="OK"` 不确定 | 源码注释是小写 `ok` / `cancel` | 建议传 `"ok"` / `"cancel"` |

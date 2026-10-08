@@ -1,8 +1,5 @@
 """教学示例：共享一个 Excel 工作簿，按业务顺序更新后统一保存。"""
 
-import os
-import shutil
-import tempfile
 import traceback
 from datetime import datetime
 from pathlib import Path
@@ -11,7 +8,7 @@ import xbot.excel
 from xbot.app import logging
 
 from . import update_country_sales, update_source
-from .config import EXCEL_KIND, TARGET_WORKBOOK_PATH
+from .config import TARGET_WORKBOOK_PATH
 
 
 STATUS_NAMES = ("订单数据", "地区销量")
@@ -72,25 +69,19 @@ def _set_status(workbook, name, result, detail, success_time=None):
 
 
 def main(args):
-    """按固定业务流程更新两个 Sheet，整轮最多保存并提交一次。"""
+    """直接打开正式工作簿，按固定业务流程更新两个 Sheet 并统一保存。"""
     results = []
     target = Path(TARGET_WORKBOOK_PATH)
-    temp_path = None
     workbook = None
     committed = False
 
     try:
-        # 检查源文件，复制到同目录临时副本；避免出错损坏正式文件
+        # 打开正式工作簿前检查一次占用
         if target.with_name(f"~${target.name}").exists():
-            raise RuntimeError("正式 Excel 正在被编辑，本轮不覆盖")
-        source_stat = target.stat()
-        source_version = (source_stat.st_size, source_stat.st_mtime_ns)
-        fd, temp_path = tempfile.mkstemp(prefix=f".{target.stem}.", suffix=target.suffix, dir=target.parent)
-        os.close(fd)
-        shutil.copy2(target, temp_path)
+            raise RuntimeError("正式 Excel 正在被编辑，本轮不打开")
 
-        # 一次打开，所有后续业务模块直接接收这个 workbook
-        workbook = xbot.excel.open(file_name=temp_path, kind=EXCEL_KIND, visible=False, update_links=False)
+        # WPS 直接打开正式文件，所有业务模块共享同一个 workbook
+        workbook = xbot.excel.open(file_name=str(target), kind="wps", visible=False, update_links=False)
         states = _read_status_table(workbook)
 
         # 来源数据：准备阶段失败不接触 RAW 区，写入阶段失败则整轮回滚
@@ -132,41 +123,27 @@ def main(args):
         else:
             results.append(("地区销量", "跳过", "今天已成功且来源未变化"))
 
-        # 只有真正写入本轮状态或数据才需要保存；所有业务结束后最多保存一次
-        changed = any(status != "跳过" for _, status, _ in results)
-        if changed:
-            workbook.save()
+        # 不论本轮更新结果，直接保存正式文件一次
+        workbook.save()
+        committed = True
         workbook.close()
         workbook = None
-
-        if changed:
-            if target.with_name(f"~${target.name}").exists():
-                raise RuntimeError("正式文件已被打开，停止覆盖")
-            latest = target.stat()
-            if (latest.st_size, latest.st_mtime_ns) != source_version:
-                raise RuntimeError("正式工作簿在运行期间被修改，停止覆盖")
-            os.replace(temp_path, target)
-            temp_path = None
-        committed = True
     except Exception as exc:
-        # 未提交的“成功”不能对外称成功；异常链包含具体写入业务上下文
-        logging.error(f"本轮 Excel 未提交：{exc}\n{traceback.format_exc()}")
-        results = [
-            (name, "失败", f"整轮未提交：{exc}") if status == "成功" else (name, status, detail)
-            for name, status, detail in results
-        ]
+        # 未保存的任务不能对外称成功；异常链包含具体业务上下文
+        logging.error(f"本轮 Excel 更新失败：{exc}\n{traceback.format_exc()}")
+        if not committed:
+            results = [
+                (name, "失败", f"整轮未保存：{exc}") if status == "成功" else (name, status, detail)
+                for name, status, detail in results
+            ]
         results.append(("整轮提交", "失败", str(exc)))
     finally:
         if workbook is not None:
             try:
+                workbook.set_saved(True)
                 workbook.close()
             except Exception as exc:
                 logging.error(f"关闭 Excel 失败：{exc}\n{traceback.format_exc()}")
-        if temp_path is not None and os.path.exists(temp_path):
-            try:
-                os.remove(temp_path)
-            except Exception as exc:
-                logging.error(f"清理临时文件失败：{exc}\n{traceback.format_exc()}")
 
     # 只在业务完整结束后输出一次汇总；实际项目可对接已核验的通知能力
     logging.info(f"工作簿提交={'成功' if committed else '失败'}，更新结果={results}")

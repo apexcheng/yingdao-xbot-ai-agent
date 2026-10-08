@@ -5,7 +5,7 @@ description: Maintain implementation consistency when modifying or adding code i
 
 # 代码实现一致性
 
-修改或新增已有项目代码时，从当前项目学习业务实现和代码风格，不为同类问题重新设计另一套等价写法。影刀 API 和市场指令的调用事实以知识库正式页面为准。
+修改或新增已有项目代码时，从当前项目学习业务实现和代码风格，不为同类问题重新设计另一套等价写法。已有相同且本次不改变契约的影刀 API 用法可直接参考项目实现；新增用法、参数 / 返回值不确定或调用异常时，以知识库正式事实页核验。
 
 ## 修改前
 
@@ -32,7 +32,7 @@ description: Maintain implementation consistency when modifying or adding code i
 
 ## 有成熟先例时
 
-场景相同时，沿用已有业务实现模式；涉及影刀 API 或市场指令调用时，以知识库正式页面核对入口和参数。
+场景相同时，沿用已有业务实现模式；新增或改变影刀 API / 市场指令调用契约时，以知识库正式页面核对入口和参数。
 
 不要仅因为另一种写法同样正确，就引入第二套表达方式。
 
@@ -44,16 +44,7 @@ if elements:
     ...
 ```
 
-则不要无业务原因改成：
-
-```python
-try:
-    element.find_by_xpath(xpath)
-except Exception:
-    ...
-```
-
-两种代码都可能运行，但存在性判断、API 选择和控制流已经不同。以上仅用于说明“实现漂移”，不表示所有场景都必须使用 `find_all_by_xpath`。
+同类场景沿用该 API 和判断方式；其它业务场景按其实际契约选用相应接口。
 
 ## 没有成熟先例时
 

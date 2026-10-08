@@ -97,7 +97,7 @@ ShadowBot.Common.PackageUnreadableException: 应用文件已损坏
 
 1. 确认影刀当前没有正在运行该应用，也没有打开该项目 Studio。
 2. 保留现场；不要先删除 `package.sigstore`。
-3. 先按 `xbot-app-lifecycle` 的同步规则执行 `python .agents/skills/xbot-app-lifecycle/scripts/sync_codeflows.py`，让 `.py` flow 登记和 Python 编译先恢复一致。
+3. 先核对 Code flow 注册与实际文件是否一致；仅在项目根目录新增 / 删除了 `.py` 文件、需要同步注册时，按 `xbot-app-lifecycle` 规则执行 `python .agents/skills/xbot-app-lifecycle/scripts/sync_codeflows.py`。只修改已有文件或仅排查签名时不运行同步 helper；如需检查 Python 语法则单独检查，不为此改写 flow 注册。
 4. 先只校验，不写入：
 
 ```powershell

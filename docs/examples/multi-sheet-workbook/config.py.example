@@ -5,4 +5,3 @@ from pathlib import Path
 DEMO_DIR = Path(r"C:\example\rpa-demo")
 TARGET_WORKBOOK_PATH = str(DEMO_DIR / "report.xlsx")
 SOURCE_CSV_PATH = str(DEMO_DIR / "sales.csv")
-EXCEL_KIND = "wps"

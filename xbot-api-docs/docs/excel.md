@@ -4,7 +4,7 @@
 
 > 定位：影刀 / xbot 操作 Excel 的开发者参数手册。  
 > 重点：用户写代码时看不到源码，所以本文尽量把**参数名、默认值、可选值、大小写、传参示例**写清楚。  
-> 规则：字符串参数必须按文档中的值原样传入，例如 `kind="wps"`，不是 `WPS`，也不是 `PWS`。
+> 规则：字符串参数必须按文档中的值原样传入，例如 `kind="wps"`。
 
 ---
 
@@ -20,38 +20,18 @@
 
 ### 2.1 字符串可选值区分大小写
 
-正确：
-
 ```python
 kind="wps"
 kind="office"
 kind="openpyxl"
 ```
 
-错误：
-
-```python
-kind="WPS"      # 错
-kind="PWS"      # 错
-kind="Office"   # 错
-kind="OPENPYXL" # 错
-```
-
 ### 2.2 布尔值必须传 Python 布尔值
-
-正确：
 
 ```python
 visible=True
 ignore_formula=False
 update_links=False
-```
-
-不建议：
-
-```python
-visible="True"   # 字符串，不建议
-visible="False"  # 字符串，不建议
 ```
 
 ### 2.3 路径建议使用原始字符串
@@ -72,13 +52,13 @@ file_name = "C:\\path\\demo.xlsx"
 
 `kind` 是最容易传错的参数，必须使用下面这些**小写字符串**：
 
-| 传参值 | 正确写法 | 说明 | 常见错误 |
-|---|---|---|---|
-| Office | `kind="office"` | 使用 Microsoft Excel / Office | `"Office"`、`"OFFICE"` |
-| WPS | `kind="wps"` | 使用 WPS 表格 | `"WPS"`、`"pws"`、`"PWS"` |
-| OpenPyXL | `kind="openpyxl"` | 后台读写 `.xlsx`，不打开界面 | `"openPyXL"`、`"OpenPyxl"` |
-| 自动检查 | `kind="auto_check"` | 优先 Office，失败再尝试 WPS | `"auto"`、`"autoCheck"` |
-| WPS 插件 | `kind="wps_addon"` | WPS 插件方式 | `"wpsAddon"`、`"wps-addon"` |
+| 传参值 | 正确写法 | 说明 |
+|---|---|---|
+| Office | `kind="office"` | 使用 Microsoft Excel / Office |
+| WPS | `kind="wps"` | 使用 WPS 表格 |
+| OpenPyXL | `kind="openpyxl"` | 后台读写 `.xlsx`，不打开界面 |
+| 自动检查 | `kind="auto_check"` | 优先 Office，失败再尝试 WPS |
+| WPS 插件 | `kind="wps_addon"` | WPS 插件方式 |
 
 推荐选择：
 
@@ -191,14 +171,22 @@ workbook = xbot.excel.open(
 )
 ```
 
-### 5.4 常见错误
+项目已经确定使用 WPS 驱动时，直接在 `open()` 调用处使用 `kind="wps"`，不必为这个固定值新增 `EXCEL_KIND` 等配置变量。不同项目或不同读取任务仍按实际需求选择驱动，不将 `wps` 强制用于所有工作簿。
 
-```python
-kind="WPS"       # 错，应该是 kind="wps"
-kind="PWS"       # 错，拼写错误
-kind="xlsx"      # 错，kind 不是文件类型
-visible="False"  # 不建议，应该用 visible=False
+#### 已有工作簿更新：推荐调用顺序
+
+已有 Excel 文件需要通过 WPS 更新时，`file_name` 直接传**正式目标文件路径**；`save()` 会保存当前打开的文件。
+
+```text
+非执行调用说明（不可直接运行，target 已指向正式工作簿）：
+
+workbook = xbot.excel.open(file_name=str(target), kind="wps", visible=False, update_links=False)
+# 业务代码：在同一个 workbook 中更新所需 Sheet
+workbook.save()
+workbook.close()
 ```
+
+若本轮业务写入失败，不主动执行 `save()`；关闭未保存工作簿时可使用已核验的 `set_saved(True)` 标记。具体多数据源失败策略见 [多数据源报表安全边界](../../docs/multi-source-report-safety.md)。
 
 ---
 
@@ -720,8 +708,6 @@ workbook.workbook.Application.WindowState = -4137  # xlMaximized
 
 `workbook.workbook.Activate()` 用于激活当前工作簿；`workbook.workbook.Application.WindowState = -4137` 用于最大化 WPS 应用窗口。当前环境已验证这组用法可以正确最大化 WPS。
 
-不要改成 `workbook.workbook.Windows.Item(1).WindowState = -4137` 作为最大化方案：当前环境实测该赋值可以正常执行但外层 WPS 窗口没有视觉上的最大化效果。
-
 如果业务允许清理本机残留 WPS 进程，可在打开工作簿前使用 `xbot.excel.kill_excel_process("wps", True)` 清场；它不是“最大化 WPS”的必要步骤，不应为了最大化窗口默认强制关闭用户现有的 WPS 进程。
 
 ---
@@ -746,8 +732,6 @@ workbook.workbook.Application.WindowState = -4137  # xlMaximized
 
 | 现象 | 常见原因 | 处理 |
 |---|---|---|
-| `kind="WPS"` 打不开 | 参数值大小写错误 | 改成 `kind="wps"` |
-| `kind="PWS"` 报错 | 拼写错误 | 改成 `kind="wps"` |
 | `openpyxl` 读取不到显示文本 | `openpyxl` 不支持 `using_text=True` | 改用 `office` / `wps` |
 | 写入数字字符串变成数字 | Excel 自动识别类型 | 用 `write_as_text_cols="C,F"` 或写入前加文本标记 |
 | 大量写入很慢 | 循环逐单元格写入 | 改用 `set_range()` 一次性写二维数组 |
