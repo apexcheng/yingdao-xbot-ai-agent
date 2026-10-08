@@ -1,6 +1,6 @@
 ---
 name: rpa-practices
-description: Apply proven ShadowBot/Yingdao RPA development workflows and templates. Use for multi-source or multi-Sheet Excel/WPS automation, asynchronous web export task identification, DingTalk business notification content, and cross-layer troubleshooting. For API signatures use the official xbot API docs; for code style follow project AGENTS.md.
+description: Apply proven ShadowBot/Yingdao RPA development workflows and templates. Use for cross-run idempotency and retryable state, multi-source or multi-Sheet Excel/WPS automation, asynchronous web export task identification, DingTalk business notification content, and cross-layer troubleshooting. For API signatures use the official xbot API docs; for code style follow project AGENTS.md.
 ---
 
 # 影刀开发经验与模板
@@ -12,6 +12,7 @@ description: Apply proven ShadowBot/Yingdao RPA development workflows and templa
 | 场景 | 必须按需阅读的材料 |
 | --- | --- |
 | 多个数据源、多 Sheet 共享工作簿、统一或逐任务保存、失败隔离、状态与数据写入安全 | [多数据源报表安全边界](references/multi-source-report-safety.md) |
+| 定时重复扫描同一对象、跨轮次去重、持久化状态、失败重试与终态管理 | [跨轮次幂等、处理状态与重试](references/cross-run-state-and-retries.md) |
 | 点击导出后在后台任务中心等待并下载，多地区、多分类任务、SPA 动态元素失效 | [网页后台异步导出任务绑定](references/async-export-task-binding.md) |
 | 钉钉机器人业务通知的标题、数字汇总、状态、分组、@ 规则及真实文案示例 | [钉钉通知文案与排版偏好](references/dingtalk-notification-style.md) |
 | 跨数据、网页、Excel / WPS、接口或环境的复杂故障，需要最小复现和分层排查 | [影刀编码版通用排错](references/troubleshooting.md) |

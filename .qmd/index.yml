@@ -10,7 +10,7 @@ collections:
     pattern: "**/*.md"
     includeByDefault: true
     context:
-      /: 影刀项目三个正式 Skill 及其完整参考资料。包括代码质量、影刀工具、跨 API 开发经验、项目骨架、多数据源安全、异步导出、钉钉通知、通用排错和教学 Demo。只按任务读取，不替代正式 API 事实或项目 AGENTS 规则。
+      /: 影刀项目三个正式 Skill 及其参考资料。包括代码质量、影刀工具、跨 API 开发经验、项目骨架、多数据源安全、跨轮次状态与重试、异步导出、钉钉通知及通用排错。只按任务读取，不替代正式 API 事实或项目 AGENTS 规则。
   yingdao-reference:
     path: ./reference-projects
     pattern: "**/*.md"

@@ -153,13 +153,7 @@ Run `ui -h` before use. Supported actions include Studio/Console minimize/maximi
 
 #### 1. 先做只读项目盘点
 
-在真实项目根目录执行：
-
-```powershell
-python .agents/skills/xbot-tools/scripts/inspect_visual_project.py .
-```
-
-脚本只读取结构元数据，不输出 `package.json` 中的变量值，也不解码 `.pybx`。根据输出确认：
+直接读取真实项目的 `package.json`、相关 Code flow 源码以及资源清单，**只读核对结构元数据**；不要输出 `package.json` 中的变量值，也不尝试解码 `.pybx`。根据文件确认：
 
 - `startup` 和所有 flow 的 `name` / `filename` / `kind` / `groupName`。
 - Visual flow 对应 `.pybx`、Code flow 对应 `.py` 是否实际存在。
@@ -260,11 +254,7 @@ powershell -ExecutionPolicy Bypass -File .agents/skills/xbot-tools/scripts/repai
 - package version / feature 是否被当前影刀版本支持。
 - 元素库、图像库或其他项目资源是否缺失或格式损坏。
 
-flow / 文件映射异常可先运行：
-
-```powershell
-python .agents/skills/xbot-tools/scripts/inspect_visual_project.py .
-```
+flow / 文件映射异常时，直接对照 `package.json` 中的 flow 注册、实际 `.py` / `.pybx` 文件与启动流，不需要另行执行项目结构扫描脚本。
 
 如果修了 `package.json`、flow 文件或其他参与完整性校验的项目文件，**最后再重新做 Sigstore 校验 / 写入**；不要先重签名、再继续改文件，否则签名会再次失效。
 
