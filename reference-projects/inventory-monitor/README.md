@@ -2,7 +2,7 @@
 
 这是一个真实运行中的影刀编码版库存监控项目源码快照，用于项目级实现参考。
 
-此快照保留 2026-09-14 的历史实现，适合研究库存幂等、重试及通知，不应作为**当前函数拆分或主流程编排的默认代码风格**。需要“一个 Page 一个主函数”和固定任务显式调用的较新真实参考，优先阅读[跨境补货表快照](../cross-border-replenishment/README.md)。
+此快照保留 2026-09-14 的历史实现，适合研究库存幂等、重试及通知，不应作为**当前函数拆分或主流程编排的默认代码风格**。
 
 ## 快照信息
 
@@ -49,7 +49,7 @@
 - 拼多多 / 天猫当前页面结构和登录方式。
 - 来源项目中仍存在的 TODO、调试痕迹和局部历史代码。
 
-具体 API 调用先以 `xbot-api-docs/` 为准，代码风格和开发行为先以 `project-template/AGENTS.md` 与 `docs/coding-style.md` 为准。
+具体 API 调用先以 `xbot-api-docs/` 为准，代码风格和开发行为先以 `project-template/AGENTS.md` 与 `project-template/.agents/skills/code-quality/references/coding-style.md` 为准。
 
 ## 已知不应作为推荐写法直接模仿的内容
 

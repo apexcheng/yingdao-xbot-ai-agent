@@ -5,7 +5,7 @@
 ## 定位
 
 - 这里不是项目模板。新建项目仍以 `project-template/` 为准。
-- 这里不是开发规范。代码结构与开发行为仍以 `project-template/AGENTS.md`、`docs/` 中的正式知识为准。
+- 这里不是开发规范。代码结构与开发行为仍以 `project-template/AGENTS.md`、项目 Skill 中的正式知识为准。
 - 这里不是 API 文档。xbot API、市场指令参数和返回值仍以 `xbot-api-docs/` 为准。
 - 这里保留真实实现，因此可能存在来源项目当时尚未清理的 TODO、历史兼容代码或后来已被知识库规则改进的写法。
 
@@ -42,5 +42,4 @@
 
 ## 当前参考项目
 
-- [跨境补货表](cross-border-replenishment/README.md)：当前推荐的多 Sheet WPS 更新真实源码参考，固定任务顺序、单 Page 过程式、下载任务绑定、独立持久化和三国销量整体保存。
 - [库存监控](inventory-monitor/README.md)：多平台 / 多店铺库存自动化，包含 SQLite 幂等与重试、ERP 数据刷新、业务日志、通知和网页库存修改闭环。

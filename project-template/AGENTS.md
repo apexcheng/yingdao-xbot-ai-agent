@@ -10,7 +10,7 @@
 ## 开始任务
 
 1. 业务规则优先级：**用户明确确认的业务目标、范围、验收标准和取舍决定 > 当前项目正式 PRD / 规范 > 当前代码与既有业务约定 > 历史经验**。影刀 xbot API 和市场指令的调用事实以知识库正式页面为准。用户明确确认的业务决策与 PRD / 规范冲突时，以用户当前决定为准；若该决定改变长期业务规则，应同步更新对应正式文档。
-2. 用户明确确认的业务规则、字段名、路径、Sheet 名等项目专有事实视为已确认输入。优先参考当前项目已有的同类实现；已有相同影刀 API 用法且本次不改变调用契约时，不必重复检索知识库。新增或改变 API 用法、参数 / 返回值不确定、出现相关异常时，按正式事实页核验。判断一致性时使用 `.agents/skills/code-consistency/SKILL.md`；非简单改动需要进一步简化时使用 `.agents/skills/code-simplifier/SKILL.md`；用户要求审查或重要改动需独立检查时使用 `.agents/skills/code-review/SKILL.md`。
+2. 用户明确确认的业务规则、字段名、路径、Sheet 名等项目专有事实视为已确认输入。优先参考当前项目已有的同类实现；已有相同影刀 API 用法且本次不改变调用契约时，不必重复检索知识库。新增或改变 API 用法、参数 / 返回值不确定、出现相关异常时，按正式事实页核验。需要一致性检查、非简单改动的进一步简化，或用户要求代码审查时，按任务目的使用 `.agents/skills/code-quality/SKILL.md` 对应部分；只读审查不得自动修改文件。
 3. 只改与需求直接相关的内容，不做无关重构、格式化或结构调整；先读相关代码并保留用户已有改动。
 4. 知识库固定路径为 `C:\Users\Administrator\Desktop\影刀xAI开发指南`。需要检索影刀知识时按下方“xbot 与知识库”的顺序查询；目录不存在时立即停止并要求用户提供正确路径。
 
@@ -40,7 +40,7 @@
 12. 业务日志应能够还原主要执行过程：记录关键业务阶段、影响流程走向的判断及原因、重要业务对象的最终结果，以及必要的异常现场。停止、跳过、重试等会改变执行路径的行为应说明原因；商品、订单、任务等对象日志带上定位所需的最小稳定上下文；成功日志尽量描述实际发生的结果，不只写“成功”。不要给简单赋值、普通 API 调用或没有独立排查价值的连续动作逐条打日志。
 13. 决定执行路径的步骤、重试、停止条件等状态由业务代码维护；仅用于错误描述的信息直接在异常位置补充。多处日志格式或上下文重复时可以封装日志辅助，但不让日志对象决定业务流程。
 
-需要查看变量内联、函数边界、异常收尾和业务过程日志的完整判断与示例时，读取知识库 `docs/coding-style.md`；以上规则已足以约束普通小改。
+需要查看变量内联、函数边界、异常收尾和业务过程日志的完整判断与示例时，读取知识库 `project-template/.agents/skills/code-quality/references/coding-style.md`；以上规则已足以约束普通小改。
 
 ## xbot 与知识库
 
@@ -52,15 +52,16 @@
 6. 网页相关问题查 `browser.md`，Win32 查 `win32.md`，Excel / WPS 查 `excel.md`；不机械加载与当前改动无关的全文。
 7. 网页业务默认使用 `xbot.web`；所有 Page 新建、跳转、刷新等加载完成后，先 `page.wait_load_completed(...)`，再统一 `time.sleep(3)`，然后开始业务操作，避免 JS 仍在初始化。需要等待异步业务结果时仍须检查实际状态，不用不断叠加固定等待。
 8. 影刀日志使用 `from xbot.app import logging`；动态内容使用完整 f-string，异常堆栈使用 `traceback.format_exc()`。
-9. 读取 / 迁移旧版可视化项目，或排查“应用文件已损坏”、flow 文件缺失、`package.sigstore` 等项目级问题时，使用 `.agents/skills/xbot-project-diagnostics/SKILL.md`；普通 Python 业务 bug 不触发。
+9. 读取 / 迁移旧版可视化项目，或排查“应用文件已损坏”、flow 文件缺失、`package.sigstore` 等项目级问题时，使用 `.agents/skills/xbot-tools/SKILL.md` 中「项目诊断与迁移」部分；普通 Python 业务 bug 不触发。
 10. `selectorsV2.xml` 是由影刀编辑器维护的元素库文件，Agent 不得创建、编辑、格式化、覆盖或补丁修改该文件，否则影刀编辑器会提示应用文件损坏。需要调整元素库时应通过影刀编辑器操作；业务代码只读取并使用项目中已有的元素库名称。
-11. 单项 CLI 操作读取 `.agents/skills/shadowbot-cli/SKILL.md`；使用 CLI 完成应用创建、开发、发布和试运行的完整流程时读取 `.agents/skills/xbot-app-lifecycle/SKILL.md`。命令和参数以本机 CLI 帮助及实际返回为准。
+11. 单项 CLI 操作使用 `.agents/skills/xbot-tools/SKILL.md` 中「CLI 操作」部分；使用 CLI 完成应用创建、开发、发布和试运行的完整流程时使用其中「应用开发闭环」部分。命令和参数以本机 CLI 帮助及实际返回为准。
+12. 多数据源 / 多 Sheet 报表、异步导出任务绑定、钉钉业务通知及跨层排错等专项任务，按需读取 `.agents/skills/rpa-practices/SKILL.md` 中对应经验与完整案例；简单项目改动不默认加载全部材料。
 
 ## 验证与同步
 
 1. 按风险做最小必要验证；默认不新增测试或运行无关全量检查。高风险写入先确认范围和回退方式。
-2. Code flow 同步 helper 属于 `.agents/skills/xbot-app-lifecycle/scripts/sync_codeflows.py`，不再作为项目根目录的独立工具。只有新增或删除项目根目录 `.py` 文件时才运行；新增文件会登记对应 Code flow，删除文件会移除对应 Code flow 注册。只修改已有 `.py` 文件时不要运行 Code flow 同步 helper。新增 `.py` 的文件名去扩展名后不得与 `package.json` 中已有 flow 的 `name` 重复，例如已有名为 `init` 的 Visual flow 时不能新建 `init.py`；撞名登记后 Studio 打开项目会直接报“应用文件已损坏”，排查与修复见 `xbot-project-diagnostics`。
-3. 用户明确要求发布外部修改后的影刀应用时，优先运行 `.agents/skills/xbot-app-lifecycle/scripts/publish_app.py`。它负责打开已有应用、重新载入磁盘修改、保存编译、同步、发布并校验线上 `versionId` 已变化；不要手工拆成多条 CLI 命令，也不要仅凭 `console app publish` 返回成功就认定新代码已上线。
+2. Code flow 同步 helper 属于 `.agents/skills/xbot-tools/scripts/sync_codeflows.py`，不再作为项目根目录的独立工具。只有新增或删除项目根目录 `.py` 文件时才运行；新增文件会登记对应 Code flow，删除文件会移除对应 Code flow 注册。只修改已有 `.py` 文件时不要运行 Code flow 同步 helper。新增 `.py` 的文件名去扩展名后不得与 `package.json` 中已有 flow 的 `name` 重复，例如已有名为 `init` 的 Visual flow 时不能新建 `init.py`；撞名登记后 Studio 打开项目会直接报“应用文件已损坏”，排查与修复见 `xbot-tools` 的「项目诊断与迁移」部分。
+3. 用户明确要求发布外部修改后的影刀应用时，优先运行 `.agents/skills/xbot-tools/scripts/publish_app.py`。它负责打开已有应用、重新载入磁盘修改、保存编译、同步、发布并校验线上 `versionId` 已变化；不要手工拆成多条 CLI 命令，也不要仅凭 `console app publish` 返回成功就认定新代码已上线。
 4. 验证失败时先区分代码、环境、依赖和路径问题，不为通过无关检查扩大改动。
 5. 用户说 'push' 时指的是 git commit 并 push 到 GitHub / Gitee 远程仓库。执行前确认有改动需要提交，并使用清晰的 commit 信息。
 

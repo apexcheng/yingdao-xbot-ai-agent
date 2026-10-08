@@ -1,6 +1,6 @@
 # 钉钉通知文案与排版偏好
 
-本页约束业务自动化项目中的钉钉通知**怎么写得清楚、像正式业务通知、方便快速处理**。API 调用方式、参数和返回值以 [增强工具的钉钉机器人说明](../xbot-api-docs/docs/extensions/xbot-enhance-tools.md) 为准。
+本页约束业务自动化项目中的钉钉通知**怎么写得清楚、像正式业务通知、方便快速处理**。API 调用方式、参数和返回值以 [增强工具的钉钉机器人说明](../../../../../xbot-api-docs/docs/extensions/xbot-enhance-tools.md) 为准。
 
 ## 1. 总体风格
 
@@ -223,6 +223,6 @@
 
 ## 5. 参考实现
 
-完整真实项目结构可参考：[库存监控真实实现参考](../reference-projects/inventory-monitor/README.md)。其中 `snapshot/dingtalk.py` 展示了店铺结果、阶段汇总、程序异常和通知失败处理如何组合。
+完整真实项目结构可参考：[库存监控真实实现参考](../../../../../reference-projects/inventory-monitor/README.md)。其中 `snapshot/dingtalk.py` 展示了店铺结果、阶段汇总、程序异常和通知失败处理如何组合。
 
 提炼真实项目时，只复用以上**表达方式和信息层级**。平台名称、状态分类、重试次数、库存阈值、通知对象等仍由各项目自己的业务规则决定。

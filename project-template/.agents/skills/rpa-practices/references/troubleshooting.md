@@ -41,7 +41,7 @@
 
 `wait_load_completed()` 只代表页面加载阶段完成；通用开发约定还需等待 3 秒供 JS 初始化，随后仍应根据具体业务状态判断是否就绪。
 
-见 [browser.md](../xbot-api-docs/docs/browser.md) 和 [iframe2-extension.md](../xbot-api-docs/docs/iframe2-extension.md)。
+见 [browser.md](../../../../../xbot-api-docs/docs/browser.md) 和 [iframe2-extension.md](../../../../../xbot-api-docs/docs/iframe2-extension.md)。
 
 ### Excel / WPS
 
@@ -52,11 +52,11 @@
 
 业务 WPS 工作簿使用 `kind="wps", visible=True`；不要用 `visible=False` 隐藏运行。下载文件的 `openpyxl` 后端可能不支持 `close()`，部分平台的 XLSX 样式也可能不能被其严格解析；先分清驱动及文件问题，再改用相应读取方式。读宽日期表头时核对真实表头，必要时分段读取并校验每段列数。
 
-见 [excel.md](../xbot-api-docs/docs/excel.md)。
+见 [excel.md](../../../../../xbot-api-docs/docs/excel.md)。
 
 ### 市场指令与第三方接口
 
-1. 从 [市场指令索引](../xbot-api-docs/docs/extension-instructions.md) 进入对应正式事实页，按知识库核对公开入口和签名；报缺少模块或入口时先检查、更新或重新安装指令。
+1. 从 [市场指令索引](../../../../../xbot-api-docs/docs/extension-instructions.md) 进入对应正式事实页，按知识库核对公开入口和签名；报缺少模块或入口时先检查、更新或重新安装指令。
 2. 对比成功与失败请求的最小差异，不根据界面中文选项猜内部枚举。
 3. `HTTP 500`、`unknownError` 或空返回都是失败证据，除非当前 API 契约明确说明，不得当成“没有数据”继续破坏性写入。
 4. 保留原始错误和 request id；不提交扩展内部源码、账号或令牌。

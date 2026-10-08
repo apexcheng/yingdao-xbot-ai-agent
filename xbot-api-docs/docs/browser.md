@@ -535,7 +535,7 @@ element.set_attribute("data-id", "123")
 
 动态页面中，元素已经可以定位时，`get_text()` 仍可能拿不到完整业务文本。先区分两种情况：
 
-另有一类不同故障：SPA / React 刷新后，已定位的旧元素在读取 `get_text()` 或点击时出现 Code 106（元素 ID 失效）。此时重新定位当前 DOM，必要时一次性通过 `page.execute_javascript()` 读取当前行数据，不要反复操作旧的 `row`、`td` 对象。先检查实际页面、遮挡和登录状态；不要把 Code 106 与文本尚未渲染混为一谈。异步导出任务处理见 [异步导出任务绑定](../../docs/async-export-task-binding.md)。
+另有一类不同故障：SPA / React 刷新后，已定位的旧元素在读取 `get_text()` 或点击时出现 Code 106（元素 ID 失效）。此时重新定位当前 DOM，必要时一次性通过 `page.execute_javascript()` 读取当前行数据，不要反复操作旧的 `row`、`td` 对象。先检查实际页面、遮挡和登录状态；不要把 Code 106 与文本尚未渲染混为一谈。异步导出任务处理见 [异步导出任务绑定](../../project-template/.agents/skills/rpa-practices/references/async-export-task-binding.md)。
 
 1. 文本只是尚未加载完成：继续用“短间隔轮询 + 总超时”，每轮重新定位元素并读取。
 2. 页面视觉上已经显示值，但 `get_text()` / `get_html()` 始终缺少动态渲染内容：不要继续重复 `get_text()`；改从真实 DOM 的 `textContent` 读取，再按业务格式判断。

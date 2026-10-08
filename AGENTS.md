@@ -20,10 +20,9 @@
 
 - `AGENTS.md`：知识库维护者手册、仓库职责与路由规则。
 - `llms.txt`：知识导航。告诉 Agent 某类开发问题应该读取哪篇正式文档，不重复正文和完整规则。
-- `docs/`：跨 API 的稳定开发知识、编码经验、项目骨架、专项流程和排错方法。
+- `project-template/.agents/skills/`：真实项目使用的三项 Skill（代码质量、影刀工具、开发经验与模板）。原跨 API 经验和完整示例分专题保留在 Skill 的 `references/`、`examples/` 下，按需阅读。
 - `xbot-api-docs/`：影刀 xbot API、市场指令及其直接相关的可核验事实；该目录有自己的 `AGENTS.md`。
 - `project-template/`：复制到真实影刀项目使用的项目模板、项目 Agent 规则、Claude 入口和项目级 Skills。
-- `project-template/.agents/skills/`：真实项目中的专项 Agent Skill。只把适合按特定工作流触发的内容放入 Skill，不把普通开发规则迁入 Skill。
 - `reference-projects/`：经过筛选、脱敏并冻结版本的真实影刀项目实现参考。用于查看复杂项目实际如何落地，不是项目模板、正式规则或 API 事实源。
 - `README.md`：面向人的项目介绍、安装、入口和使用说明。
 - `CONTRIBUTING.md`：知识贡献、证据和脱敏要求。
@@ -33,12 +32,12 @@
 ## 3. 新增知识如何归位
 
 1. **API 签名、参数、返回值、版本差异、市场指令真实调用契约、与某 API 直接相关的高频误用**：写入 `xbot-api-docs/` 最相关页面。
-2. **跨 API 的稳定开发方法、代码风格详细说明、项目骨架、数据安全、通用排错流程**：写入 `docs/` 最相关页面。
+2. **跨 API 的稳定开发方法、代码风格详细说明、项目骨架、数据安全、通用排错流程**：写入 `project-template/.agents/skills/` 中对应 Skill 的正文或完整参考文件；常驻开发行为仍只在项目 `AGENTS.md` 维护。
 3. **真实影刀项目必须常驻的 Agent 开发行为规则**：写入 `project-template/AGENTS.md`，不要写入根 `AGENTS.md`。
 4. **旧版可视化项目解析 / 迁移、应用文件损坏排查等需要特定触发条件、固定步骤或专项工具的方法**：写入 `project-template/.agents/skills/` 的对应 Skill。
 5. **知识入口或文档位置变化**：更新 `llms.txt`；不要把正文搬进 `llms.txt`。
 6. **知识库维护方式、目录职责、审查方法发生变化**：更新根 `AGENTS.md`。
-7. **真实项目中具有代表性的完整实现**：可筛选后冻结到 `reference-projects/`。稳定开发规则仍应提炼到 `docs/` 或项目规则，API 事实仍写入 `xbot-api-docs/`；不得让参考项目替代正式知识。
+7. **真实项目中具有代表性的完整实现**：可筛选后冻结到 `reference-projects/`。稳定开发经验归对应 Skill，项目常驻规则归模板 `AGENTS.md`，API 事实仍写入 `xbot-api-docs/`；不得让参考项目替代正式知识。
 8. 同一事实已经存在时，优先补充或修正原事实页；其他位置使用链接或简短路由说明，不创建第二套正文。
 
 ## 4. 审查知识库的方法
@@ -49,7 +48,7 @@
 2. `project-template/AGENTS.md`：真实项目开发规则是否完整、冲突或被弱化。
 3. 根 `.claude/CLAUDE.md` 与 `project-template/.claude/CLAUDE.md`：Claude 是否加载了对应环境的正确主规则，是否重复维护规则正文。
 4. `llms.txt`：正式知识入口是否完整、链接是否指向唯一事实源。
-5. `docs/`：跨领域开发知识、编码风格、项目骨架和排错方法是否仍完整。
+5. 三项 Skill 及其 `references/`、`examples/`：跨领域开发知识、编程风格、项目骨架、排错经验与实例是否仍完整并可定位。
 6. `xbot-api-docs/AGENTS.md` 与相关 API 页面：API 事实、参数、返回值、高频坑和文档维护边界是否一致。
 7. `project-template/.agents/skills/`：专项工作流是否仍由 Skill 承担，是否被误塞进常驻 Agent 规则，或反过来缺少必要项目规则。
 
@@ -80,7 +79,7 @@
 1. `project-template/` 是真实影刀项目的便携模板，不是本知识库根规则的附录。
 2. 用户要求修改项目开发规则时，优先判断是否应修改 `project-template/AGENTS.md`；根 `AGENTS.md` 只需要知道该规则属于项目层，不维护其正文。
 3. 用户要求使用模板创建、补全或开发真实项目时，实际开发应发生在真实项目目录；真实项目的 `AGENTS.md` 默认就是 `project-template/AGENTS.md` 的项目副本，通用开发行为以模板为唯一来源，不在真实项目另建一套与模板冲突的通用优先级或开发规则。项目自身的业务差异、长期口径和设计决策写入该项目正式 PRD / 规范。
-4. 知识库中的 `docs/`、`xbot-api-docs/` 可以被真实项目 Agent 按 `llms.txt` 查询，但不因此成为真实项目的常驻规则文件。
+4. 知识库中的 Skill 完整参考材料和 `xbot-api-docs/` 可以被真实项目 Agent 按 `llms.txt` 查询，但不因此成为真实项目的常驻规则文件。
 5. 对模板做规则调整时，必须确认是在修改“未来所有真实项目的默认开发行为”，不要把某个单一业务项目的特殊约定固化为通用模板规则。
 
 ## 7. 变更检查与汇报

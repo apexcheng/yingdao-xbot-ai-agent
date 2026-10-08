@@ -8,6 +8,6 @@
 
 知识库固定路径为 `C:\Users\Administrator\Desktop\影刀xAI开发指南`。需要确认 xbot API、市场指令、base 骨架或排错资料时，统一遵守当前项目 [AGENTS.md](../AGENTS.md) 中“xbot 与知识库”的检索顺序；不在这里维护第二套检索规则。
 
-读取 / 迁移旧版影刀可视化项目，或排查“应用文件已损坏”、flow 文件缺失、`package.sigstore` 等项目级问题时，使用 `.claude/skills/xbot-project-diagnostics/SKILL.md`；普通 Python 业务 bug 不触发该 Skill。
+读取 / 迁移旧版影刀可视化项目，或排查“应用文件已损坏”、flow 文件缺失、`package.sigstore` 等项目级问题时，使用 `.claude/skills/xbot-tools/SKILL.md` 的对应部分；普通 Python 业务 bug 不触发该流程。
 
 影刀同步的触发条件、执行方式及验证边界统一遵守当前项目的 [AGENTS.md](../AGENTS.md)。

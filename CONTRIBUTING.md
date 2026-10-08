@@ -17,7 +17,7 @@
 
 ## 内容边界
 
-- 真实影刀项目的跨项目常驻核心约束以 [project-template/AGENTS.md](project-template/AGENTS.md) 为唯一规范源；[编程风格详解](docs/coding-style.md) 只保存示例和低频边界，不削弱项目规则。根 [AGENTS.md](AGENTS.md) 只维护知识库本身的职责、审查和路由规则。
+- 真实影刀项目的跨项目常驻核心约束以 [project-template/AGENTS.md](project-template/AGENTS.md) 为唯一规范源；[编程风格详解](project-template/.agents/skills/code-quality/references/coding-style.md) 只保存示例和低频边界，不削弱项目规则。根 [AGENTS.md](AGENTS.md) 只维护知识库本身的职责、审查和路由规则。
 - API 签名、参数、返回值和限制写入对应的 `xbot-api-docs/docs/` 页面。
 - 市场指令参数和返回值写入对应事实页；只有新增指令时才在总索引补一条链接。
 - 项目专用流程、页面字段和业务口径留在真实项目文档中。

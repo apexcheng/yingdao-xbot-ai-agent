@@ -24,7 +24,7 @@
 4. 不同地区导出同名文件时，分别保存并标记地区，确认文件身份和布局后再拼接。
 5. 同一业务结果依赖多个地区文件时，全部必需文件成功且结构一致后再更新结果；失败只阻塞相关业务，不影响其它无依赖任务。
 
-压缩包解压与多文件目标识别参阅 [xzip.md](../xbot-api-docs/docs/xzip.md)；网页下载和等待 API 参阅 [browser.md](../xbot-api-docs/docs/browser.md)。
+压缩包解压与多文件目标识别参阅 [xzip.md](../../../../../xbot-api-docs/docs/xzip.md)；网页下载和等待 API 参阅 [browser.md](../../../../../xbot-api-docs/docs/browser.md)。
 
 ## 动态任务表：避免过期网页元素
 

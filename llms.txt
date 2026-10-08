@@ -11,18 +11,16 @@
 
 ## 按任务直达
 
-- 新建或补全影刀编码版项目：[base-project-skeleton.md](docs/base-project-skeleton.md)
-- 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[coding-style.md](docs/coding-style.md)
-- 钉钉业务通知的文案结构、排版偏好、状态 emoji 与示例：[dingtalk-notification-style.md](docs/dingtalk-notification-style.md)
-- 多数据源 / 多 Sheet 更新同一工作簿、统一或逐任务保存及失败策略：[multi-source-report-safety.md](docs/multi-source-report-safety.md)
-- 网页后台异步导出、本轮任务识别、任务中心多地区及多分类下载：[async-export-task-binding.md](docs/async-export-task-binding.md)
-- 多 Sheet / 多数据源 RPA 的**历史真实代码参考**：固定业务任务显式调用、单 Page 过程式、逐任务保存、三国销量整体保存：[跨境补货表冻结实现](reference-projects/cross-border-replenishment/README.md)。注意旧快照还保留已废弃的失败重开、整表状态读取和导出前任务快照；按问题选择参考，不代表最新项目代码或完整实机验收。
-- 仅需学习“整轮统一保存”策略的最小教学 Demo：[multi-sheet-workbook/README.md](docs/examples/multi-sheet-workbook/README.md)。此示例不适用于需要逐任务持久化和失败隔离的项目。
-- 跨数据、API、环境或市场指令的通用排错：[troubleshooting.md](docs/troubleshooting.md)
+- 新建或补全影刀编码版项目：[xbot-tools / base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
+- 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[code-quality / 编程风格](project-template/.agents/skills/code-quality/references/coding-style.md)
+- 钉钉业务通知的文案结构、排版偏好、状态 emoji 与示例：[rpa-practices / 钉钉通知](project-template/.agents/skills/rpa-practices/references/dingtalk-notification-style.md)
+- 多数据源 / 多 Sheet 更新同一工作簿、统一或逐任务保存及失败策略：[rpa-practices / 报表安全](project-template/.agents/skills/rpa-practices/references/multi-source-report-safety.md)
+- 网页后台异步导出、本轮任务识别、任务中心多地区及多分类下载：[rpa-practices / 异步导出](project-template/.agents/skills/rpa-practices/references/async-export-task-binding.md)
+- 跨数据、API、环境或市场指令的通用排错：[rpa-practices / 通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 - 多平台、多店铺、SQLite 状态 / 重试、日志与通知的历史真实参考：[库存监控源码快照](reference-projects/inventory-monitor/README.md)。此案例不作为当前函数拆分与过程式编程的默认标准。
-- 旧版可视化项目解析 / 迁移、应用文件损坏与 Sigstore 排查：[xbot-project-diagnostics](project-template/.agents/skills/xbot-project-diagnostics/SKILL.md)
-- 单项 CLI 命令、参数与登录恢复：[shadowbot-cli](project-template/.agents/skills/shadowbot-cli/SKILL.md)
-- CLI 创建、开发、发布、试运行影刀应用的完整流程：[xbot-app-lifecycle](project-template/.agents/skills/xbot-app-lifecycle/SKILL.md)
+- 代码一致性、简化与只读审查：[code-quality](project-template/.agents/skills/code-quality/SKILL.md)
+- 影刀 CLI、应用创建与发布、旧版可视化迁移、项目损坏及 Sigstore 排查：[xbot-tools](project-template/.agents/skills/xbot-tools/SKILL.md)
+- 影刀开发经验与模板、多 Sheet、异步导出、钉钉通知、通用排错：[rpa-practices](project-template/.agents/skills/rpa-practices/SKILL.md)
 - 元素库、图像库、资源文件、全局变量：[package.md](xbot-api-docs/docs/package.md)
 - 浏览器、网页元素、输入、下载、Cookie、网络监听：[browser.md](xbot-api-docs/docs/browser.md)
 - Excel / WPS 工作簿、Sheet、区域、读写和格式：[excel.md](xbot-api-docs/docs/excel.md)
@@ -42,6 +40,6 @@
 - 网页数英验证码图片识别、云码 token 与元素库参数：[activity-jfbym.md](xbot-api-docs/docs/extensions/activity-jfbym.md)
 - C-ERP 初始化、图形 / 短信验证码登录与报表下载：[c-erp-python.md](xbot-api-docs/docs/extensions/c-erp-python.md)
 - 钉钉群机器人、XPath 等待、下载等待、共享文件占用者识别：[xbot-enhance-tools.md](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
-- 钉钉业务通知怎么写、怎么排版：[dingtalk-notification-style.md](docs/dingtalk-notification-style.md)
+- 钉钉业务通知怎么写、怎么排版：[rpa-practices / 钉钉通知](project-template/.agents/skills/rpa-practices/references/dingtalk-notification-style.md)
 
 文档贡献的证据和脱敏要求见 [CONTRIBUTING.md](CONTRIBUTING.md)。

@@ -32,16 +32,20 @@
 
 ### AI Agent 开发规则
 
-- [AGENTS.md](AGENTS.md)：执行任务时常驻的跨项目核心约束，完整保留过程式主流程、文件职责、变量内联和函数封装边界规则。
+- [AGENTS.md](AGENTS.md)：知识库自身的维护规则；真实项目的常驻开发规则见 [project-template/AGENTS.md](project-template/AGENTS.md)。
 - [llms.txt](llms.txt)：给 AI Agent 使用的精简文档导航。
-- [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口、可视化流程读取 Skill，以及 `xbot-app-lifecycle` 内置的 Code flow 同步 helper。
+- [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口和三个 Skill（`code-quality`、`xbot-tools`、`rpa-practices`）。
 
-### 开发与排错专题
+### Skills 与完整开发经验
 
-- [影刀编码版编程风格详解](docs/coding-style.md)
-- [最小 base 骨架](docs/base-project-skeleton.md)
-- [多数据源报表安全边界](docs/multi-source-report-safety.md)
-- [影刀编码版通用排错](docs/troubleshooting.md)
+- [代码质量 Skill](project-template/.agents/skills/code-quality/SKILL.md)：一致性、简化、审查。
+- [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)：CLI、项目创建、同步、发布、迁移、项目诊断。
+- [开发经验与模板 Skill](project-template/.agents/skills/rpa-practices/SKILL.md)：多数据源报表、异步导出、钉钉通知和通用排错。
+
+- [影刀编码版编程风格详解](project-template/.agents/skills/code-quality/references/coding-style.md)
+- [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
+- [多数据源报表安全边界](project-template/.agents/skills/rpa-practices/references/multi-source-report-safety.md)
+- [影刀编码版通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 
 ### xbot API 与自动化文档
 
@@ -84,16 +88,16 @@ AGENTS.md
 config.py
 run.py
 .gitignore
-.agents/skills/xbot-project-diagnostics/
-.agents/skills/shadowbot-cli/
-.agents/skills/xbot-app-lifecycle/
+.agents/skills/code-quality/
+.agents/skills/xbot-tools/
+.agents/skills/rpa-practices/
 .claude/CLAUDE.md
-.claude/skills/xbot-project-diagnostics/
-.claude/skills/shadowbot-cli/
-.claude/skills/xbot-app-lifecycle/
+.claude/skills/code-quality/
+.claude/skills/xbot-tools/
+.claude/skills/rpa-practices/
 ```
 
-模板默认由 `config.py` 管理项目配置。`shadowbot-cli` Skill 保留安装版 CLI 用法，`xbot-app-lifecycle` Skill 维护本项目的创建、开发、Code Flow 同步、发布和试运行流程：`scripts/sync_codeflows.py` 只处理新增 / 删除 Code Flow，`scripts/publish_app.py` 统一处理外部修改后的保存、同步、发布与版本校验。使用时需本机已安装影刀 CLI。骨架和配置约定见 [最小 base 骨架](docs/base-project-skeleton.md)。
+模板默认由 `config.py` 管理项目配置。`code-quality` Skill 提供一致性、简化和审查；`xbot-tools` Skill 包含 CLI、应用创建、发布、可视化迁移及项目诊断，其 `scripts/sync_codeflows.py` 只处理新增 / 删除 Code Flow，`scripts/publish_app.py` 统一处理外部修改后的保存、同步、发布与版本校验。`rpa-practices` Skill 按场景提供开发经验与示例。使用 CLI 时需本机已安装影刀 CLI。骨架和配置约定见 [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)。
 
 ### 4. 告诉 AI Agent 两个目录
 
@@ -107,7 +111,7 @@ run.py
 
 ## 影刀同步
 
-同步的触发条件、执行命令和验证边界统一见 [AGENTS.md 的影刀同步规则](AGENTS.md#6-影刀同步)。
+同步的触发条件、执行命令和验证边界统一见 [真实项目的同步规则](project-template/AGENTS.md#验证与同步)，操作步骤见 [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)。
 
 ## 开发与维护风格
 
@@ -127,8 +131,12 @@ AGENTS.md                    # Agent 常驻核心约束
 llms.txt                     # AI / LLM 文档索引
 README.md                    # 项目介绍与使用入口
 CONTRIBUTING.md              # 事实证据、内容边界与脱敏规则
-docs/                        # 编程风格详解、base 骨架、多数据源安全与通用排错
-project-template/            # 真实影刀项目 base 模板与 Skill
+project-template/            # 真实影刀项目 base 模板与 3 个 Skill
+  .agents/skills/
+    code-quality/            # 代码规范、简化与审查；详细编程风格
+    xbot-tools/              # CLI、项目生命周期、诊断、脚本与项目骨架
+    rpa-practices/           # 多 Sheet、异步导出、钉钉、排错
+reference-projects/          # 冻结的真实项目完整案例
 xbot-api-docs/
   AGENTS.md                  # API 文档维护边界
   docs/                      # xbot API 和市场指令事实页
