@@ -156,7 +156,7 @@ workbook = xbot.excel.open(
     visible=False,
 )
 
-# WPS 打开：注意是小写 wps
+# WPS 打开：业务工作簿使用小写 wps，必须显示窗口
 workbook = xbot.excel.open(
     file_name=r"C:\path\demo.xlsx",
     kind="wps",
@@ -171,7 +171,7 @@ workbook = xbot.excel.open(
 )
 ```
 
-项目已经确定使用 WPS 驱动时，直接在 `open()` 调用处使用 `kind="wps"`，不必为这个固定值新增 `EXCEL_KIND` 等配置变量。不同项目或不同读取任务仍按实际需求选择驱动，不将 `wps` 强制用于所有工作簿。
+影刀自动化打开业务 WPS 工作簿时统一用 `kind="wps", visible=True`，不要以“后台运行”为由写成 `visible=False`；不必为固定驱动新增 `EXCEL_KIND`。单纯解析外部下载文件是否使用 `openpyxl` 仍可按具体读取需求决定，这不改变该 API 对其他 `kind` 值的支持。
 
 #### 已有工作簿更新：推荐调用顺序
 
@@ -180,13 +180,19 @@ workbook = xbot.excel.open(
 ```text
 非执行调用说明（不可直接运行，target 已指向正式工作簿）：
 
-workbook = xbot.excel.open(file_name=str(target), kind="wps", visible=False, update_links=False)
+workbook = xbot.excel.open(file_name=str(target), kind="wps", visible=True, update_links=False)
 # 业务代码：在同一个 workbook 中更新所需 Sheet
 workbook.save()
 workbook.close()
 ```
 
 若本轮业务写入失败，不主动执行 `save()`；关闭未保存工作簿时可使用已核验的 `set_saved(True)` 标记。具体多数据源失败策略见 [多数据源报表安全边界](../../docs/multi-source-report-safety.md)。
+
+#### 两种后端的实测差异
+
+- 本次 Windows 影刀运行中，`kind="openpyxl"` 对象调用 `workbook.close()` 报 Code 1259：`openpyxl目前不支持关闭操作`。使用此后端只读取下载文件时，不要照搬 WPS 的关闭调用；`kind="wps"` 的工作簿仍按正常生命周期保存、关闭。
+- Shopee 导出的部分 XLSX 虽是有效 ZIP 包，但 `xl/styles.xml` 含不符合 `openpyxl` 严格边框样式解析的 `none` 值，读取时报 `could not read stylesheet`；可在核实文件完整性后改用 WPS 后端兼容读取，不修改或盲目修补原文件。
+- 超宽工作簿按 WPS 区域读取表头时，可能返回不完整列；先对照原 Excel 实际列，再按较小连续列段读取并检查每段长度，避免误判为模板缺少日期。
 
 ---
 

@@ -81,7 +81,7 @@ def main(args):
             raise RuntimeError("正式 Excel 正在被编辑，本轮不打开")
 
         # WPS 直接打开正式文件，所有业务模块共享同一个 workbook
-        workbook = xbot.excel.open(file_name=str(target), kind="wps", visible=False, update_links=False)
+        workbook = xbot.excel.open(file_name=str(target), kind="wps", visible=True, update_links=False)
         states = _read_status_table(workbook)
 
         # 来源数据：准备阶段失败不接触 RAW 区，写入阶段失败则整轮回滚

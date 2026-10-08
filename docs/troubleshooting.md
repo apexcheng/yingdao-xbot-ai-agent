@@ -37,6 +37,10 @@
 3. 是否滚动了正确容器，点击后是否等待真实异步条件。
 4. 元素库、XPath 或 CSS 是否仍符合当前 DOM。
 
+遇到“XPath 定位成功但点击没反应”或 Code 106 时，先检查当前页面是否有活动公告 / 广告遮罩、是否正在跳转登录页、是否发生 SPA / React 重绘。元素引用可能在定位后失效，`get_text()` 或 `click()` 也会失败；重新定位或对**实时 DOM** 一次读取任务表，再核对业务状态。不要只延长 XPath 超时，也不要仅凭错误码确定是广告。开发中异常保留 Page 可帮助查看 URL、DOM、遮挡，但须由任务明确决定何时保留及何时清理，不把所有异常都改成永久不关闭页面。
+
+`wait_load_completed()` 只代表页面加载阶段完成；通用开发约定还需等待 3 秒供 JS 初始化，随后仍应根据具体业务状态判断是否就绪。
+
 见 [browser.md](../xbot-api-docs/docs/browser.md) 和 [iframe2-extension.md](../xbot-api-docs/docs/iframe2-extension.md)。
 
 ### Excel / WPS
@@ -45,6 +49,8 @@
 2. 文件是否被占用，当前驱动是否为需要的 `office`、`wps` 或 `openpyxl`。
 3. 长数字是否丢失精度，以 `=` 开头的业务文本是否被当成公式。
 4. 保存路径、权限和进程状态是否正常。
+
+业务 WPS 工作簿使用 `kind="wps", visible=True`；不要用 `visible=False` 隐藏运行。下载文件的 `openpyxl` 后端可能不支持 `close()`，部分平台的 XLSX 样式也可能不能被其严格解析；先分清驱动及文件问题，再改用相应读取方式。读宽日期表头时核对真实表头，必要时分段读取并校验每段列数。
 
 见 [excel.md](../xbot-api-docs/docs/excel.md)。
 

@@ -258,6 +258,20 @@ browser.stop_load()
 browser.wait_load_completed(timeout=20)
 ```
 
+### Page 加载后的统一等待
+
+业务 Page 新建、`navigate()`、`reload()` 等加载完成后，统一执行 `wait_load_completed()` **再额外等待 3 秒**，让页面 JS 有时间初始化。调用者若已等待页面加载完成，就只补 3 秒，不重复等待；此约定适用于影刀编码版的各平台 Page，不限于妙手 ERP。
+
+```text
+非执行调用说明（不可直接运行；page 已指向当前网页，time 已导入）：
+
+page.wait_load_completed(timeout=60)
+time.sleep(3)
+# 后续再定位菜单、筛选框、业务数据
+```
+
+这是开发等待约定，不是 `wait_load_completed()` 的内置行为，也不能保证所有异步数据都已出现；特定数据、按钮、导出任务仍需根据真实状态等待。不要对每次普通点击都无条件叠加 3 秒。
+
 | 方法 | 参数 | 说明 |
 |---|---|---|
 | `navigate(url, load_timeout=20)` | `url: str` | 跳转网址 |
@@ -520,6 +534,8 @@ element.set_attribute("data-id", "123")
 ### 15.1 `get_text()` 暂时读取不到动态渲染文本
 
 动态页面中，元素已经可以定位时，`get_text()` 仍可能拿不到完整业务文本。先区分两种情况：
+
+另有一类不同故障：SPA / React 刷新后，已定位的旧元素在读取 `get_text()` 或点击时出现 Code 106（元素 ID 失效）。此时重新定位当前 DOM，必要时一次性通过 `page.execute_javascript()` 读取当前行数据，不要反复操作旧的 `row`、`td` 对象。先检查实际页面、遮挡和登录状态；不要把 Code 106 与文本尚未渲染混为一谈。异步导出任务处理见 [异步导出任务绑定](../../docs/async-export-task-binding.md)。
 
 1. 文本只是尚未加载完成：继续用“短间隔轮询 + 总超时”，每轮重新定位元素并读取。
 2. 页面视觉上已经显示值，但 `get_text()` / `get_html()` 始终缺少动态渲染内容：不要继续重复 `get_text()`；改从真实 DOM 的 `textContent` 读取，再按业务格式判断。
