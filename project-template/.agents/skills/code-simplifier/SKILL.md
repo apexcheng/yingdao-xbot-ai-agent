@@ -35,6 +35,7 @@ description: Simplify recently modified code while preserving behavior and proje
 简化不是重新设计。不得无理由改变：
 
 - 业务条件、执行顺序、循环边界和停止条件。
+- 将多个函数合并回主流程时，检查原函数的局部变量是否覆盖外层循环变量或业务状态；同时保持原有执行顺序、异常处理、返回值和页面状态不变。
 - 返回值、数据结构、异常传播和失败语义。
 - 日志中承担排查价值的业务上下文。
 - 用户已确认的字段名、XPath、CSS、URL、按钮文案、Sheet 名、状态值和配置值。
