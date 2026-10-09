@@ -47,16 +47,13 @@ ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明
 
 ## 验证与同步
 
-1. 按风险做最小必要验证；默认不新增测试或运行无关全量检查。高风险写入先确认范围和回退方式。
-2. Code flow 同步 helper 属于 `.agents/skills/xbot-tools/scripts/sync_codeflows.py`，不再作为项目根目录的独立工具。只有新增或删除项目根目录 `.py` 文件时才运行；新增文件会登记对应 Code flow，删除文件会移除对应 Code flow 注册。只修改已有 `.py` 文件时不要运行 Code flow 同步 helper。新增 `.py` 的文件名去扩展名后不得与 `package.json` 中已有 flow 的 `name` 重复，例如已有名为 `init` 的 Visual flow 时不能新建 `init.py`；撞名登记后 Studio 打开项目会直接报“应用文件已损坏”，排查与修复见 `.agents/skills/xbot-tools/references/project-diagnostics.md`。
-3. 验证失败时先区分代码、环境、依赖和路径问题，不为通过无关检查扩大改动。
-4. 用户说 'push' 时指的是 git commit 并 push 到 GitHub / Gitee 远程仓库。执行前确认有改动需要提交，并使用清晰的 commit 信息。
+1. 按风险做最小必要验证；默认不新增测试或运行无关全量检查。高风险写入前提示具体数据风险和可能影响，不默认设计回退方案。
+2. 新增项目根目录 `.py` 文件时，文件名去扩展名后不得与 `package.json` 中已有 flow 的 `name` 重复，例如已有名为 `init` 的 Visual flow 时不能新建 `init.py`；撞名登记后 Studio 打开项目可能报“应用文件已损坏”，排查与修复见 `.agents/skills/xbot-tools/references/project-diagnostics.md`。
+3. 用户说 'push' 时指的是 git commit 并 push 到 GitHub / Gitee 远程仓库。执行前确认有改动需要提交，并使用清晰的 commit 信息。
 
 ## 安全与汇报
 
 1. 不隐藏副作用，不通过吞异常、静默失败或模糊返回值让主流程看起来成功。
-2. 不提交账号、密码、Token、Cookie、Webhook、客户数据或未公开地址；示例和日志必须脱敏。
-3. 长期业务规则和设计决策写入项目已有正式文档。
 
 ## 回复模板
 
