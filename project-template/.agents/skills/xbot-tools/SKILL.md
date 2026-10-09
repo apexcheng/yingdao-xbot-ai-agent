@@ -1,11 +1,11 @@
 ---
 name: xbot-tools
-description: Operate ShadowBot/Yingdao CLI, develop and publish xbot Code apps, synchronize flows, analyze legacy Visual projects, and diagnose or repair project metadata and Sigstore problems. Read only the task-relevant section; execution, publication, and repair require the user's explicit intent.
+description: Operate ShadowBot/Yingdao CLI, develop and publish xbot Code apps, synchronize flows, and diagnose or repair project metadata and Sigstore problems. Read only the task-relevant section; execution, publication, and repair require the user's explicit intent.
 ---
 
 # 影刀工具：CLI、应用生命周期与项目诊断
 
-该 Skill 汇总影刀工具与项目级操作。根据任务进入「CLI 操作」「应用开发闭环」或「项目诊断与迁移」，不要求执行无关流程。默认先只读；启动任务、同步发布、改写项目文件和修复签名都要遵守各部分原有的执行边界。
+该 Skill 汇总影刀工具与项目级操作。根据任务进入「CLI 操作」「应用开发闭环」或「项目诊断」，不要求执行无关流程。默认先只读；启动任务、同步发布、改写项目文件和修复签名都要遵守各部分原有的执行边界。
 
 新建或补全影刀编码版项目时，按需先阅读 [最小 base 项目骨架与验收说明](references/base-project-skeleton.md)。模板文件仍位于当前项目的 `project-template/`，不使用参考文档替代真实项目文件。普通 CLI 账户 / 任务查询无需加载骨架说明。
 
@@ -106,6 +106,6 @@ Console-only operations can return `not_supported` in Assistant mode. Check `sys
 4. 实际发布后核实线上版本对应本次代码；如已按用户要求运行，再根据任务状态与日志确认实际结果，未运行不得宣称业务已验证。
 5. 未经发布运行验证，不得假定 Code flow 可以直接作为应用的 `startup`；历史实验和验证边界见 [应用生命周期特殊案例](references/app-lifecycle-cases.md)。整应用复制的已知限制也在该参考文档中。
 
-## 项目诊断与迁移
+## 项目诊断
 
-读取 / 迁移旧版可视化项目，或排查应用文件损坏、Sigstore 校验失败、Flow 重名时，按需阅读 [项目诊断与迁移](references/project-diagnostics.md)。普通业务代码问题不触发该流程。
+排查应用文件损坏、Sigstore 校验失败、Flow 重名时，按需阅读 [项目诊断](references/project-diagnostics.md)。普通业务代码问题不触发该流程。

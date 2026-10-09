@@ -21,7 +21,7 @@
 - 多平台、多店铺、SQLite 状态 / 重试、日志与通知的历史真实参考：[库存监控源码快照](reference-projects/inventory-monitor/README.md)。此案例不作为当前函数拆分与过程式编程的默认标准。
 - 代码一致性、简化与只读审查：[code-quality](project-template/.agents/skills/code-quality/SKILL.md)
 - 影刀 CLI、应用创建与发布：[xbot-tools](project-template/.agents/skills/xbot-tools/SKILL.md)
-- 旧版可视化迁移、项目损坏、Sigstore 及 flow 重名排查：[项目诊断与迁移](project-template/.agents/skills/xbot-tools/references/project-diagnostics.md)
+- 项目损坏、Sigstore 及 flow 重名排查：[项目诊断](project-template/.agents/skills/xbot-tools/references/project-diagnostics.md)
 - 影刀开发经验与模板、多 Sheet、异步导出、钉钉通知、通用排错：[rpa-practices](project-template/.agents/skills/rpa-practices/SKILL.md)
 - 元素库、图像库、`package.image_selector()`、`package.resources`、全局变量：[package.md](xbot-api-docs/docs/package.md)
 - 浏览器、Chrome Profile、`get_all()`、页面加载后等待、Code 106、网页元素、输入、下载、Cookie、网络监听：[browser.md](xbot-api-docs/docs/browser.md)

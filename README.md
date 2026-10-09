@@ -39,7 +39,7 @@
 ### Skills 与完整开发经验
 
 - [代码质量 Skill](project-template/.agents/skills/code-quality/SKILL.md)：一致性、简化、审查。
-- [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)：CLI、项目创建、同步、发布、迁移、项目诊断。
+- [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)：CLI、项目创建、同步、发布、项目诊断。
 - [开发经验与模板 Skill](project-template/.agents/skills/rpa-practices/SKILL.md)：多数据源报表、异步导出、钉钉通知和通用排错。
 
 - [影刀编码版编程风格详解](project-template/.agents/skills/code-quality/references/coding-style.md)
@@ -97,7 +97,7 @@ run.py
 .claude/skills/rpa-practices/
 ```
 
-模板默认由 `config.py` 管理项目配置。`code-quality` Skill 提供一致性、简化和审查；`xbot-tools` Skill 包含 CLI、应用创建、发布、可视化迁移及项目诊断，其 `scripts/sync_codeflows.py` 只处理新增 / 删除 Code Flow，`scripts/publish_app.py` 统一处理外部修改后的保存、同步、发布与版本校验。`rpa-practices` Skill 按场景提供开发经验与示例。使用 CLI 时需本机已安装影刀 CLI。骨架和配置约定见 [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)。
+模板默认由 `config.py` 管理项目配置。`code-quality` Skill 提供一致性、简化和审查；`xbot-tools` Skill 包含 CLI、应用创建、发布及项目诊断，其 `scripts/sync_codeflows.py` 只处理新增 / 删除 Code Flow，`scripts/publish_app.py` 统一处理外部修改后的保存、同步、发布与版本校验。`rpa-practices` Skill 按场景提供开发经验与示例。使用 CLI 时需本机已安装影刀 CLI。骨架和配置约定见 [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)。
 
 ### 4. 告诉 AI Agent 两个目录
 

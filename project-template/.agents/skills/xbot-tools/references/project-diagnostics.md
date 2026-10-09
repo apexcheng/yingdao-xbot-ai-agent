@@ -1,36 +1,10 @@
-# xbot 项目诊断与迁移
+# xbot 项目诊断
 
-本文处理普通业务代码之外的**项目级问题**。当前包含两条工作流：
+本文处理普通业务代码之外的**项目级问题**：影刀应用“应用文件已损坏”等项目完整性问题排查与修复。
 
-1. 旧版可视化项目解析 / 迁移。
-2. 影刀应用“应用文件已损坏”等项目完整性问题排查与修复。
+普通 Python 业务 bug、网页元素问题、Excel / WPS 问题仍按项目 `AGENTS.md` 和知识库对应事实页处理。
 
-先根据用户症状选择对应工作流，不把两套步骤机械地全部执行。普通 Python 业务 bug、网页元素问题、Excel / WPS 问题仍按项目 `AGENTS.md` 和知识库对应事实页处理。
-
-### 工作流 A：可视化项目解析与迁移
-
-#### 1. 证据顺序
-
-1. `package.json`：启动流、flow 类型和文件映射。
-2. Code flow `.py`：`main(args)`、公开函数、参数与调用边界。
-3. `selectorsV2.xml` / `imagesV2.xml` / `package.py`：资源名称和对象来源。
-4. Visual flow `.pybx`：影刀维护的二进制流程文件，不把它当文本、JSON 或 Python 猜内部步骤。
-5. 需要步骤级逻辑时，使用当前环境可用的影刀 Studio、截图或可读导出作为证据；先从已安装工具的 help 发现真实命令，不编造命令、标志或流程 ID。
-
-无法确认 Visual flow 内部步骤时，明确标记“未确认”，不要根据流程名补全业务逻辑。
-
-#### 2. 迁移到编码版
-
-迁移时：
-
-- 保留用户已确认的 XPath、字段名、参数名、按钮文案和业务口径，不顺带重写业务。
-- 主流程按真实业务顺序自上而下展开，遵守项目 `AGENTS.md` 的代码结构规则。
-- 一次迁移一个可验证的业务边界；不要先删除原 Visual flow 再尝试复原。
-- 新增 `.py` flow 后按项目同步规则更新 `package.json` 并编译；资源仍被使用时不要删除元素库、图像库或全局变量。
-
-迁移完成至少验证：新 Code flow 已登记、Python 编译通过、必要的影刀同步完成、关键业务路径与旧流程证据一致。没有实际运行过的步骤不得写成“已验证运行”。
-
-### 工作流 B：应用文件损坏排查
+## 应用文件损坏排查
 
 典型界面提示：
 
@@ -41,7 +15,7 @@
 
 不要只根据这个弹窗猜 Python 代码坏了。**先看影刀日志，确认失败层级。**
 
-#### 1. 先查真实错误
+### 1. 先查真实错误
 
 优先读取失败时间附近的影刀日志：
 
@@ -67,7 +41,7 @@ ShadowBot.Common.PackageUnreadableException: 应用文件已损坏
 
 则当前已确认的是**项目完整性签名校验失败**，不是 Python 语法错误的同义词。
 
-#### 2. Sigstore 修复顺序
+### 2. Sigstore 修复顺序
 
 `package.sigstore` 与影刀项目文件内容有关。外部工具修改 `run.py`、其他 flow、`package.json` 等文件后，如果没有由影刀重新生成签名，就可能出现 Studio 拒绝打开。
 
@@ -92,7 +66,7 @@ powershell -ExecutionPolicy Bypass -File .agents/skills/xbot-tools/scripts/repai
 
 脚本调用**本机已安装影刀 Runtime 自己的 `PackageHelper.TestPackageSigstore()` / `WritePackageSigstore()`**，并在写入前把旧 `package.sigstore` 备份到项目 `.dev/repair-backups/`。它不是手工计算或伪造签名。
 
-#### 3. 不要把所有“损坏”都归因于 Sigstore
+### 3. 不要把所有“损坏”都归因于 Sigstore
 
 如果日志没有 Sigstore 失败，或者校验结果已经是 `before=True`，不要重签名碰运气。继续按日志证据检查：
 
@@ -105,7 +79,7 @@ flow / 文件映射异常时，直接对照 `package.json` 中的 flow 注册、
 
 如果修了 `package.json`、flow 文件或其他参与完整性校验的项目文件，**最后再重新做 Sigstore 校验 / 写入**；不要先重签名、再继续改文件，否则签名会再次失效。
 
-#### 4. flow 重名导致的假“损坏”
+### 4. flow 重名导致的假“损坏”
 
 日志没有 Sigstore 失败、校验 `before=True`，但出现以下错误时，是流程重名，不是签名问题（运行验证：影刀 Studio，2026-10）：
 
@@ -131,7 +105,7 @@ Studio 按 `<活动代码>.<流程名>` 建 flow 字典，`package.json` 的 `fl
 
 ### 安全与输出
 
-- 排查默认先只读。只有用户明确要求修复 / 迁移时才修改项目文件。
+- 排查默认先只读。只有用户明确要求修复时才修改项目文件。
 - 不泄露账号、密码、Token、Cookie、Webhook、客户数据或 `package.json` 的变量值。
 - 不把“Python 编译通过”“Sigstore 校验通过”“Studio 可以打开”“业务实际运行成功”混成同一个验证等级。
 - 汇报时区分：已确认根因、实际修改、实际验证、仍未验证的部分。
