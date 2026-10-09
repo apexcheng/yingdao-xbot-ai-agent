@@ -10,6 +10,8 @@
 
 多 Sheet 业务工作簿使用 `xbot.excel.open(file_name=str(target), kind="wps", visible=True, update_links=False)` 打开。多个模块共用工作簿时，可打开一次，将 `workbook` 传给实际需要它的模块；保存与关闭按当前业务处理。
 
+直接调用 `workbook.save()`、`workbook.close()`，不要只为这两个调用单独增加 `try/except` 来包装、转换或吞掉异常；让异常遵循项目已有的业务流程。需要保证资源收尾时仍可使用 `finally`，但不对正常保存、关闭动作额外套专用捕获。
+
 WPS 自动保存、保存失败或异常退出时，以正式文件的实际状态判断结果。
 
 ## 数据源模块
