@@ -11,9 +11,7 @@ description: Operate ShadowBot/Yingdao CLI, develop and publish xbot Code apps, 
 
 ## CLI 操作
 
-Use the installed ShadowBot agent-oriented CLI for ShadowBot-specific app lifecycle and runtime operations instead of guessing internal APIs or manually automating the ShadowBot UI.
-
-This CLI is a **supplementary ShadowBot tool, not the default way to inspect or develop project source**. Read and analyze the actual project directly for source files, configuration tracing, code search, temporary scripts, and ordinary project commands. Do not use CLI flow/block inspection as a substitute for source analysis when the project can answer the question directly.
+ShadowBot CLI 只用于影刀自身运行和生命周期操作；普通源码、配置与业务分析直接在项目工作区完成。
 
 ### Executable
 
@@ -23,17 +21,10 @@ Prefer the stable launcher path:
 
 Do not pin commands to versioned directories such as `shadowbot-6.x.x`; ShadowBot updates can change those folders.
 
-### Core workflow
+### 按需检查与命令帮助
 
-1. Check availability first:
-   `"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" system health`
-2. Inspect runtime state when mode/UI/task state matters:
-   `"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" system state`
-3. Inspect the current account when authentication matters:
-   `"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" auth current`
-4. The CLI is self-documenting for LLM agents. Before any unfamiliar or parameterized action, run:
-   `"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" <command> -h`
-   Do not guess flags, IDs, accepted values, or workflow ordering.
+- CLI 连接或服务可用性不明时查 `system health`；涉及模式或任务状态时查 `system state`；需要当前账号身份时查 `auth current`。已掌握所需信息时不重复预检。
+- 遇到不熟悉的命令或不确定的参数，先运行 `"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" <command> -h`；不要猜命令标志、ID、参数取值或执行顺序。
 
 ### Find ShadowBot apps/projects
 
@@ -47,7 +38,7 @@ Use the returned `appId` as the canonical app identifier. To inspect one app and
 
 `"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" console app detail --app-id <UUID> --app-type developed`
 
-When the user asks which ShadowBot project contains a feature, webhook, task, or automation, search app names first with `console app`. If source-level inspection is then required, use the discovered app identity to locate the corresponding local ShadowBot project rather than guessing from directory order.
+已有可信项目路径或 App ID 时直接使用，不重复搜索；需要发现应用身份时再用 `console app` 搜索，多个结果必须核对元数据后确定目标。需定位源码时据此确认对应项目目录，不按目录顺序猜测。
 
 ### Run and inspect tasks
 
@@ -81,7 +72,7 @@ Useful commands:
 - `studio create`
 - `studio open`
 
-`studio create` creates a PC automation app and sync-closes it. `studio open` creates a PC automation app and keeps Studio open. Do not assume either command opens an existing app; inspect help and current CLI capabilities instead.
+ShadowBot 6.3.22 已验证：`studio create` **新建**应用后同步关闭；`studio open` **不带 `--app-id`** 时新建应用并保持 Studio 打开。要打开**已有应用**，在当前 PowerShell 进程设置 `SWITCH_STUDIO_MCP_CLI_SUPPORT=1`，通过 `studio open -h` 确认支持 `--app-id` 后执行 `studio open --app-id <uuid>`。不同版本先以当前 CLI 帮助为准，不要把不带 ID 的 `studio open` 误用为打开已有项目。
 
 ### Runtime modes
 
@@ -92,20 +83,9 @@ The CLI supports `console` and `assistant` mode switching:
 
 Console-only operations can return `not_supported` in Assistant mode. Check `system state` before switching. Do not use `--force` to switch to Console while a task is running unless the user explicitly wants that interruption/risk.
 
-### Settings and UI
+### 低频配置、UI 与连接排错
 
-Configuration workflow:
-1. `config list`
-2. `config describe --key <key>`
-3. `config get --key <key>`
-4. `config set --key <key> --value <value>`
-
-Some settings require a ShadowBot restart. Verify after changes.
-
-UI actions are exposed through:
-`ui --exec <action>`
-
-Run `ui -h` before use. Supported actions include Studio/Console minimize/maximize and switching to schedule/assistant/console.
+涉及影刀配置、窗口 UI 操作或 CLI 本地 REST 连接异常时，按需阅读 [CLI 辅助命令与连接排错](references/cli-auxiliary-commands.md)。
 
 ### Safety and modification rules
 
@@ -115,7 +95,6 @@ Run `ui -h` before use. Supported actions include Studio/Console minimize/maximi
 - Treat all app/task execution commands as real execution with possible business side effects. Only execute when the user explicitly requests a run; do not make app execution a default development, verification, or completion step.
 - Never invent an app UUID or silently pick the first search result when multiple apps match. Use names and returned metadata to disambiguate.
 - Prefer CLI outputs as the source of truth for current ShadowBot app IDs, task state, account state, and supported command parameters.
-- If a command fails because the local REST API is unavailable, verify `system health`, ShadowBot process/runtime state, and authentication before attempting alternate methods.
 
 ## 应用开发闭环
 
@@ -124,7 +103,7 @@ Run `ui -h` before use. Supported actions include Studio/Console minimize/maximi
 源码读取、代码修改、配置追踪和临时脚本直接在真实项目工作区完成；本 Skill 中的 ShadowBot CLI 只承担创建 / 打开 / 保存 / 同步 / 发布 / 运行等应用生命周期动作，不把 CLI 当成源码分析器。
 
 1. 新建应用时，先核对 CLI 的 `studio create -h` / `studio open -h`。ShadowBot 6.3.22 实测中，`studio create` 创建并同步关闭应用，但返回结果不含应用 ID；随后用唯一临时应用名执行 `console app --search <name>` 可取得 `appId` / `versionId`。再用 `auth current` 返回的 `userId` 组合本机目录 `%LOCALAPPDATA%\ShadowBot\users\<userId>\apps\<appId>\xbot_robot`，并以该目录 `package.json.uuid == appId` 作为项目根确认，不凭应用名猜目录。
-2. 重新打开已有应用与创建新应用必须分开。ShadowBot 6.3.22 实测需要在当前 PowerShell 进程设置 `SWITCH_STUDIO_MCP_CLI_SUPPORT=1` 后重新查看 `studio open -h`；此时帮助会正式列出 `--app-id`。使用 `studio open --app-id <uuid>` 可重新打开已有 developed app；不传 `--app-id` 的 `studio open` 仍是创建新应用。保存已有应用可用 `studio current save`，同步并关闭用 `studio current sync`。若先在项目目录外部修改了 `package.json` / Code flow，必须让 Studio 重新载入磁盘状态后再保存、同步；不要把 `console app publish` 的成功返回当作磁盘改动已经进入新版本。
+2. 创建新应用与打开已有应用的命令区别见上方「Studio operations」，不要混用。保存已有应用可用 `studio current save`，同步并关闭用 `studio current sync`。若先在项目目录外部修改了 `package.json` / Code flow，必须让 Studio 重新载入磁盘状态后再保存、同步；不要把 `console app publish` 的成功返回当作磁盘改动已经进入新版本。
 3. 将模板中缺失的文件合并到真实项目，保留影刀生成的文件和已有业务改动。配置变量由 `config.py` 管理，默认不新增影刀运行输入参数；`run.py` 的 `main(args)` 是 Code 流入口，其他模块正常导入调用。只有新增或删除项目根目录 `.py` 文件时才运行本 Skill 内置 helper：`python .agents/skills/xbot-tools/scripts/sync_codeflows.py`；只修改已有 `.py` 文件时不要运行。该 helper 只同步 Code flow 注册并做编译检查，不承担保存、同步或发布。
 4. 本 Skill 提供一个可选发布 helper：`python .agents/skills/xbot-tools/scripts/publish_app.py --project-dir <项目目录> --update-log \"<发布说明>\"`。它从 `package.json.uuid` 读取 App ID，依次执行 `studio open → studio app reload → studio app save → studio current sync → console app publish`，并检查发布前后的线上版本；不是强制发布方式。该 helper 不调用 `sync_codeflows.py`，新增 / 删除 `.py` 时应先单独同步 Code flow。发布和运行都不是默认开发收尾动作，只有用户明确要求时才执行。
 5. 排错时在相关步骤临时加日志，不记录凭据或敏感数据；根据日志修复并重试。完成后删除临时日志并重新保存 / 同步。若本次任务由用户明确要求发布，再确认发布版本对应清理后的代码；若用户明确要求运行，再单独确认运行范围、副作用，并结合任务状态与日志验收。
