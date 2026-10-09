@@ -18,7 +18,7 @@
 - 多数据源 / 多 Sheet 共用工作簿、WPS 用法与数据写入边界：[rpa-practices / Excel/WPS](project-template/.agents/skills/rpa-practices/references/excel-wps.md)
 - 跨轮次处理状态示例、失败重试与通知状态区分：[rpa-practices / 跨轮次状态与重试](project-template/.agents/skills/rpa-practices/references/cross-run-state-and-retries.md)
 - 网页后台异步导出、任务列表快照比对、本轮任务识别及动态元素失效处理：[rpa-practices / Web](project-template/.agents/skills/rpa-practices/references/web.md)
-- 业务流程组合场景索引（当前仅登记「表格更新」，正文待补充）：[rpa-practices / 业务流程组合](project-template/.agents/skills/rpa-practices/references/workflow-composition.md)
+- Web、WPS、多来源数据处理与钉钉如何组合；跨境补货表「表格更新」真实案例：[rpa-practices / 业务流程组合](project-template/.agents/skills/rpa-practices/references/workflow-composition.md)
 - 跨数据、API、环境或市场指令的通用排错：[rpa-practices / 通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 - 多平台、多店铺、SQLite 状态 / 重试、日志与通知的历史真实参考：[库存监控源码快照](reference-projects/inventory-monitor/README.md)。此案例不作为当前函数拆分与过程式编程的默认标准。
 - 代码一致性、简化与只读审查：[code-quality](project-template/.agents/skills/code-quality/SKILL.md)
