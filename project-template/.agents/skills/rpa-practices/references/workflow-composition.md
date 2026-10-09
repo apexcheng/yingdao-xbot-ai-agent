@@ -6,8 +6,8 @@
 
 ### 真实来源与适用场景
 
-- 来源：影刀编码版「【表格更新】跨镜补货表」；[GitHub 固定版本 d721bcd](https://github.com/apexcheng/cross-border-replenishment-rpa/tree/d721bcd33d64e5daa29547a8de79d91dc308d168)（2026-10）。
-- 该业务程序已在其它机器执行（用户确认）；本页以固定提交中的源码为准，不复制整个项目，也不据此声称该提交已单独做过实机验收。该提交的 16 项模拟测试已通过。
+- 来源：影刀编码版「【表格更新】跨镜补货表」；[GitHub 固定版本 3a78997](https://github.com/apexcheng/cross-border-replenishment-rpa/tree/3a7899764960435767553f9cf00076adb5f19f74)（2026-10）。
+- 该业务程序已在其它机器执行（用户确认）；本页以固定提交中的源码为准，不复制整个项目，也不据此声称该提交已单独做过实机验收。该提交的 17 项模拟测试已通过。
 - 适用：从多个 Web / ERP 下载数据，更新同一个 Excel / WPS 工作簿的多个 Sheet，并在结束后记录结果、归档日志、发送钉钉通知。
 
 ### 一轮业务怎么串起来
@@ -37,12 +37,12 @@
 
 | 文件 | 在组合中的职责 |
 | --- | --- |
-| [`run.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/d721bcd33d64e5daa29547a8de79d91dc308d168/run.py) | 顺序编排、按本轮业务条件跳过、传递共享工作簿和源文件路径、记录状态、统一保存与收尾 |
-| [`update_seaya_stock.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/d721bcd33d64e5daa29547a8de79d91dc308d168/update_seaya_stock.py) 等 `update_xxx.py` | 各自处理所属业务的数据获取与写入，不承担整轮保存、钉钉汇总 |
-| [`shopee_common.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/d721bcd33d64e5daa29547a8de79d91dc308d168/shopee_common.py) | 仅集中 Shopee 两种业务实际共用的登录、地区切换、导出任务下载 |
-| [`utils.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/d721bcd33d64e5daa29547a8de79d91dc308d168/utils.py) | 三次下载重试、统一 WPS 打开、RAW 区复制及必要的数据转换 |
-| [`update_country_sales.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/d721bcd33d64e5daa29547a8de79d91dc308d168/update_country_sales.py) | 使用同轮妙手、C-ERP 来源，规格同步、销量计算与三国逐项写入 |
-| [`run_logger.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/d721bcd33d64e5daa29547a8de79d91dc308d168/run_logger.py) | 中文日志、Sheet 结果、脱敏、最终钉钉通知及日志导出；不决定业务执行顺序 |
+| [`run.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/3a7899764960435767553f9cf00076adb5f19f74/run.py) | 顺序编排、按本轮业务条件跳过、传递共享工作簿和源文件路径、记录状态、统一保存与收尾 |
+| [`update_seaya_stock.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/3a7899764960435767553f9cf00076adb5f19f74/update_seaya_stock.py) 等 `update_xxx.py` | 各自处理所属业务的数据获取与写入，不承担整轮保存、钉钉汇总 |
+| [`shopee_common.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/3a7899764960435767553f9cf00076adb5f19f74/shopee_common.py) | 仅集中 Shopee 两种业务实际共用的登录、地区切换、导出任务下载 |
+| [`utils.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/3a7899764960435767553f9cf00076adb5f19f74/utils.py) | 下载最多尝试三次、统一 WPS 打开、RAW 区复制及必要的数据转换 |
+| [`update_country_sales.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/3a7899764960435767553f9cf00076adb5f19f74/update_country_sales.py) | 使用同轮妙手、C-ERP 来源，规格同步、销量计算与三国逐项写入 |
+| [`run_logger.py`](https://github.com/apexcheng/cross-border-replenishment-rpa/blob/3a7899764960435767553f9cf00076adb5f19f74/run_logger.py) | 中文日志、Sheet 结果、脱敏、最终钉钉通知及日志导出；不决定业务执行顺序 |
 
 **跨模块传递的是实际需要的数据，不是万能上下文字典。** 主流程持有一个目标 `workbook`；成功下载的妙手 / C-ERP 文件路径仅在本轮交给后续国家销量模块。若本轮因为跳过或失败没有取得该路径，国家销量模块按自身需要重新下载；不引入跨轮文件缓存。来源工作簿由各业务模块打开，目标工作簿最终由主流程统一保存。
 
@@ -64,6 +64,7 @@
 ### 日志、通知与复用原则
 
 - 运行日志采用 `【业务对象】操作：结果｜必要信息`，正常路径记录关键节点；最终失败保留一次完整堆栈。详见 [中文业务上下文日志](logging.md)。
+- 状态区仅记录业务结果、处理时间和必要说明；日志文件与历史快照用相同的执行开始时间命名，不另外维护用于关联的业务字段。
 - 钉钉消息按 Sheet 展示更新、跳过、失败及未执行结果，并区分保存状态；不要把代码级流水日志复制到通知中。详见 [钉钉通知实践](dingtalk.md)。
 - **借鉴组合，不复制业务**：可参考“多来源 → 各自下载处理 → 共用目标工作簿 → 统一保存 → 结果通知”的调用关系；不要复制 Shopee XPath、店铺 ID、验证码流程、国家销量字段位置、截止日期初始化值、重试次数、快照数量或具体的保存失败策略。
 - **需要具体实现才打开源码**：优先从本页理解全局，再按上面的文件索引选读 1～2 个模块。新增或修改 API 时以 [正式 API 文档](../../../../../xbot-api-docs/docs/browser.md) 及相应知识页为准，不用历史项目反推 API 契约。
