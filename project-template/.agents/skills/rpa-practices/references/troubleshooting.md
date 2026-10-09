@@ -32,13 +32,13 @@
 
 遇到 XPath 查到却无法点击、Code 106 或页面行为异常时，结合当前 URL / 登录状态、iframe、遮罩与 SPA 重绘判断原因。元素可能因重绘失效，必要时重新定位；不要仅凭错误码认定广告遮挡或一味增加超时。保留异常 Page 供排查只在当前任务需要时执行。
 
-网页加载等待及具体 API 见 [browser.md](../../../../../xbot-api-docs/docs/browser.md)，跨 iframe 见 [iframe2-extension.md](../../../../../xbot-api-docs/docs/iframe2-extension.md)，异步任务表元素失效见 [异步导出](async-export-task-binding.md)。
+网页加载等待及具体 API 见 [browser.md](../../../../../xbot-api-docs/docs/browser.md)，跨 iframe 见 [iframe2-extension.md](../../../../../xbot-api-docs/docs/iframe2-extension.md)，异步任务表元素失效见 [网页实践](web.md)。
 
 ### Excel / WPS
 
 按当前故障确认文件 / Sheet / 区域、文件占用、驱动和保存结果。注意长数字精度和以 `=` 开头的文本可能被当作公式。下载文件的 `openpyxl` 后端可能不支持 `close()`，部分平台 XLSX 样式不一定能被严格解析；宽日期表头有读取异常时可分段核对列数。
 
-WPS 打开示例见 [多数据源报表](multi-source-report-safety.md)，具体 API 和驱动差异见 [excel.md](../../../../../xbot-api-docs/docs/excel.md)。
+WPS 打开示例见 [表格实践](excel-wps.md)，具体 API 和驱动差异见 [excel.md](../../../../../xbot-api-docs/docs/excel.md)。
 
 ### 市场指令与第三方接口
 

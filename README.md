@@ -40,11 +40,14 @@
 
 - [代码质量 Skill](project-template/.agents/skills/code-quality/SKILL.md)：一致性、简化、审查。
 - [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)：CLI、项目创建、同步、发布、项目诊断。
-- [开发经验与模板 Skill](project-template/.agents/skills/rpa-practices/SKILL.md)：多数据源报表、异步导出、钉钉通知和通用排错。
+- [开发经验与模板 Skill](project-template/.agents/skills/rpa-practices/SKILL.md)：网页、Excel/WPS、钉钉通知、业务组合场景及通用排错。
 
 - [影刀编码版编程风格详解](project-template/.agents/skills/code-quality/references/coding-style.md)
 - [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
-- [多数据源报表安全边界](project-template/.agents/skills/rpa-practices/references/multi-source-report-safety.md)
+- [Excel / WPS 表格实践](project-template/.agents/skills/rpa-practices/references/excel-wps.md)
+- [网页自动化实践](project-template/.agents/skills/rpa-practices/references/web.md)
+- [钉钉通知实践](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
+- [业务流程组合（表格更新待补充）](project-template/.agents/skills/rpa-practices/references/workflow-composition.md)
 - [影刀编码版通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 
 ### xbot API 与自动化文档

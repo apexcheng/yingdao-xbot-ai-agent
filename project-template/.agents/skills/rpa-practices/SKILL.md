@@ -1,20 +1,21 @@
 ---
 name: rpa-practices
-description: Apply proven ShadowBot/Yingdao RPA development workflows and templates. Use for cross-run status and retry semantics, multi-source or multi-Sheet Excel/WPS automation, asynchronous web export task identification, DingTalk business notification content, and cross-layer troubleshooting. For API signatures use the official xbot API docs; for code style follow project AGENTS.md.
+description: Apply proven ShadowBot/Yingdao RPA practices for Web automation, Excel/WPS, DingTalk notifications, cross-run state and retries, and troubleshooting. Includes a workflow-composition index for future business examples. For API signatures use official xbot API docs; for code style follow project AGENTS.md.
 ---
 
 # 影刀开发经验与模板
 
-本 Skill 汇总原 `docs/` 的实际开发经验、专项流程与示例。**先按任务类型读取相应的完整参考文件**，不要为简单改动加载全部内容；参考文件保留原有详细判断、风险边界及示例，不用本目录替代正式 xbot API 文档或当前项目 `AGENTS.md`。
+本 Skill 汇总影刀实际开发经验，分技术专题与跨领域专项。**按任务需要读取对应参考文件**，不要求简单改动加载全部内容；API 签名仍查正式 xbot API 文档，常驻开发约束仍以当前项目 `AGENTS.md` 为准。
 
 ## 按场景读取
 
 | 场景 | 必须按需阅读的材料 |
 | --- | --- |
-| 多数据源、多 Sheet 共享工作簿、WPS 打开方式与数据写入边界 | [多数据源报表安全边界](references/multi-source-report-safety.md) |
+| Web 自动化：后台异步导出任务绑定、SPA 动态元素失效 | [网页实践](references/web.md) |
+| Excel / WPS：多数据源、多 Sheet、工作簿使用和写入边界 | [表格实践](references/excel-wps.md) |
+| 钉钉机器人业务通知：排版、分组、@ 规则及真实示例 | [钉钉通知实践](references/dingtalk.md) |
+| 跨技术业务流程组合；当前仅有「表格更新」场景标题，内容尚未编写 | [业务流程组合](references/workflow-composition.md) |
 | 跨轮次状态示例、失败重试判断、业务结果与通知结果区分 | [跨轮次处理状态与重试](references/cross-run-state-and-retries.md) |
-| 点击导出后在后台任务中心识别本轮任务、等待下载，以及 SPA 动态元素失效 | [网页后台异步导出任务绑定](references/async-export-task-binding.md) |
-| 钉钉机器人业务通知的标题、数字汇总、状态、分组、@ 规则及真实文案示例 | [钉钉通知文案与排版偏好](references/dingtalk-notification-style.md) |
 | 跨数据、网页、Excel / WPS、接口或环境的复杂故障，按实际证据分层排查 | [影刀编码版通用排错](references/troubleshooting.md) |
 
 ## 使用边界

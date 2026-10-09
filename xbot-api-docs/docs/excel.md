@@ -160,7 +160,7 @@ workbook.save()
 workbook.close()
 ```
 
-若本轮业务写入失败，不主动执行 `save()`；关闭未保存工作簿时可使用已核验的 `set_saved(True)` 标记。具体多数据源失败策略见 [多数据源报表安全边界](../../project-template/.agents/skills/rpa-practices/references/multi-source-report-safety.md)。
+若本轮业务写入失败，不主动执行 `save()`；关闭未保存工作簿时可使用已核验的 `set_saved(True)` 标记。具体多数据源失败策略见 [Excel / WPS 表格实践](../../project-template/.agents/skills/rpa-practices/references/excel-wps.md)。
 
 #### 两种后端的实测差异
 
