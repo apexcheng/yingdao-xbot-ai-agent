@@ -29,16 +29,12 @@ config   Code     配置路径
 - `.agents/skills/xbot-tools/scripts/sync_codeflows.py`：仅在新增 / 删除项目根目录 `.py` 时使用，用于同步 Code Flow 注册并编译当前项目 Python 文件；普通已有文件修改不需要执行。
 - `.agents/skills/xbot-tools/scripts/publish_app.py`：发布外部修改后的已有应用，统一执行打开应用、重新载入磁盘、保存编译、同步、发布和线上版本校验；不负责 Code Flow 注册。
 
-模板不预设业务字段，也不创建影刀“运行应用时需要传入的参数”。在真实项目的 `config.py` 中按需求定义配置；凭据等敏感值从本地安全来源读取，不在 Git 中保存明文。需要交互式配置或加密持久化的项目，可按[增强工具2026](../../../../../xbot-api-docs/docs/extensions/xbot-enhance-tools.md)的已核验 API 单独实现。
+模板不预设业务字段，也不创建影刀“运行应用时需要传入的参数”。在真实项目的 `config.py` 中按需求定义配置；凭据等敏感值从本地安全来源读取，不在 Git 中保存明文。
 
 ## Agent 实现规则
 
-入口、参数、敏感信息与同步遵守[项目开发规则](../../../../AGENTS.md)；过程式主流程、`run.py / config.py / tool.py（或 utils.py）` 职责、变量内联和函数边界的详细判断见[编程风格详解](../../code-quality/references/coding-style.md)。`main(args)` 是影刀调用 Code 流的入口约定；其他 Python 文件按正常 Python 语法导入和调用，无需都定义 `main(args)`。
-
-涉及多个更新模块共同处理一份 Excel，提交策略先根据实际业务在 [多数据源报表安全边界](../../rpa-practices/references/multi-source-report-safety.md) 确认，不预设统一保存或逐任务保存。
+开发约束遵守[项目开发规则](../../../../AGENTS.md)，不在骨架文档重复规定。
 
 ## 最小验收
 
-1. 仅新增缺失文件；已有入口、配置与用户改动保留。按项目规则需要同步时，先备份 `package.json`，再确认新增 Code 流已登记；用户要求暂不同步时记录未执行。
-2. 真实项目的配置变量已在 `config.py` 定义，业务模块只导入所需值；敏感值没有以明文提交。
-3. 默认执行语法检查及与改动风险匹配的针对性验证；仅在用户明确要求时才发布或运行影刀应用。执行后须确认生效的是最终代码版本，主要业务路径符合当前需求。
+按实际改动做必要验证：涉及新增或删除 Code Flow 时确认注册一致，按需检查 Python 语法。未实际发布或运行的内容，不得宣称已通过对应验证。
