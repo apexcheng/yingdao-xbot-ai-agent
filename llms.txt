@@ -14,6 +14,7 @@
 - 新建或补全影刀编码版项目：[xbot-tools / base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
 - 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[code-quality / 编程风格](project-template/.agents/skills/code-quality/references/coding-style.md)
 - 钉钉业务通知的文案结构、排版偏好、状态 emoji 与示例：[rpa-practices / 钉钉通知](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
+- 中文业务上下文日志、关键节点与失败示例：[rpa-practices / 日志实践](project-template/.agents/skills/rpa-practices/references/logging.md)
 - 多数据源 / 多 Sheet 共用工作簿、WPS 用法与数据写入边界：[rpa-practices / Excel/WPS](project-template/.agents/skills/rpa-practices/references/excel-wps.md)
 - 跨轮次处理状态示例、失败重试与通知状态区分：[rpa-practices / 跨轮次状态与重试](project-template/.agents/skills/rpa-practices/references/cross-run-state-and-retries.md)
 - 网页后台异步导出、任务列表快照比对、本轮任务识别及动态元素失效处理：[rpa-practices / Web](project-template/.agents/skills/rpa-practices/references/web.md)

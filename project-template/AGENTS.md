@@ -40,7 +40,7 @@ ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明
 2. 需要检索影刀知识时，通过知识库 `llms.txt` 或 QMD 定位相关正式文档；搜索摘要不能替代正式文档内容。
 3. 调用任何市场指令（`xbot_extensions`）时，无论是 Flow 的 `processN(...)`、直接 Python API，还是通过别名导入后调用，都必须在调用点紧邻添加注释，至少说明该入口的业务功能，以及本次传入各参数的名称和含义；不得只保留裸调用。功能和参数说明以知识库正式事实页或用户已确认用法为准，不得根据函数编号、函数名、参数值或安装副本猜测。知识页缺少所需事实时说明缺口；不为日常调用自动转查源码。
 4. 网页业务默认使用 `xbot.web`；所有 Page 新建、跳转、刷新等加载完成后，先 `page.wait_load_completed(...)`，再统一 `time.sleep(3)`，然后开始业务操作，避免 JS 仍在初始化。需要等待异步业务结果时仍须检查实际状态，不用不断叠加固定等待。
-5. 影刀日志使用 `from xbot.app import logging`；动态内容使用完整 f-string，异常堆栈使用 `traceback.format_exc()`。
+5. 影刀日志使用 `from xbot.app import logging`；动态内容使用完整 f-string，异常堆栈使用 `traceback.format_exc()`。业务日志默认采用简洁的中文上下文格式，记录业务对象、动作和必要结果；示例见 `.agents/skills/rpa-practices/references/logging.md`。
 6. **严格禁止 Agent 直接修改 `selectorsV2.xml`**：不得创建、编辑、格式化、覆盖或补丁修改该文件。需要增删或调整元素库时，Agent 只能提示用户自行通过影刀编辑器修改，不得代替用户修改文件；业务代码只读取并使用项目中已有的元素库名称。
 7. 需要操作 ShadowBot CLI 时，按需读取 `.agents/skills/xbot-tools/SKILL.md`；命令参数以本机帮助为准。
 8. 跨轮次状态与重试、多数据源 / 多 Sheet 报表、异步导出任务绑定、钉钉业务通知及跨层排错等专项任务，按需读取 `.agents/skills/rpa-practices/SKILL.md` 中对应经验与完整案例；简单项目改动不默认加载全部材料。

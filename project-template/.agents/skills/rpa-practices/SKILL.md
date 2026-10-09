@@ -1,6 +1,6 @@
 ---
 name: rpa-practices
-description: Apply proven ShadowBot/Yingdao RPA practices for Web automation, Excel/WPS, DingTalk notifications, cross-run state and retries, and troubleshooting. Includes a workflow-composition index for future business examples. For API signatures use official xbot API docs; for code style follow project AGENTS.md.
+description: Apply proven ShadowBot/Yingdao RPA practices for Web automation, Excel/WPS, Chinese business-context logs, DingTalk notifications, cross-run state and retries, and troubleshooting. Includes a workflow-composition index for future business examples. For API signatures use official xbot API docs; for code style follow project AGENTS.md.
 ---
 
 # 影刀开发经验与模板
@@ -13,6 +13,7 @@ description: Apply proven ShadowBot/Yingdao RPA practices for Web automation, Ex
 | --- | --- |
 | Web 自动化：后台异步导出任务绑定、SPA 动态元素失效 | [网页实践](references/web.md) |
 | Excel / WPS：多数据源、多 Sheet、工作簿使用和写入边界 | [表格实践](references/excel-wps.md) |
+| 中文业务上下文日志：输出格式、关键节点、异常记录与示例 | [日志实践](references/logging.md) |
 | 钉钉机器人业务通知：排版、分组、@ 规则及真实示例 | [钉钉通知实践](references/dingtalk.md) |
 | 跨技术业务流程组合；当前仅有「表格更新」场景标题，内容尚未编写 | [业务流程组合](references/workflow-composition.md) |
 | 跨轮次状态示例、失败重试判断、业务结果与通知结果区分 | [跨轮次处理状态与重试](references/cross-run-state-and-retries.md) |
