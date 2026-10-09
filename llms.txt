@@ -15,8 +15,8 @@
 - 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[code-quality / 编程风格](project-template/.agents/skills/code-quality/references/coding-style.md)
 - 钉钉业务通知的文案结构、排版偏好、状态 emoji 与示例：[rpa-practices / 钉钉通知](project-template/.agents/skills/rpa-practices/references/dingtalk-notification-style.md)
 - 多数据源 / 多 Sheet 更新同一工作簿、统一或逐任务保存及失败策略：[rpa-practices / 报表安全](project-template/.agents/skills/rpa-practices/references/multi-source-report-safety.md)
-- 定时重复执行、跨轮次幂等、状态落盘、重试次数与终态管理：[rpa-practices / 跨轮次状态与重试](project-template/.agents/skills/rpa-practices/references/cross-run-state-and-retries.md)
-- 网页后台异步导出、本轮任务识别、任务中心多地区及多分类下载：[rpa-practices / 异步导出](project-template/.agents/skills/rpa-practices/references/async-export-task-binding.md)
+- 跨轮次处理状态示例、失败重试与通知状态区分：[rpa-practices / 跨轮次状态与重试](project-template/.agents/skills/rpa-practices/references/cross-run-state-and-retries.md)
+- 网页后台异步导出、任务列表快照比对、本轮任务识别及动态元素失效处理：[rpa-practices / 异步导出](project-template/.agents/skills/rpa-practices/references/async-export-task-binding.md)
 - 跨数据、API、环境或市场指令的通用排错：[rpa-practices / 通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 - 多平台、多店铺、SQLite 状态 / 重试、日志与通知的历史真实参考：[库存监控源码快照](reference-projects/inventory-monitor/README.md)。此案例不作为当前函数拆分与过程式编程的默认标准。
 - 代码一致性、简化与只读审查：[code-quality](project-template/.agents/skills/code-quality/SKILL.md)

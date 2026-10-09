@@ -1,6 +1,6 @@
 ---
 name: rpa-practices
-description: Apply proven ShadowBot/Yingdao RPA development workflows and templates. Use for cross-run idempotency and retryable state, multi-source or multi-Sheet Excel/WPS automation, asynchronous web export task identification, DingTalk business notification content, and cross-layer troubleshooting. For API signatures use the official xbot API docs; for code style follow project AGENTS.md.
+description: Apply proven ShadowBot/Yingdao RPA development workflows and templates. Use for cross-run status and retry semantics, multi-source or multi-Sheet Excel/WPS automation, asynchronous web export task identification, DingTalk business notification content, and cross-layer troubleshooting. For API signatures use the official xbot API docs; for code style follow project AGENTS.md.
 ---
 
 # 影刀开发经验与模板
@@ -12,15 +12,14 @@ description: Apply proven ShadowBot/Yingdao RPA development workflows and templa
 | 场景 | 必须按需阅读的材料 |
 | --- | --- |
 | 多个数据源、多 Sheet 共享工作簿、统一或逐任务保存、失败隔离、状态与数据写入安全 | [多数据源报表安全边界](references/multi-source-report-safety.md) |
-| 定时重复扫描同一对象、跨轮次去重、持久化状态、失败重试与终态管理 | [跨轮次幂等、处理状态与重试](references/cross-run-state-and-retries.md) |
-| 点击导出后在后台任务中心等待并下载，多地区、多分类任务、SPA 动态元素失效 | [网页后台异步导出任务绑定](references/async-export-task-binding.md) |
+| 跨轮次状态示例、失败重试判断、业务结果与通知结果区分 | [跨轮次处理状态与重试](references/cross-run-state-and-retries.md) |
+| 点击导出后在后台任务中心识别本轮任务、等待下载，以及 SPA 动态元素失效 | [网页后台异步导出任务绑定](references/async-export-task-binding.md) |
 | 钉钉机器人业务通知的标题、数字汇总、状态、分组、@ 规则及真实文案示例 | [钉钉通知文案与排版偏好](references/dingtalk-notification-style.md) |
 | 跨数据、网页、Excel / WPS、接口或环境的复杂故障，需要最小复现和分层排查 | [影刀编码版通用排错](references/troubleshooting.md) |
 
 ## 使用边界
 
 - 多数据源的业务失败策略与工作簿保存策略需要分别按业务确定，不默认逐任务保存，也不默认全部成功才能继续。
-- 识别后台导出任务时以本轮唯一性为准；已有可靠身份特征就不额外建立历史任务快照。
+- 异步导出默认先获取任务列表快照，再通过新增任务识别本轮导出；平台直接提供可靠的唯一任务 ID 时可直接绑定，不必额外读取快照。
 - 钉钉通知的文案与排版从上述经验页读取；发送消息的函数、参数、返回值仍查 `xbot-api-docs/` 的对应正式事实页。
 - 通用排错只在局部 API 排错不足以解决或故障跨层时使用，不把全部检查清单强加给普通小改。
-- 复杂项目完整落地可查看知识库 `reference-projects/` 中经筛选的冻结案例，它们是参考代码，不覆盖当前业务规则或正式 API。
