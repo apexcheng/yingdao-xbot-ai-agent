@@ -13,12 +13,11 @@
 
 **调用方式：** direct python
 
-**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 等待、下载等待、异常详情格式化、商家后台登录辅助、Windows 元素可点击判断、Excel / WPS 共享文件占用者识别、ntfy 消息发送与接收、钉钉消息与 Markdown 表格，以及影刀自定义对话框初始化配置的 DPAPI 加密持久化。
+**用途：** 面向 `xbot` 的增强工具包。当前已收录浏览器 XPath 出现等待、下载等待、异常详情格式化、商家后台登录辅助、Windows 元素可点击判断、Excel / WPS 共享文件占用者识别、ntfy 消息发送与接收、钉钉消息与 Markdown 表格，以及影刀自定义对话框初始化配置的 DPAPI 加密持久化。
 
 **调用入口：**
 - `from xbot_extensions.xbot_enhance_tools import exception_utils, browser_utils, shop_utils, win_utils, ntfy_message`
 - `from xbot_extensions.xbot_enhance_tools.browser_utils import wait_appear_by_xpath`
-- `from xbot_extensions.xbot_enhance_tools.browser_utils import wait_disappear_by_xpath`
 - `from xbot_extensions.xbot_enhance_tools.browser_utils import wait_download_file`
 - `from xbot_extensions.xbot_enhance_tools.exception_utils import format_exception_detail`
 - `from xbot_extensions.xbot_enhance_tools.shop_utils import login_pdd_seller`
@@ -38,7 +37,6 @@
 
 **当前能力：**
 - `wait_appear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_all_by_xpath(xpath, timeout=1)`，匹配到一个及以上元素即返回第一个元素，超时返回 `None`
-- `wait_disappear_by_xpath(page, xpath, timeout=20)`：循环调用 `page.find_all_by_xpath(xpath, timeout=1)`，返回空列表即视为已消失，返回 `True`；超时返回 `False`
 - `wait_download_file(download_dir=None, filename_pattern=None, timeout=300, start_time=None)`：等待下载目录中的文件下载完成；成功返回 `pathlib.Path`；超时抛出 `TimeoutError`。`download_dir` 不传时默认使用当前用户下载目录，不存在则回退到 `~/下载`；`filename_pattern` 可选，传了按指定文件名关键词或 glob 表达式匹配，不传按本次新出现并稳定的文件判断；`start_time` 建议在点击下载前用 `time.time()` 记录
 - `format_exception_detail(e)`：返回错误信息、报错位置、当前时间、函数名、代码行，适合通知或日志汇总
 - `login_pdd_seller(account, password, profile=None)`：打开拼多多商家中心登录页，登录后按 URL 是否离开 `login` 判断结果
@@ -113,7 +111,7 @@ Webhook 群 Markdown：send_dingtalk_group("markdown", message, title="任务结
 
 **适用场景：**
 - Agent 编码场景里只有 XPath 字符串，没有元素库选择器
-- XPath 字符串等待优先使用本扩展里的等待方法
+- 只有 XPath 字符串、需要等待元素出现时，使用本扩展的 `wait_appear_by_xpath()`
 - 下载文件业务需要统一等待下载完成
 - 需要把异常对象整理成更易读的文本内容
 - 需要在编码版里直接调用商家后台登录辅助函数，并复用指定 Chrome profile
@@ -132,7 +130,6 @@ import time
 
 from xbot_extensions.xbot_enhance_tools.browser_utils import (
     wait_appear_by_xpath,
-    wait_disappear_by_xpath,
     wait_download_file,
 )
 from xbot_extensions.xbot_enhance_tools.exception_utils import format_exception_detail
@@ -143,9 +140,6 @@ element = wait_appear_by_xpath(page, '//button[contains(., "查询")]', timeout=
 if not element:
     raise RuntimeError("查询按钮等待超时")
 element.click()
-
-if not wait_disappear_by_xpath(page, '//div[@class="loading"]', timeout=20):
-    raise RuntimeError("loading 未消失")
 
 start_time = time.time()
 file_path = wait_download_file(filename_pattern="result.xlsx", timeout=300, start_time=start_time)
@@ -338,10 +332,9 @@ if config is not None:
 
 **注意事项：**
 - 这是市场扩展能力，不是原生 `xbot` 内置 API
-- `wait_appear_by_xpath()` / `wait_disappear_by_xpath()` 面向 XPath 字符串，不是元素库选择器
+- `wait_appear_by_xpath()` 面向 XPath 字符串，不是元素库选择器
 - 需要循环刷新等待元素时，优先让 `wait_appear_by_xpath()` 负责单轮短时等待，并在循环顶部统一判断总超时；不要再用 `find_by_xpath()` 配合 `try / except` 轮询
-- `wait_disappear_by_xpath()` 的判定依据是"`find_all_by_xpath()` 返回空列表即视为已消失"
-- 两个等待方法内部都用 `find_all_by_xpath()` 判断，XPath 匹配到多个元素时也能正常工作；不要改回 `find_by_xpath()`（它匹配到多个元素会抛异常，会让"等待出现"误判为失败、"等待消失"误判为已消失）
+- `wait_appear_by_xpath()` 内部使用 `find_all_by_xpath()` 判断，XPath 匹配到多个元素时也能正常工作；不要改回 `find_by_xpath()`，因为它匹配到多个元素会抛异常
 - 下载文件业务统一优先使用 `wait_download_file()`，不要再为同类业务单独维护旧下载等待封装
 - `wait_download_file()` 成功返回 `Path`；需要传给只接受字符串路径的市场指令或旧代码时，可显式转换为 `str(file_path)`
 - `wait_download_file()` 超时会抛出 `TimeoutError`，不要把超时误判为返回 `None`

@@ -46,7 +46,7 @@ element = browser.find_by_css('.item', timeout=10)
 | `xbot.web` | 普通网页自动化主线 | 原生 `WebBrowser` / `WebElement` |
 | `xbot_visual.web` | 影刀可视化组件内部 | 多数为原生对象 |
 
-单次等待元素出现使用原生 `find_by_xpath(..., timeout=...)`；项目已安装“增强工具2026”、且需要等待 XPath 出现 / 消失或下载完成时，按 [增强工具 2026](extensions/xbot-enhance-tools.md) 使用对应公开函数。
+单次等待元素出现使用原生 `find_by_xpath(..., timeout=...)`；项目已安装“增强工具2026”、且需要循环等待 XPath 出现或等待下载完成时，按 [增强工具 2026](extensions/xbot-enhance-tools.md) 使用对应公开函数。
 
 需要跨 iframe XPath 定位时，项目安装对应市场指令后按 [`iframe2 / XPath跨域获取网页元素`](iframe2-extension.md) 的公开接口调用。
 
@@ -286,7 +286,7 @@ buttons = row.find_all_by_xpath('.//button[contains(@class, "action")]', timeout
 element = browser.find_by_xpath('//button[contains(., "查询")]', timeout=10)
 ```
 
-`find_by_xpath()` 自带超时等待，适合一次性等待并获取单个元素。需要“等待 XPath 出现 / 消失”“循环刷新直到总超时”这类复用能力时，如果当前项目已安装“增强工具2026”，直接使用其 `wait_appear_by_xpath()` / `wait_disappear_by_xpath()`；准确签名、返回值和循环等待约定只在 [增强工具 2026](extensions/xbot-enhance-tools.md) 维护。
+`find_by_xpath()` 自带超时等待，适合一次性等待并获取单个元素。需要循环刷新等待 XPath 出现直到总超时时，如果当前项目已安装“增强工具2026”，直接使用 `wait_appear_by_xpath()`；准确签名和返回值只在 [增强工具 2026](extensions/xbot-enhance-tools.md) 维护。
 
 ---
 

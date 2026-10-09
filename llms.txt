@@ -34,6 +34,6 @@
 - 市场指令、Visual / Code / Direct Python 入口、扩展能力及已核验参数和返回值：[extension-instructions.md](xbot-api-docs/docs/extension-instructions.md)
 - 网页数英验证码图片识别、云码 token 与元素库参数：[activity-jfbym.md](xbot-api-docs/docs/extensions/activity-jfbym.md)
 - C-ERP可视化版市场指令、ERP 初始化及库存 / 铺货 / 发货 / 退货下载：[activity-a90a8311.md](xbot-api-docs/docs/extensions/activity-a90a8311.md)
-- 钉钉群机器人、XPath 等待、下载等待、共享文件占用者识别：[xbot-enhance-tools.md](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
+- 钉钉群机器人、XPath 出现等待、下载等待、共享文件占用者识别：[xbot-enhance-tools.md](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
 
 文档贡献的证据和脱敏要求见 [CONTRIBUTING.md](CONTRIBUTING.md)。
