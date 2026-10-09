@@ -15,7 +15,7 @@ description: Apply proven ShadowBot/Yingdao RPA development workflows and templa
 | 跨轮次状态示例、失败重试判断、业务结果与通知结果区分 | [跨轮次处理状态与重试](references/cross-run-state-and-retries.md) |
 | 点击导出后在后台任务中心识别本轮任务、等待下载，以及 SPA 动态元素失效 | [网页后台异步导出任务绑定](references/async-export-task-binding.md) |
 | 钉钉机器人业务通知的标题、数字汇总、状态、分组、@ 规则及真实文案示例 | [钉钉通知文案与排版偏好](references/dingtalk-notification-style.md) |
-| 跨数据、网页、Excel / WPS、接口或环境的复杂故障，需要最小复现和分层排查 | [影刀编码版通用排错](references/troubleshooting.md) |
+| 跨数据、网页、Excel / WPS、接口或环境的复杂故障，按实际证据分层排查 | [影刀编码版通用排错](references/troubleshooting.md) |
 
 ## 使用边界
 
