@@ -14,6 +14,12 @@ config   Code     配置路径
 
 `startup` 指向 `main`。`main.pybx`、`package.json`、`package.py`、`selectorsV2.xml` 和 `imagesV2.xml` 由影刀维护，不从知识库模板覆盖。
 
+## 新建应用与项目路径定位
+
+新建应用时，先核对 CLI 的 `studio create -h` / `studio open -h`。ShadowBot 6.3.22 的实测行为是：`studio create` 创建并同步关闭应用，但不返回 App ID；`studio open` 不带 `--app-id` 时创建新应用并保持 Studio 打开。打开已有应用的用法见 [CLI 操作](../SKILL.md#studio-operations)。
+
+创建后以唯一的临时应用名称执行 `console app --search <name>`，取得 `appId` / `versionId`；通过 `auth current` 获取 `userId`，定位 `%LOCALAPPDATA%\ShadowBot\users\<userId>\apps\<appId>\xbot_robot`。核对该目录 `package.json.uuid == appId` 后才认定为项目根，不仅凭应用名称猜目录。
+
 ## 需要复制的文件
 
 将 `project-template/` 中缺失的文件复制到已存在 `package.json` 的真实项目根目录。目标已有同名文件时，先保留原文件和用户改动，再按当前需求最小合并；不得整份覆盖已有 `run.py`、`config.py`、`.gitignore` 或规则文件。其中的 base 代码是：
