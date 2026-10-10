@@ -24,55 +24,19 @@ Do not pin commands to versioned directories such as `shadowbot-6.x.x`; ShadowBo
 ### 按需检查与命令帮助
 
 - CLI 连接或服务可用性不明时查 `system health`；涉及模式或任务状态时查 `system state`；需要当前账号身份时查 `auth current`。已掌握所需信息时不重复预检。
-- 遇到不熟悉的命令或不确定的参数，先运行 `"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" <command> -h`；不要猜命令标志、ID、参数取值或执行顺序。
+- 不熟悉命令或参数时，对目标子命令运行 `-h` 查看当前支持的用法；不要猜 ID、参数或执行顺序。
 
 ### Find ShadowBot apps/projects
 
-For user-developed apps:
-
-`"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" console app --app-type developed --search "<keyword>"`
-
-For subscribed apps, use `--app-type subscribed`.
-
-Use the returned `appId` as the canonical app identifier. To inspect one app and its runtime input parameters:
-
-`"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" console app detail --app-id <UUID> --app-type developed`
-
-已有可信项目路径或 App ID 时直接使用，不重复搜索；需要发现应用身份时再用 `console app` 搜索，多个结果必须核对元数据后确定目标。需定位源码时据此确认对应项目目录，不按目录顺序猜测。
+已有可信项目路径或 App ID 时直接使用。需要发现时用 `console app` 搜索（自主开发应用为 `--app-type developed`，订阅应用为 `subscribed`）；以返回的 `appId` 为准，多条匹配时核对元数据，再根据当前子命令帮助查看详情或定位项目目录。
 
 ### Run and inspect tasks
 
-Before running, discover the app and inspect its detail when inputs may be required.
-
-Starting an app or task is a real business execution, not a read-only inspection technique. Do not start a workflow merely to discover runtime variables, configuration values, Sheet names, credentials, account lists, or other data that can be obtained by static source analysis or a direct minimal API request. **Only run an app or task when the user explicitly asks to run it.** Do not infer permission to run from “development completed”, “ready for testing”, “needs verification”, or similar states.
-
-Help:
-`"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" console task run -h`
-
-Typical default-parameter run:
-`"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" console task run --app-id <UUID> --app-type developed`
-
-The default task run is synchronous and streams logs. Use `--async` only when the user explicitly wants immediate return or the workflow specifically requires it.
-
-Useful task commands:
-- `console task status`
-- `console task history`
-- `console task logs`
-- `console task stop`
-
-Run `-h` on the exact subcommand before supplying parameters.
+**只有用户明确要求运行时才启动应用或任务。** 运行不是只读检查；不能为了查看配置、字段、凭证等就实际执行。运行前按需核实应用和输入参数，再使用 `console task run`；默认同步执行并输出日志，仅在业务明确需要时使用 `--async`。任务查询与停止按需使用 `console task status/history/logs/stop`，参数以当前帮助为准。
 
 ### Studio operations
 
-Useful commands:
-- `studio current get`
-- `studio current save`
-- `studio current sync`
-- `studio current update-info`
-- `studio create`
-- `studio open`
-
-ShadowBot 6.3.22 已验证：`studio create` **新建**应用后同步关闭；`studio open` **不带 `--app-id`** 时新建应用并保持 Studio 打开。要打开**已有应用**，在当前 PowerShell 进程设置 `SWITCH_STUDIO_MCP_CLI_SUPPORT=1`，通过 `studio open -h` 确认支持 `--app-id` 后执行 `studio open --app-id <uuid>`。不同版本先以当前 CLI 帮助为准，不要把不带 ID 的 `studio open` 误用为打开已有项目。
+ShadowBot 6.3.22 已验证：`studio create` **新建**应用后同步关闭，且不返回 App ID；`studio open` **不带 `--app-id`** 时新建应用并保持 Studio 打开。要打开**已有应用**，在当前 PowerShell 进程设置 `SWITCH_STUDIO_MCP_CLI_SUPPORT=1`，通过 `studio open -h` 确认支持 `--app-id` 后执行 `studio open --app-id <uuid>`。不同版本先以当前 CLI 帮助为准，不要把不带 ID 的 `studio open` 误用为打开已有项目。
 
 ### Runtime modes
 
@@ -89,10 +53,8 @@ Console-only operations can return `not_supported` in Assistant mode. Check `sys
 
 ### Safety and modification rules
 
-- Read/query operations are safe defaults.
 - Use ordinary project workspace capabilities for source inspection, file operations, project-local commands, and temporary diagnostic or migration scripts. Use this CLI only when a ShadowBot-specific capability is actually needed.
 - Treat `console app recycle`, permanent delete, publish, collaborator changes, `config set`, task stop, forced mode switches, and similar state-changing operations as explicit user-intent actions.
-- Treat all app/task execution commands as real execution with possible business side effects. Only execute when the user explicitly requests a run; do not make app execution a default development, verification, or completion step.
 - Never invent an app UUID or silently pick the first search result when multiple apps match. Use names and returned metadata to disambiguate.
 - Prefer CLI outputs as the source of truth for current ShadowBot app IDs, task state, account state, and supported command parameters.
 
