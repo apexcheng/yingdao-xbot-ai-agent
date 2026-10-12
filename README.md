@@ -40,14 +40,15 @@
 
 - [代码质量 Skill](project-template/.agents/skills/code-quality/SKILL.md)：一致性、简化、审查。
 - [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)：CLI、项目创建、同步、发布、项目诊断。
-- [开发经验与模板 Skill](project-template/.agents/skills/rpa-practices/SKILL.md)：网页、钉钉通知、业务组合场景及通用排错。
+- [开发经验 Skill](project-template/.agents/skills/rpa-practices/SKILL.md)：网页、钉钉通知、跨轮状态及通用排错。
 - [表格操作 Skill](project-template/.agents/skills/spreadsheet-operations/SKILL.md)：Excel/CSV 用 WPS 打开、更新、保存和关闭。
 
 - [影刀编码版编程风格详解](project-template/.agents/skills/code-quality/references/coding-style.md)
 - [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
 - [网页自动化实践](project-template/.agents/skills/rpa-practices/references/web.md)
 - [钉钉通知实践](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
-- [业务流程组合（表格更新真实案例）](project-template/.agents/skills/rpa-practices/references/workflow-composition.md)
+- [项目参考案例库](reference-projects/README.md)：跨境补货表完整业务流程、库存监控源码快照。
+- [跨境补货表真实案例](reference-projects/cross-border-replenishment/README.md)
 - [影刀编码版通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 
 ### xbot API 与自动化文档
@@ -140,9 +141,9 @@ project-template/            # 真实影刀项目 base 模板与 4 个 Skill
   .agents/skills/
     code-quality/            # 代码规范、简化与审查；详细编程风格
     xbot-tools/              # CLI、项目生命周期、诊断、脚本与项目骨架
-    rpa-practices/           # Web、业务组合、钉钉、排错
+    rpa-practices/           # Web、日志、钉钉、跨轮状态、排错
     spreadsheet-operations/  # WPS 表格操作规范
-reference-projects/          # 冻结的真实项目完整案例
+reference-projects/          # 真实项目参考案例：固定 Git commit 或脱敏冻结源码
 xbot-api-docs/
   AGENTS.md                  # API 文档维护边界
   docs/                      # xbot API 和市场指令事实页

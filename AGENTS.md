@@ -9,7 +9,7 @@
 - 根 `AGENTS.md` 只管知识库维护；`project-template/AGENTS.md` 是真实项目常驻规则的唯一模板。具体业务代码只能在用户指定的真实项目中修改，项目业务差异和长期决策留在其正式 PRD / 规范。
 - `xbot-api-docs/` 保存 API 签名、参数、返回值、版本差异和直接相关的误用事实；维护时还需遵守 `xbot-api-docs/AGENTS.md`。
 - `project-template/.agents/skills/` 保存开发方法、编码标准、代码审查、项目骨架和低频专项流程；项目 `AGENTS.md` 只保留关键行为边界及按需阅读入口，不复制标准正文。
-- `reference-projects/` 保存有来源 commit 的脱敏、冻结真实案例，仅供实现参考，不代替 API 事实或开发规范。允许保留历史痕迹；已知不推荐写法在案例 README 中说明，不把快照改造成未经运行的示例，也不自动跟随来源项目更新。
+- `reference-projects/` 是完整项目案例的唯一位置，收录具有固定来源 commit 的脱敏源码快照或引用固定 Git 提交的完整流程案例，仅供实现参考，不代替 API 事实或开发规范。Skill 的 `references/` 只维护专项技术经验，不再放项目级 Demo。允许保留历史痕迹；已知不推荐写法在案例 README 中说明，不把快照改造成未经运行的示例，也不自动跟随来源项目更新。
 - `llms.txt` 是 AI 知识导航，`README.md` 是人类使用说明，`CONTRIBUTING.md` 负责证据与脱敏要求；这些入口不复制正式知识正文。新增或调整知识时先选唯一事实源，其它位置只写必要链接。
 - 根与模板的 `.claude/CLAUDE.md` 各自只加载对应 `AGENTS.md`，不维护第二套规则，也不能混用。
 - 本库仅收录影刀 xbot、编码版和 RPA 的稳定知识。宿主侧 ChatGPT、Claude Code、Codex 的插件、MCP、DevSpace、Computer Use、设备连接、模型和工具路由不在维护范围；影刀自身的 CLI、API、项目格式与 Studio / Flow / Console 运行机制仍属于本库。
