@@ -4,9 +4,9 @@
 
 ## 查找顺序
 
-1. 影刀 xbot API、市场指令的入口、参数、返回值和用法，以本导航指向的正式知识页为准；先定位并阅读对应页面，不把项目里的安装副本或旧调用当作事实源。
+1. 需要影刀 xbot API、市场指令的入口、参数、返回值和用法时，先查对应 Skill 及本导航指向的正式知识页，不跳过知识库直接查源码。
 2. 项目专有的业务规则、配置、字段和当前行为仍从真实项目的 `AGENTS.md`、正式规范及相关代码确认；只读取完成当前任务所需的内容。
-3. 正式知识页缺少所需事实时，说明缺口，不猜测，也不为日常使用问题自动转查扩展源码。只有用户要求维护知识、调查版本差异或排查升级后仍存在的异常时，才按该任务范围核验实现或运行结果。
+3. Skill 与正式知识页都没有所需用法时，才按需核对公开源码，不能凭猜测实现；有正式知识时不额外查源码，也不复制市场指令源码到业务项目。
 4. 文档所述入口在项目中缺失时，先提示检查、更新或重新安装相应市场指令；若市场尚无包含该入口的版本，应明确说明发布缺口，不擅自改写文档中的调用方式。
 
 ## 按任务直达
@@ -15,7 +15,7 @@
 - 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[code-quality / 编程风格](project-template/.agents/skills/code-quality/references/coding-style.md)
 - 钉钉业务通知的文案结构、排版偏好、状态 emoji 与示例：[rpa-practices / 钉钉通知](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
 - 中文业务上下文日志、关键节点与失败示例：[rpa-practices / 日志实践](project-template/.agents/skills/rpa-practices/references/logging.md)
-- 多数据源 / 多 Sheet 共用工作簿、WPS 用法与数据写入边界：[rpa-practices / Excel/WPS](project-template/.agents/skills/rpa-practices/references/excel-wps.md)
+- Excel / CSV 全部用 WPS、工作簿最大化、Sheet 区域更新、统一保存与关闭：[spreadsheet-operations](project-template/.agents/skills/spreadsheet-operations/SKILL.md)
 - 跨轮次处理状态示例、失败重试与通知状态区分：[rpa-practices / 跨轮次状态与重试](project-template/.agents/skills/rpa-practices/references/cross-run-state-and-retries.md)
 - 网页后台异步导出、任务列表快照比对、本轮任务识别及动态元素失效处理：[rpa-practices / Web](project-template/.agents/skills/rpa-practices/references/web.md)
 - Web、WPS、多来源数据处理与钉钉如何组合；跨境补货表「表格更新」真实案例：[rpa-practices / 业务流程组合](project-template/.agents/skills/rpa-practices/references/workflow-composition.md)
@@ -24,10 +24,10 @@
 - 代码一致性、简化与只读审查：[code-quality](project-template/.agents/skills/code-quality/SKILL.md)
 - 影刀 CLI、应用创建与发布：[xbot-tools](project-template/.agents/skills/xbot-tools/SKILL.md)
 - 项目损坏、Sigstore 及 flow 重名排查：[项目诊断](project-template/.agents/skills/xbot-tools/references/project-diagnostics.md)
-- 影刀开发实践、Web、Excel/WPS、钉钉通知及业务流程组合：[rpa-practices](project-template/.agents/skills/rpa-practices/SKILL.md)
+- 影刀开发实践、Web、钉钉通知及业务流程组合：[rpa-practices](project-template/.agents/skills/rpa-practices/SKILL.md)
 - 元素库、图像库、`package.image_selector()`、`package.resources`、全局变量：[package.md](xbot-api-docs/docs/package.md)
 - 浏览器、Chrome Profile、`get_all()`、页面加载后等待、Code 106、网页元素、输入、下载、Cookie、网络监听：[browser.md](xbot-api-docs/docs/browser.md)
-- Excel / WPS 工作簿、`kind="wps", visible=True`、`set_range()`、长数字精度、公式文本、文件占用、openpyxl 差异：[excel.md](xbot-api-docs/docs/excel.md)
+- Excel / WPS API 签名、`kind="wps"`、`get_range()`、`set_range()` 等参数：[excel.md](xbot-api-docs/docs/excel.md)
 - Windows 窗口、元素层级、桌面自动化、图像点击、焦点、键盘与鼠标：[win32.md](xbot-api-docs/docs/win32.md)
 - 影刀日志：[logging.md](xbot-api-docs/docs/logging.md)
 - 对话框与通知：[notification.md](xbot-api-docs/docs/notification.md)

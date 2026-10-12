@@ -34,14 +34,7 @@
 | 自动检查 | `kind="auto_check"` | 优先 Office，失败再尝试 WPS |
 | WPS 插件 | `kind="wps_addon"` | WPS 插件方式 |
 
-推荐选择：
-
-| 场景 | 推荐 |
-|---|---|
-| 只读写 `.xlsx`，不需要界面 | `kind="openpyxl"` |
-| 需要宏、公式刷新、复制粘贴、真实 Excel 行为 | `kind="office"` |
-| 公司电脑主要装 WPS | `kind="wps"` |
-| 不确定装了 Office 还是 WPS | `kind="auto_check"` |
+以上仅记录 API 支持的参数值。影刀表格更新程序统一使用 WPS，具体开发规则见 [表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md)。
 
 ---
 
@@ -145,7 +138,7 @@ workbook = xbot.excel.open(
 )
 ```
 
-影刀自动化打开业务 WPS 工作簿时统一用 `kind="wps", visible=True`，不要以“后台运行”为由写成 `visible=False`；不必为固定驱动新增 `EXCEL_KIND`。单纯解析外部下载文件是否使用 `openpyxl` 仍可按具体读取需求决定，这不改变该 API 对其他 `kind` 值的支持。
+影刀表格更新程序的驱动选择见 [表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md)；本页仅记录 API 支持的参数。
 
 #### 已有工作簿更新：推荐调用顺序
 
@@ -160,13 +153,9 @@ workbook.save()
 workbook.close()
 ```
 
-若本轮业务写入失败，不主动执行 `save()`；关闭未保存工作簿时可使用已核验的 `set_saved(True)` 标记。具体多数据源失败策略见 [Excel / WPS 表格实践](../../project-template/.agents/skills/rpa-practices/references/excel-wps.md)。
+多 Sheet 的实际更新与保存流程见 [表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md)。
 
-#### 两种后端的实测差异
-
-- 本次 Windows 影刀运行中，`kind="openpyxl"` 对象调用 `workbook.close()` 报 Code 1259：`openpyxl目前不支持关闭操作`。使用此后端只读取下载文件时，不要照搬 WPS 的关闭调用；`kind="wps"` 的工作簿仍按正常生命周期保存、关闭。
-- Shopee 导出的部分 XLSX 虽是有效 ZIP 包，但 `xl/styles.xml` 含不符合 `openpyxl` 严格边框样式解析的 `none` 值，读取时报 `could not read stylesheet`；可在核实文件完整性后改用 WPS 后端兼容读取，不修改或盲目修补原文件。
-- 超宽工作簿按 WPS 区域读取表头时，可能返回不完整列；先对照原 Excel 实际列，再按较小连续列段读取并检查每段长度，避免误判为模板缺少日期。
+`kind="openpyxl"` 的历史 API 故障事实（仅用于排查该后端，不是表格更新项目的推荐方式）：本机影刀 `workbook.close()` 曾报 Code 1259（`openpyxl目前不支持关闭操作`）；部分 Shopee XLSX 文件的样式定义使该后端读取时报 `could not read stylesheet`。这些故障不代表 WPS 打开相同文件时也会失败。
 
 ---
 
@@ -688,7 +677,7 @@ workbook.workbook.Application.WindowState = -4137  # xlMaximized
 
 `workbook.workbook.Activate()` 用于激活当前工作簿；`workbook.workbook.Application.WindowState = -4137` 用于最大化 WPS 应用窗口。当前环境已验证这组用法可以正确最大化 WPS。
 
-如果业务允许清理本机残留 WPS 进程，可在打开工作簿前使用 `xbot.excel.kill_excel_process("wps", True)` 清场；它不是“最大化 WPS”的必要步骤，不应为了最大化窗口默认强制关闭用户现有的 WPS 进程。
+表格更新项目的启动清理与窗口最大化要求见 [表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md)。
 
 ---
 
@@ -696,24 +685,16 @@ workbook.workbook.Application.WindowState = -4137  # xlMaximized
 
 解压后的报表包含多个 Excel 文件时，目标工作簿的识别规则见 [ZIP 使用建议](xzip.md#5-使用建议)。
 
-### 17.1 长数字已经丢失精度时不能靠格式恢复
-
-订单号、商品 ID、链接 ID 等长数字应在进入 Excel / WPS 前就按文本保护。如果原始文件已经把长数字按数值保存并发生精度丢失，之后再设置文本格式、科学计数法显示格式或给当前错误值加单引号，都不能恢复原始数字；这时必须回到未丢失精度的数据源重新读取。
-
-### 17.2 WPS / Excel 只读与文件占用
+### 17.1 WPS / Excel 只读与文件占用
 
 真实工作簿以只读方式打开时，不要直接把原因判定为“他人占用”。常见排查顺序是：
 
 1. 先检查 `workbook.workbook.ReadOnly`。
-2. 如果业务允许清理本机残留进程，先关闭当前工作簿，再按驱动使用 `xbot.excel.kill_excel_process("wps", True)` 或 `xbot.excel.kill_excel_process("office", True)` 清理本机残留进程并重新打开一次。
-3. 二次打开仍为只读时，再结合 `xbot_enhance_tools.excel_utils.get_wps_lock_user(workbook)` 检查共享文件锁和占用者。
-
-不要在共享办公场景下未经确认就强制结束他人的 Office / WPS 进程。`get_wps_lock_user()` 的返回与锁文件边界见 [增强工具 2026](extensions/xbot-enhance-tools.md)。
+2. 如需排查共享文件占用者，可使用 `xbot_enhance_tools.excel_utils.get_wps_lock_user(workbook)`；其返回值见 [增强工具 2026](extensions/xbot-enhance-tools.md)。
 
 | 现象 | 常见原因 | 处理 |
 |---|---|---|
 | `openpyxl` 读取不到显示文本 | `openpyxl` 不支持 `using_text=True` | 改用 `office` / `wps` |
-| 写入数字字符串变成数字 | Excel 自动识别类型 | 用 `write_as_text_cols="C,F"` 或写入前加文本标记 |
 | 大量写入很慢 | 循环逐单元格写入 | 改用 `set_range()` 一次性写二维数组 |
 | WPS `set_range()` 固定批次报 `发生意外` / `-1880948725` | 某个业务文本以 `=` 开头，被 WPS 当成非法公式 | 二分定位到具体单元格；确认是文本后改为 `"'" + value` 再一次性写入 |
 | 宏无法执行 | `openpyxl` 不支持宏执行 | 改用 `office` 或 `wps` |

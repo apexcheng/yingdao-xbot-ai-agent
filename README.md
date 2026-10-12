@@ -34,20 +34,20 @@
 
 - [AGENTS.md](AGENTS.md)：知识库自身的维护规则；真实项目的常驻开发规则见 [project-template/AGENTS.md](project-template/AGENTS.md)。
 - [llms.txt](llms.txt)：给 AI Agent 使用的精简文档导航。
-- [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口和三个 Skill（`code-quality`、`xbot-tools`、`rpa-practices`）。
+- [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口和四个 Skill（`code-quality`、`xbot-tools`、`rpa-practices`、`spreadsheet-operations`）。
 
 ### Skills 与完整开发经验
 
 - [代码质量 Skill](project-template/.agents/skills/code-quality/SKILL.md)：一致性、简化、审查。
 - [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)：CLI、项目创建、同步、发布、项目诊断。
-- [开发经验与模板 Skill](project-template/.agents/skills/rpa-practices/SKILL.md)：网页、Excel/WPS、钉钉通知、业务组合场景及通用排错。
+- [开发经验与模板 Skill](project-template/.agents/skills/rpa-practices/SKILL.md)：网页、钉钉通知、业务组合场景及通用排错。
+- [表格操作 Skill](project-template/.agents/skills/spreadsheet-operations/SKILL.md)：Excel/CSV 用 WPS 打开、更新、保存和关闭。
 
 - [影刀编码版编程风格详解](project-template/.agents/skills/code-quality/references/coding-style.md)
 - [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
-- [Excel / WPS 表格实践](project-template/.agents/skills/rpa-practices/references/excel-wps.md)
 - [网页自动化实践](project-template/.agents/skills/rpa-practices/references/web.md)
 - [钉钉通知实践](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
-- [业务流程组合（表格更新待补充）](project-template/.agents/skills/rpa-practices/references/workflow-composition.md)
+- [业务流程组合（表格更新真实案例）](project-template/.agents/skills/rpa-practices/references/workflow-composition.md)
 - [影刀编码版通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 
 ### xbot API 与自动化文档
@@ -94,13 +94,15 @@ run.py
 .agents/skills/code-quality/
 .agents/skills/xbot-tools/
 .agents/skills/rpa-practices/
+.agents/skills/spreadsheet-operations/
 .claude/CLAUDE.md
 .claude/skills/code-quality/
 .claude/skills/xbot-tools/
 .claude/skills/rpa-practices/
+.claude/skills/spreadsheet-operations/
 ```
 
-模板默认由 `config.py` 管理项目配置。`code-quality` Skill 提供一致性、简化和审查；`xbot-tools` Skill 包含 CLI、应用创建、发布及项目诊断，其 `scripts/sync_codeflows.py` 只处理新增 / 删除 Code Flow，`scripts/publish_app.py` 统一处理外部修改后的保存、同步、发布与版本校验。`rpa-practices` Skill 按场景提供开发经验与示例。使用 CLI 时需本机已安装影刀 CLI。骨架和配置约定见 [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)。
+模板默认由 `config.py` 管理必要配置。`code-quality` 提供代码简化与审查，`spreadsheet-operations` 负责 WPS 表格操作，`rpa-practices` 提供 Web、日志和流程组合经验；`xbot-tools` 负责 CLI、项目诊断及发布，其 `scripts/sync_codeflows.py` 只处理新增 / 删除 Code Flow，`scripts/publish_app.py` 负责保存、同步、发布与版本校验。使用 CLI 时需本机已安装影刀 CLI。骨架见 [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)。
 
 ### 4. 告诉 AI Agent 两个目录
 
@@ -134,11 +136,12 @@ AGENTS.md                    # Agent 常驻核心约束
 llms.txt                     # AI / LLM 文档索引
 README.md                    # 项目介绍与使用入口
 CONTRIBUTING.md              # 事实证据、内容边界与脱敏规则
-project-template/            # 真实影刀项目 base 模板与 3 个 Skill
+project-template/            # 真实影刀项目 base 模板与 4 个 Skill
   .agents/skills/
     code-quality/            # 代码规范、简化与审查；详细编程风格
     xbot-tools/              # CLI、项目生命周期、诊断、脚本与项目骨架
-    rpa-practices/           # 多 Sheet、异步导出、钉钉、排错
+    rpa-practices/           # Web、业务组合、钉钉、排错
+    spreadsheet-operations/  # WPS 表格操作规范
 reference-projects/          # 冻结的真实项目完整案例
 xbot-api-docs/
   AGENTS.md                  # API 文档维护边界

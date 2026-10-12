@@ -44,7 +44,7 @@ description: Check existing-project implementation consistency, simplify recent 
 
 简化时优先让真实业务顺序直接可见，并遵守项目已有的函数边界、日志、异常处理和 xbot API 使用方式。
 
-真实取舍示例：某多 Sheet RPA 最终确认“写入失败直接中断”，则可删除 `_discard_unsaved_and_reopen()` 及其重开链路。该例不能反向变成所有项目必须中断或不得恢复的规则，先按用户确认的业务失败与保存边界判断。
+表格更新 RPA 的独立 Sheet 失败继续、最后统一保存等固定规则，直接按 [表格操作 Skill](../spreadsheet-operations/SKILL.md) 执行，不额外添加重开和回滚流程。
 
 ### 保持行为不变
 
@@ -126,7 +126,7 @@ description: Check existing-project implementation consistency, simplify recent 
 - 不根据通用 Python、Selenium、Playwright 经验猜 xbot API。
 - 对本次新增或改变的影刀 API / 市场指令调用，以及有争议或出现异常的用法，按知识库正式事实页核验；未改变契约且项目已有相同用法时可直接核对现有实现。项目成熟实现不覆盖正式 API 事实。
 - 检查 XPath、字段、请求响应结构、页面状态或 Profile 等是否被本次改动错误假设。
-- 页面加载是否遵循项目已确认的等待约定；WPS 打开参数按 [表格实践](../rpa-practices/references/excel-wps.md) 核对，不另存一份规范。
+- 页面加载是否遵循项目已确认的等待约定；WPS 操作按 [表格操作 Skill](../spreadsheet-operations/SKILL.md) 核对，不另存一份规范。
 
 #### 4. 异常与失败语义（按证据归入 Spec 或 Standards）
 

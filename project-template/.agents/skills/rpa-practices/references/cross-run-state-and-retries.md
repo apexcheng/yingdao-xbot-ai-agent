@@ -27,4 +27,4 @@
 
 ## 参考边界
 
-上述判断来自 [库存监控冻结源码](../../../../../reference-projects/inventory-monitor/README.md)（2026-09-14）。它证明一种实际落地方式，不证明所有项目必须采用其表结构、状态枚举、重试次数、分页终止条件、库存业务口径或当时的页面操作写法。Excel 的业务保存边界另见 [表格实践](excel-wps.md)，两者不应混为一谈。
+上述判断来自 [库存监控冻结源码](../../../../../reference-projects/inventory-monitor/README.md)（2026-09-14），不代表所有项目必须采用其表结构、状态枚举或库存口径。Excel / CSV 表格更新按 [表格操作 Skill](../../spreadsheet-operations/SKILL.md) 执行。
