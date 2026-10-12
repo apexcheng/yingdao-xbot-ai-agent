@@ -435,9 +435,9 @@ last_column = sheet.get_last_column()
 row_num = sheet.get_first_free_row_on_column("A")
 ```
 
-当前真实项目已确认可用 `sheet.get_last_column()` 获取最后使用列，返回列字母，例如 `"BA"`。当前未确认对应的原生“最后数据行”方法，最后数据行通常仍使用 `sheet.get_first_free_row() - 1`。
+`sheet.get_last_column()` 返回 WPS 识别的最后使用列，结果为列字母，例如 `"BA"`，但不保证覆盖业务实际需要的全部列。实测某日期表头延伸到 NH，该接口却只返回 JJ；直接读取 JJ 之后的单元格仍然成功，因此不能认为接口只能读到 JJ。当前未确认对应的原生“最后数据行”方法，最后数据行通常仍使用 `sheet.get_first_free_row() - 1`。
 
-普通的数据区域读取、复制或清空场景中，即使结束边界多包含一个空行或空列通常也没有影响，可以直接把 `get_first_free_row()` / `get_first_free_column()` 的结果当作区域结束位置使用。不要仅为把“第一个空行 / 空列”换算成“最后数据行 / 列”而新增复杂封装；需要准确最后列时直接调用 `get_last_column()`。
+普通的数据区域读取、复制或清空场景中，即使结束边界多包含一个空行或空列通常也没有影响，可以直接把 `get_first_free_row()` / `get_first_free_column()` 的结果当作区域结束位置使用。不要仅为把“第一个空行 / 空列”换算成“最后数据行 / 列”而新增复杂封装；已知固定布局或连续日期表头时，应根据业务范围确定列边界，不能仅依赖 `get_last_column()` 判断是否完整。
 
 只有业务明确要求精确行数、精确列数或严格边界时，才在当前代码中直接做简单换算，例如最后数据行为 `sheet.get_first_free_row() - 1`。
 
@@ -497,7 +497,7 @@ source_sheet.copy_range(begin_row_num=1, begin_column_name="A", end_row_num=end_
 target_sheet.paste_range_ex(row_num=1, column_name="G")
 ```
 
-纯数据搬运优先使用 `get_range()` + `set_range()`；需要同时保留公式或格式时，再使用 `copy_range()` + `paste_range_ex()`。
+Python 中已经持有二维数组时，直接调用目标 Sheet 的 `set_range()` 写入；不要为了写入而新建临时 WPS 工作簿，再通过 `copy_range()` + `paste_range_ex()` 中转。从源 Sheet 搬运纯数据时优先使用 `get_range()` + `set_range()`；确实需要同时保留源单元格公式或格式时，再使用 `copy_range()` + `paste_range_ex()`。
 
 `copy_range()` 参数：
 
