@@ -2,7 +2,7 @@
 
 > 调用类型：影刀市场指令 Visual Flow，通过 `xbot_extensions.activity_a90a8311.processN(...)` 公开包装函数调用；不是 `guanyi_erp_api` 直接查询接口。
 >
-> 证据：2026-10-13 核对本机「C-ERP可视化版」市场指令开发项目（`activity_code=activity_a90a8311`）的 `package.json`、`prototype.block.json`（`hidden=false`）和 `__init__.py` 包装函数。此项目 `package_version=8` 是项目元数据，不等于市场线上发布版本；本页仅描述核对到的九个公开入口，未验证市场线上最新版本。
+> 证据：2026-10-13 核对本机「C-ERP可视化版」市场指令开发项目（`activity_code=activity_a90a8311`）的 `package.json`、`prototype.block.json`、`__init__.py` 及项目内 Code Flow 源码。`package.json` 登记了 13 个 Visual Flow 和 13 个 Code Flow；其中 9 个 Visual Flow 为公开入口。`package_version=8` 是项目元数据，不等于市场线上发布版本；未验证市场线上最新版本。
 >
 > [市场指令索引](../extension-instructions.md)
 
@@ -33,7 +33,7 @@
 - `process5` 的 `web` 对应 ERP 网页对象；Visual 元数据允许 `None`，但 Python 包装函数仍有必填位置参数。它只负责进入 Tab，不返回下载路径。
 - `process8` 的 `下载时间` 为 `datetime` 对象，`等待超时` 为以秒为单位的整数；Visual 元数据默认 600 秒，但 Python 包装函数仍要求传入。该入口用于获取后台导出任务的结果，不应与发起导出混为一谈。
 - `file_path` 表示下载文件路径（字符串）；`ERP网页对象` 表示网页对象。这里列出的是指令公开的**输出字段名及类型**，业务代码应按当前安装版本核对实际包装返回形态。
-- 当前项目另有 `download_return_details`、`download_delivery_item_details` 等 Code Flow，但其 block 为 `hidden=true`，且未出现在 `__init__.py` 的公开包装方法中；这些**不是本页支持调用的市场指令 API**。
+- 其余隐藏 Visual Flow 和 Code Flow 也在下方列出，供维护市场指令开发项目时查询。它们未出现在 `__init__.py` 的公开包装方法中，**不能直接等同于已发布市场指令的公开 API**。
 
 ## 最小调用形态
 
@@ -68,6 +68,61 @@ download_path = cerp.process8("指定导出任务关键词", download_time, 600)
 ```
 
 以上示例只表达包装函数的调用顺序及参数位置，不证明账号、ERP 页面、下载权限或业务数据当前可用。调用市场指令时，真实项目代码还需遵守 `project-template/AGENTS.md` 的调用点功能与参数注释要求。
+
+## 项目内其他 Visual Flow（非公开）
+
+这些 Flow 存在于当前 `package.json`，但 `prototype.block.json` 中标记 `hidden=true`，且 `__init__.py` 没有对应公开包装函数。它们用于理解开发项目结构，不作为业务应用的调用入口。
+
+| Flow 文件名 | 项目名称 | 作用与状态 |
+|---|---|---|
+| `main` | 主流程 | Visual 启动流，不是公开 API |
+| `process1` | 登陆C-ERP | 初始化流程所依赖的登录子流程 |
+| `process2` | 子流程1 | 隐藏的历史子流程，具体用途未在本次核验中确认 |
+| `process7` | 进入任务中心X(废弃) | 已标为废弃，不应作为新开发入口 |
+
+## 项目内 Python Code Flow（非公开）
+
+以下 **13 个 Code Flow 均登记在 `package.json`**，其 block 为 `hidden=true`。表中的 Python 函数签名、`main(args)` 字段来自本机源文件，适用于**维护这个市场指令开发项目时**查阅；它们不代表其他影刀业务应用可以通过 `from xbot_extensions import activity_a90a8311` 直接调用同名函数。
+
+### 初始化与共用模块
+
+| 模块文件 | Python 函数或入口 | 功能、输入与结果 |
+|---|---|---|
+| `init_erp.py` | `init(username, password, browser_profile, captcha_token="", ntfy_topic="", refresh=False)` | 初始化浏览器环境、复用或新建 ERP 页面并登录；可选图形验证码 Token、短信接收主题与刷新选项；返回 ERP Page。`main(args)` 必需 `username`、`password`、`browser_profile`，可选 `captcha_token`、`ntfy_topic`、`refresh`，将 Page 写入 `args["page"]` |
+| `enter_tab.py` | `enter_tab(page, menu_name)` | 切换已存在的 ERP Tab，或搜索进入指定菜单；`main(args)` 读取 `page`、`menu_name`，不返回下载文件 |
+| `date_picker.py` | `select_date(page, iframe_xpath, date_label, placeholder, target_date)` | 在报表 iframe 中定位日期输入框并选择 `datetime.date` 目标日期；空日期先选择今天。**该文件没有 `main(args)`**，虽然登记为 Code Flow，当前是内部 Python 辅助函数 |
+| `get_download_file.py` | `get_download_file(page, file_keyword, export_time, timeout_seconds)` | 到 ERP 任务中心按任务关键词及导出时间等待、下载 CSV；`export_time` 为 `datetime` 或 `%Y-%m-%d %H:%M:%S` 字符串，超时单位秒；`main(args)` 读取同名四个字段，输出 `args["file_path"]` |
+
+### 报表下载模块
+
+以下模块在开发项目内部接收已经初始化的 ERP `page`，自行切换 Tab、设置筛选、触发导出并调用 `get_download_file` 获取 CSV；成功时返回文件路径，`main(args)` 也写入 `args["file_path"]`。
+
+| 模块文件 | Python 函数签名 | `main(args)` 必需字段和用途 |
+|---|---|---|
+| `download_stock.py` | `download_stock(page, item_code, spec_code, warehouse_name)` | `page`、`item_code`、`spec_code`、`warehouse_name`；按商品代码、规格代码、仓库筛选库存 |
+| `download_platform_distribution.py` | `download_platform_distribution(page, platform_type, shop_name, platform_item_id)` | `page`、`platform_type`、`shop_name`、`platform_item_id`；筛选平台铺货数据 |
+| `download_delivery_summary.py` | `download_delivery_summary(page, shop_name, start_date, end_date, group_by_shop)` | `page`、`shop_name`、`start_date`、`end_date`、`group_by_shop`；发货商品汇总，可按店铺汇总 |
+| `download_delivery_orders.py` | `download_delivery_orders(page, shop_name, start_date, end_date)` | `page`、`shop_name`、`start_date`、`end_date`；发货订单明细 |
+| `download_return_details.py` | `download_return_details(page, shop_name, inbound_time, creation_time)` | `page`、`shop_name`、`inbound_time`、`creation_time`；退货商品明细，后两项各为 `(开始日期, 结束日期)` 元组，分别表示入库与制单时间 |
+| `download_delivery_item_details.py` | `download_delivery_item_details(page, shop_name, start_date, end_date)` | `page`、`shop_name`、`start_date`、`end_date`；发货商品明细统计 |
+
+`start_date`、`end_date` 及两个日期元组内的日期字符串使用 `yyyy/mm/dd`。**特别注意：** `download_return_details.py` 的双时间范围是 Code Flow 的内部接口，不是公开 Visual `process15` 的参数，也不能把 `download_delivery_item_details.py` 误认为已存在同名公开 `processN`。
+
+### 配置与测试模块
+
+| 模块文件 | 角色与使用边界 |
+|---|---|
+| `config.example.py` | 登录验证码配置模板，声明 `CAPTCHA_TOKEN`、`NTFY_TOPIC` 两项配置；不提供 `main(args)` |
+| `config.py` | 开发项目自身的私有登录验证码配置，由 `init_erp.py` 在未显式传值时读取；不提供 `main(args)`，不得复制其中任何真实配置到知识库 |
+| `test.py` | 项目内测试 Code Flow，`main(args)` 依次下载退货商品明细与发货商品明细，写入 `args["return_details_file_path"]`、`args["delivery_item_details_file_path"]`；使用项目内测试配置及固定测试条件，**不作为通用业务入口** |
+
+还有三个不在 `package.json` 的 `flows` 列表中、但存在于项目根目录的 Python 支撑文件：`__init__.py` 定义上述九个公开 `processN` 包装函数，`package.py` 提供项目变量与资源访问，`test_config.py` 是测试用的私有配置文件。它们不是另三个 Code Flow；配置内容不在此记录。
+
+### Code Flow 与公开市场 API 的区别
+
+- **其他业务影刀项目**：使用上方 `processN(...)` 公开包装函数；按目标应用实际安装的市场指令版本确认是否具备对应入口。
+- **维护当前市场指令开发项目**：可以依据上表的内部 Python 函数和 `main(args)` 字段维护自身 Code Flow。`hidden=true` 并不意味着源码不存在，但也不自动产生对外 Python 包装签名。
+- **来源差异**：当前项目同时保留 Visual 下载流程和 Python 实现，它们并非自动互相替换。例如退货报表 Python 实现使用两个时间范围，而公开 `process15` 仍是三个位置参数，不能混用。
 
 ## 安装版本差异
 
