@@ -59,3 +59,7 @@ orders_path = cerp.process14("指定店铺", "2026/10/01", "2026/10/07")
 - 未检查市场线上当前发布版本，也未运行真实 ERP 下载。本页核验范围为本机安装副本的公开调用契约，不宣称业务实机验收通过。
 
 如果需要用 C-ERP API 查询数据而不是在网页导出报表，应查 [C-ERP API](guanyi-erp-api.md)，不要混用两个扩展。
+
+## Python 项目实现参考
+
+退货商品明细统计、发货商品明细统计的项目内 Python 实现及其日期选择、三态筛选、CSV 导出下载流程，见 [C-ERP 商品明细报表下载案例](../../../reference-projects/cerp-report-downloads/README.md)。案例按固定来源提交记录；它不证明已安装市场指令新增了公开入口，也不替换本页已核验的 `processN` 包装签名。

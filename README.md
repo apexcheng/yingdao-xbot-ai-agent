@@ -47,8 +47,9 @@
 - [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
 - [网页自动化实践](project-template/.agents/skills/rpa-practices/references/web.md)
 - [钉钉通知实践](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
-- [项目参考案例库](reference-projects/README.md)：跨境补货表完整业务流程、库存监控源码快照。
+- [项目参考案例库](reference-projects/README.md)：跨境补货表完整业务流程、库存监控源码快照、C-ERP 商品明细报表下载。
 - [跨境补货表真实案例](reference-projects/cross-border-replenishment/README.md)
+- [C-ERP 商品明细报表下载案例](reference-projects/cerp-report-downloads/README.md)：退货 / 发货两个项目内 Python 模块。
 - [影刀编码版通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 
 ### xbot API 与自动化文档
@@ -68,7 +69,7 @@
 
 - 钉钉 AI 表格，以及增强工具中的钉钉机器人消息。
 - Excel 扩展操作、离线 OCR、广告处理和网页增强。
-- C-ERP 报表下载 Python 版、ERP 订单查询与字段翻译。
+- C-ERP 可视化版报表下载公开接口、ERP 订单查询与字段翻译。
 - 登录扩展、iframe 和其他已核验扩展能力。
 
 ## 快速开始
