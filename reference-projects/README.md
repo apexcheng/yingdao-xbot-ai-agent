@@ -44,4 +44,3 @@
 
 - [库存监控](inventory-monitor/README.md)：多平台 / 多店铺库存自动化，包含 SQLite 幂等与重试、ERP 数据刷新、业务日志、通知和网页库存修改闭环。
 - [跨境补货表](cross-border-replenishment/README.md)：多数据源、8 个 Sheet、WPS 统一保存、下载路径复用、状态和钉钉通知的完整流程；源码链接到真实影刀项目的固定 Git 提交，不另存快照。
-- [C-ERP 商品明细报表下载](cerp-report-downloads/README.md)：退货、发货两个 Python 模块的筛选、三态复选框、日期选择和 CSV 导出下载流程；引用固定源码提交。

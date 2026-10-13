@@ -47,9 +47,8 @@
 - [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
 - [网页自动化实践](project-template/.agents/skills/rpa-practices/references/web.md)
 - [钉钉通知实践](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
-- [项目参考案例库](reference-projects/README.md)：跨境补货表完整业务流程、库存监控源码快照、C-ERP 商品明细报表下载。
+- [项目参考案例库](reference-projects/README.md)：跨境补货表完整业务流程、库存监控源码快照。
 - [跨境补货表真实案例](reference-projects/cross-border-replenishment/README.md)
-- [C-ERP 商品明细报表下载案例](reference-projects/cerp-report-downloads/README.md)：退货 / 发货两个项目内 Python 模块。
 - [影刀编码版通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 
 ### xbot API 与自动化文档
