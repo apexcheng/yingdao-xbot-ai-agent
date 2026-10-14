@@ -252,7 +252,7 @@ package.variables["template_file"] = template_file
 
 普通 Win32 / Web / Mobile 元素定位直接把元素库名称传给对应原生 API，不需要显式获取 `Selector` 对象。
 
-只有确实需要读取或处理选择器对象本身的元数据时，才使用 `package.selector()`：
+调用的 API 要求传入 Selector 对象时，使用 `package.selector(name)` 从元素库名称获取对象；需要读取选择器元数据时也使用此方法。例如，广告杀手 `close_ads_win()` 要求 Win32 Selector 对象列表，详见[广告杀手事实页](extensions/ad-killer.md)：
 
 ```python
 from . import package
