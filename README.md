@@ -119,6 +119,14 @@ run.py
 
 同步的触发条件、执行命令和验证边界统一见 [真实项目的同步规则](project-template/AGENTS.md#验证与同步)，操作步骤见 [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)。
 
+要将知识库最新的 `AGENTS.md`、Skills 和 Claude/Codex 规则同步到本机全部账号、全部影刀项目，在知识库根目录运行：
+
+```bash
+python scripts/sync_agent_rules.py
+```
+
+脚本自动扫描 `%LOCALAPPDATA%/ShadowBot/users/*/apps/*/xbot_robot` 下有 `package.json` 的项目（包括 `_Release` 目录）；只同步 Agent 规则文件并清理已淘汰的旧 Skill，不修改业务代码。重复运行只更新有差异的文件，完成后会校验并显示成功、跳过和失败数量。
+
 ## 开发与维护风格
 
 这是一个个人持续维护的实用型知识库，优先保留长期、稳定、能反复帮助真实项目的内容：
