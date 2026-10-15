@@ -47,8 +47,8 @@
 - [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
 - [网页自动化实践](project-template/.agents/skills/rpa-practices/references/web.md)
 - [钉钉通知实践](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
-- [项目参考案例库](reference-projects/README.md)：抖音经营报表完整业务流程、库存监控源码快照。
-- [抖音经营报表真实案例](reference-projects/douyin-operating-report/README.md)
+- [项目参考案例库](reference-projects/README.md)：抖音经营报表和库存监控的本地冻结源码案例。
+- [抖音经营报表真实案例（内置源码快照）](reference-projects/douyin-operating-report/README.md)
 - [影刀编码版通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 
 ### xbot API 与自动化文档

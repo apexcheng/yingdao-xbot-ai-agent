@@ -4,10 +4,12 @@
 
 ## 来源与使用范围
 
-- 项目：`douyin-bow-profit-report-rpa`；[固定源码提交 `7cb4751`](https://github.com/apexcheng/douyin-bow-profit-report-rpa/tree/7cb4751675d9b062b30527bcc15320a34579ffc1)（2026-10-15）。
-- 当前案例只以此 Git 提交为准，不自动追随本机未提交修改或之后的业务更新。资料审查不等于整项目的实机验收；不能据此承诺网页、外部服务或 WPS 在其它机器上直接运行成功。
+- 来源项目：`douyin-bow-profit-report-rpa`；**冻结来源 Git 提交：`7cb4751675d9b062b30527bcc15320a34579ffc1`**（2026-10-15）。
+- **源码已存入本知识库的 [snapshot/](snapshot/) 目录**：`run.py`、`utils.py`、`notify.py`、10 个 `update_*.py` 和 `requirements.txt`。后续阅读不依赖原项目仓库，即使原仓库继续提交或不可访问，本快照也保持独立。只有明确要求更新案例时才重新冻结新版本。
+- 快照忠实保留该提交的业务流程，**仅脱敏**：`run.py` 注释中的 3 处历史本机路径、`update_global_promotion.py` 和 `update_influencer_promotion.py` URL 中各 1 处广告账户 ID（替换为 `EXAMPLE_ACCOUNT_ID`）。不将这类替换视为原始源码本身的实现事实。
+- 这是静态代码参考，未经独立的全流程实机验收；不能据此承诺网页、外部服务或 WPS 在其它机器上直接运行成功。
 - 适合参考：一个目标 WPS 工作簿、多来源文件导出、网页网络响应、独立 HTTP API、全量覆盖和增量/差异更新、跨日跳过、逐 Sheet 结果、统一保存及钉钉通知。
-- 源码中涉及未跟踪的私有 `config.py`、影刀应用资源、账号授权和已安装市场指令；**Git 固定源码本身不是完整可部署应用**。只学习结构与数据交接，不复制真实配置、店铺路径、授权信息或专有字段值。
+- 原项目中的私有 `config.py`、`package.py`、元素库及影刀应用资源、账号授权和已安装市场指令未收录；**快照不是可直接部署的影刀应用**。只学习结构与数据交接，不复制真实配置、店铺路径、授权信息或专有字段值。
 
 ## 主流程：9 个日常 Sheet + 每轮采购成本
 
@@ -40,26 +42,26 @@ run.main(args)
 
 | Sheet / 模块 | 数据来源与操作 | 更新方式 |
 | --- | --- | --- |
-| ERP 退货｜[update_erp_returns.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_erp_returns.py) | 复用主流程的 ERP Page，调用市场指令下载退货明细 | 文件经 WPS 读取，覆盖事实层 |
-| ERP 发货｜[update_erp_deliveries.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_erp_deliveries.py) | 同一个 ERP Page，市场指令下载发货明细 | 文件经 WPS 读取，覆盖事实层 |
-| 平台订单｜[update_order_data.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_order_data.py) | 抖店页面导出、短信验证码及加密 ZIP 解压 | 文件经 WPS 读取，覆盖事实层 |
-| 全域投放｜[update_global_promotion.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_global_promotion.py) | 网页筛选、导出投放报表 | 文件经 WPS 读取，覆盖事实层 |
-| 直播链接｜[update_live_links.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_live_links.py) | 逐日网页导出直播商品数据 | 按已有日期向后追加 |
-| 达人佣金｜[update_selected_alliance.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_selected_alliance.py) | 联盟财务页查询、等待导出任务 | 文件经 WPS 读取，覆盖事实层 |
-| 团长服务费｜[update_leader_fee.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_leader_fee.py) | 联盟财务页查询、等待导出任务 | 文件经 WPS 读取，覆盖事实层 |
-| 达人投流｜[update_influencer_promotion.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_influencer_promotion.py) | 多账户网页下载投放数据并合并 | 合并后覆盖事实层 |
-| 产品库｜[update_product_library.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_product_library.py) | DOM 负责查询/排序/翻页，网络响应提供商品数据 | 补齐旧商品时间，再按创建时间降序增量追加 |
-| 采购成本｜[update_purchase_cost.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_purchase_cost.py) | `urllib.request` 使用只读 Token 分页请求航桥 API | 全量读取并比较规格代码；有变化才覆盖成本区域 |
+| ERP 退货｜[update_erp_returns.py](snapshot/update_erp_returns.py) | 复用主流程的 ERP Page，调用市场指令下载退货明细 | 文件经 WPS 读取，覆盖事实层 |
+| ERP 发货｜[update_erp_deliveries.py](snapshot/update_erp_deliveries.py) | 同一个 ERP Page，市场指令下载发货明细 | 文件经 WPS 读取，覆盖事实层 |
+| 平台订单｜[update_order_data.py](snapshot/update_order_data.py) | 抖店页面导出、短信验证码及加密 ZIP 解压 | 文件经 WPS 读取，覆盖事实层 |
+| 全域投放｜[update_global_promotion.py](snapshot/update_global_promotion.py) | 网页筛选、导出投放报表 | 文件经 WPS 读取，覆盖事实层 |
+| 直播链接｜[update_live_links.py](snapshot/update_live_links.py) | 逐日网页导出直播商品数据 | 按已有日期向后追加 |
+| 达人佣金｜[update_selected_alliance.py](snapshot/update_selected_alliance.py) | 联盟财务页查询、等待导出任务 | 文件经 WPS 读取，覆盖事实层 |
+| 团长服务费｜[update_leader_fee.py](snapshot/update_leader_fee.py) | 联盟财务页查询、等待导出任务 | 文件经 WPS 读取，覆盖事实层 |
+| 达人投流｜[update_influencer_promotion.py](snapshot/update_influencer_promotion.py) | 多账户网页下载投放数据并合并 | 合并后覆盖事实层 |
+| 产品库｜[update_product_library.py](snapshot/update_product_library.py) | DOM 负责查询/排序/翻页，网络响应提供商品数据 | 补齐旧商品时间，再按创建时间降序增量追加 |
+| 采购成本｜[update_purchase_cost.py](snapshot/update_purchase_cost.py) | `urllib.request` 使用只读 Token 分页请求航桥 API | 全量读取并比较规格代码；有变化才覆盖成本区域 |
 
 ### 模式一：文件导出 → WPS 事实层覆盖
 
 - `download()` 获取文件或已打开的源工作簿；`update(target_workbook, ...)` 只处理自己负责的 Sheet。复用的 ERP Page 从主流程传入，避免重复初始化。
-- [utils.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/utils.py) 中的 `open_source_workbook()` 使用 WPS 打开来源文件；`replace_fact_area()` 只清空约定事实层，读取来源二维矩阵并批量写入目标。订单号等长标识在写入前按当前业务需求保留文本形态。
+- [utils.py](snapshot/utils.py) 中的 `open_source_workbook()` 使用 WPS 打开来源文件；`replace_fact_area()` 只清空约定事实层，读取来源二维矩阵并批量写入目标。订单号等长标识在写入前按当前业务需求保留文本形态。
 - 某些业务是多来源合并或按日追加，**不是所有 Sheet 都适合无条件覆盖**；例如直播链接按日期追加。固定列坐标和业务字段映射来自项目配置，不应被提升为通用规则。
 
 ### 模式二：网页操作触发请求 → 读取响应 → 增量补录
 
-以 [update_product_library.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_product_library.py) 为代表：
+以 [update_product_library.py](snapshot/update_product_library.py) 为代表：
 
 1. 从目标产品库读取已有商品 ID 和时间。对于时间缺失的 ID，通过输入商品 ID、点击查询触发 `/product/tproduct/list` 请求；监听响应、按 ID 精确匹配后补齐时间；找不到时保留空值并记录业务提示。
 2. 以补齐后的最大创建时间为下界，网页按创建时间降序排序；依次通过查询、下一页动作触发网络请求，解析响应中的商品列表。
@@ -69,7 +71,7 @@ run.main(args)
 
 ### 模式三：HTTP API → 完整读取 → 差异写入
 
-以 [update_purchase_cost.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_purchase_cost.py) 为代表：
+以 [update_purchase_cost.py](snapshot/update_purchase_cost.py) 为代表：
 
 1. 直接通过 HTTP API 分页读取航桥采购成本，使用私有配置中的只读 Token；核对接口返回、分页完整性、记录与规格代码，并按业务口径转换成本数值。
 2. 从目标表读取当前成本区，以规格代码为键对比旧值、新值（含新增、修改、删除）。
@@ -80,22 +82,22 @@ run.main(args)
 
 ## 状态、重试、保存与通知的真实边界
 
-- [run.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/run.py) 的 `update_sheet()` 按源码注释约定，对**整个 Sheet 的下载、读取、写入操作最多尝试 2 次（首次执行 + 失败后重试 1 次）**，最终失败记状态并继续处理独立 Sheet；实际次数由未收录在固定提交中的私有配置 `SHEET_ATTEMPTS` 决定。ERP 或抖店初始化失败则按来源分组标记受影响任务。存在依赖时遵守当前项目的实际失败分组，而不是假定所有任务独立。
+- [run.py](snapshot/run.py) 的 `update_sheet()` 按源码注释约定，对**整个 Sheet 的下载、读取、写入操作最多尝试 2 次（首次执行 + 失败后重试 1 次）**，最终失败记状态并继续处理独立 Sheet；实际次数由未收录在固定提交中的私有配置 `SHEET_ATTEMPTS` 决定。ERP 或抖店初始化失败则按来源分组标记受影响任务。存在依赖时遵守当前项目的实际失败分组，而不是假定所有任务独立。
 - 看板的记录包含 Sheet、结果、尝试次数、处理时间、说明；「今日跳过」在本轮结果中保留原成功时间，写回看板时仍记「成功」。单个 Sheet 的「成功」表示业务写入步骤已完成，**不意味着统一保存已经成功**。
 - 普通事实层可能先清空再写入；如果中途失败且主流程最终保存，可能保留部分修改，**不是原子更新**。产品库以 ID 事件辅助通知，不是完整的持久化审计：失败重试时可能清空前次尝试的事件。
 - **日常任务完成后的收尾浏览器清理**与 `target_workbook.save()` 由独立的 `try/except` 处理，保持清理在保存之前的业务顺序；这次收尾清理仍遍历两个 Profile，即使某个平台本轮未初始化；清理异常不会阻止保存，两个失败分别记错误。**启动阶段只清理需要初始化的平台的历史 Page**，该清理未单独捕获异常，失败会中断本轮并跳过保存。程序 `finally` 仍会结束 WPS，即使保存失败也不保留 WPS 现场。
-- [notify.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/notify.py) 按 Sheet 结果分组显示本轮更新、今日跳过和失败；额外列出产品库 ID 变化或异常、采购成本变更摘要，以及独立的「表格是否已保存」状态。采购成本没有变化且全部日常 Sheet 今日跳过、无异常时不发送通知；通知失败不会反向修改已保存的 Sheet 结果。
+- [notify.py](snapshot/notify.py) 按 Sheet 结果分组显示本轮更新、今日跳过和失败；额外列出产品库 ID 变化或异常、采购成本变更摘要，以及独立的「表格是否已保存」状态。采购成本没有变化且全部日常 Sheet 今日跳过、无异常时不发送通知；通知失败不会反向修改已保存的 Sheet 结果。
 
 ## 文件职责与按需阅读路径
 
 | 首先读 | 需要回答的问题 |
 | --- | --- |
-| [run.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/run.py) | 十项任务顺序、ERP/抖店初始化、跨日跳过、最多两次尝试、统一保存和异常收尾 |
-| [utils.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/utils.py) | 多来源文件如何用 WPS 读取、复用对象、写入约定事实层 |
-| [update_product_library.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_product_library.py) | 怎样从页面操作和网络响应获取业务数据并增量写入 |
-| [update_purchase_cost.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/update_purchase_cost.py) | 怎样将直接 HTTP API 与差异对比、WPS 写入结合 |
-| [notify.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7cb4751675d9b062b30527bcc15320a34579ffc1/notify.py) | Sheet 结果、产品 ID 事件和采购成本差异怎样进入通知 |
+| [run.py](snapshot/run.py) | 十项任务顺序、ERP/抖店初始化、跨日跳过、最多两次尝试、统一保存和异常收尾 |
+| [utils.py](snapshot/utils.py) | 多来源文件如何用 WPS 读取、复用对象、写入约定事实层 |
+| [update_product_library.py](snapshot/update_product_library.py) | 怎样从页面操作和网络响应获取业务数据并增量写入 |
+| [update_purchase_cost.py](snapshot/update_purchase_cost.py) | 怎样将直接 HTTP API 与差异对比、WPS 写入结合 |
+| [notify.py](snapshot/notify.py) | Sheet 结果、产品 ID 事件和采购成本差异怎样进入通知 |
 
-其它业务模块从上方十项清单按需打开 1～2 个即可。不单独维护 XPath 清单、可复制的业务账号、配置内容或完整源码快照。
+其它业务模块从上方十项清单按需打开 1～2 个即可。不单独维护 XPath 清单、可复制的业务账号或配置内容；全部业务模块源码已在本案例 `snapshot/` 内冻结，不需要再访问其它仓库。
 
 **规范边界**：这是来源提交当时的运行事实。影刀 Page、网络监听、Excel/WPS、钉钉等 API 优先查 [正式 API 文档](../../xbot-api-docs/docs/browser.md)、[表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md) 与 [Web 实践](../../project-template/.agents/skills/rpa-practices/references/web.md)；案例中的日期边界、状态字段、写入区域、外部接口、通知阈值不能自动套给其它项目。固定版本的达人投流页面有特定的右键交互与 `time.sleep(3)`，属于项目实现差异，不替代模板中加载完成后等待 2 秒的通用规则。

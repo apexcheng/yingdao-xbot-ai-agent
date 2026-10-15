@@ -18,7 +18,7 @@
 - Excel / CSV 全部用 WPS、工作簿最大化、Sheet 区域更新、统一保存与关闭：[spreadsheet-operations](project-template/.agents/skills/spreadsheet-operations/SKILL.md)
 - 跨轮次处理状态示例、失败重试与通知状态区分：[rpa-practices / 跨轮次状态与重试](project-template/.agents/skills/rpa-practices/references/cross-run-state-and-retries.md)
 - 网页网络响应优先取数、DOM 触发交互、后台异步导出与动态元素失效处理：[rpa-practices / Web](project-template/.agents/skills/rpa-practices/references/web.md)
-- Web、WPS、网络响应、HTTP API、多来源及钉钉如何组成完整表格更新流程：[抖音经营报表真实案例](reference-projects/douyin-operating-report/README.md)
+- Web、WPS、网络响应、HTTP API、多来源及钉钉如何组成完整表格更新流程（源码已冻结在知识库内）：[抖音经营报表真实案例](reference-projects/douyin-operating-report/README.md)
 - 跨数据、API、环境或市场指令的通用排错：[rpa-practices / 通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
 - 项目级真实实现案例索引：[reference-projects](reference-projects/README.md)；其中库存监控 [源码快照](reference-projects/inventory-monitor/README.md) 可参考多店铺 SQLite 状态 / 重试、日志与通知，但不作为现行编码规范。
 - 代码一致性、简化与只读审查：[code-quality](project-template/.agents/skills/code-quality/SKILL.md)
