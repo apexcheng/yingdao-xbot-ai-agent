@@ -43,4 +43,4 @@
 ## 当前参考项目
 
 - [库存监控](inventory-monitor/README.md)：多平台 / 多店铺库存自动化，包含 SQLite 幂等与重试、ERP 数据刷新、业务日志、通知和网页库存修改闭环。
-- [跨境补货表](cross-border-replenishment/README.md)：多数据源、8 个 Sheet、WPS 统一保存、下载路径复用、状态和钉钉通知的完整流程；源码链接到真实影刀项目的固定 Git 提交，不另存快照。
+- [抖音经营报表](douyin-operating-report/README.md)：**唯一表格更新案例**；10 个 Sheet，涵盖 Web/ERP 文件、网页网络响应、航桥 HTTP API、全量/增量/差异更新、统一保存与钉钉通知；源码链接固定 Git 提交，不另存快照。
