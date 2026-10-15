@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -113,10 +114,14 @@ def publish_app(args):
     after = get_online_version(app_id)
     if not after:
         raise RuntimeError("发布命令执行后未找到线上版本")
+    if not after.get("versionId"):
+        raise RuntimeError("发布命令执行后线上版本缺少 versionId，无法校验发布结果")
     if before and after.get("versionId") == before.get("versionId"):
         raise RuntimeError("发布命令返回成功，但线上 versionId 未变化，不能视为新版本发布成功")
 
     print(json.dumps({
+        "status": "success",
+        "message": "发布成功，线上版本已更新" if before else "发布成功，已确认线上版本（发布前无版本可比较）",
         "app_id": app_id,
         "version": after.get("version"),
         "version_id": after.get("versionId"),
@@ -143,7 +148,12 @@ def build_parser():
 
 
 def main():
-    publish_app(build_parser().parse_args())
+    args = build_parser().parse_args()
+    try:
+        publish_app(args)
+    except Exception as error:
+        print(json.dumps({"status": "failed", "error": str(error)}, ensure_ascii=False), file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

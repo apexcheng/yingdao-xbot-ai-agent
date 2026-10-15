@@ -64,8 +64,8 @@ Console-only operations can return `not_supported` in Assistant mode. Check `sys
 
 1. 保存已有应用可使用 `studio current save`，同步并关闭使用 `studio current sync`。若在项目目录外部修改了 `package.json` / Code flow，必须让 Studio 重新载入磁盘状态后再保存、同步；不能仅凭 `console app publish` 成功认定磁盘改动已发布。
 2. **只有新增或删除项目根目录 `.py` 文件时**才运行 `python .agents/skills/xbot-tools/scripts/sync_codeflows.py` 同步 Code flow 注册并编译；只修改已有 `.py` 不运行。该工具不负责保存、同步或发布。
-3. 可选发布 helper：`python .agents/skills/xbot-tools/scripts/publish_app.py --project-dir <项目目录> --update-log "<发布说明>"`。负责重新加载、保存、同步、发布并检查线上版本，不负责 Code flow 注册。
-4. 实际发布后核实线上版本对应本次代码；如已按用户要求运行，再根据任务状态与日志确认实际结果，未运行不得宣称业务已验证。
+3. 发布已有应用优先使用 `python .agents/skills/xbot-tools/scripts/publish_app.py --project-dir <项目目录> --update-log "<发布说明>"`。脚本负责重新加载、保存、同步、发布与线上 `versionId` 校验，不负责 Code flow 注册。脚本返回 `status=success` 且退出码为 0 才视为发布成功；失败时返回 `status=failed` 并以非零退出码结束。
+4. 脚本成功后 Agent **无需再次调用 `console app versions` 重复校验版本**；直接汇报脚本给出的版本信息。线上 `versionId` 变化不等于已证明本次代码全部生效；如已按用户要求运行，再根据任务状态与日志确认实际业务结果，未运行不得宣称业务已验证。
 5. 未经发布运行验证，不得假定 Code flow 可以直接作为应用的 `startup`；历史实验和验证边界见 [应用生命周期特殊案例](references/app-lifecycle-cases.md)。整应用复制的已知限制也在该参考文档中。
 
 ## 项目诊断
