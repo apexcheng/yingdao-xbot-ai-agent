@@ -212,17 +212,9 @@ browser.wait_load_completed(timeout=20)
 
 ### Page 加载后的统一等待
 
-业务 Page 新建、`navigate()`、`reload()` 等加载完成后，统一执行 `wait_load_completed()` **再额外等待 3 秒**，让页面 JS 有时间初始化。调用者若已等待页面加载完成，就只补 3 秒，不重复等待；此约定适用于影刀编码版的各平台 Page，不限于妙手 ERP。
+`wait_load_completed()` 只用于等待 Page 加载完成，不包含额外的 JS 初始化等待；新建、跳转、刷新后的固定等待约定统一查 [项目模板 AGENTS.md](../../project-template/AGENTS.md#xbot-与知识库)，本 API 文档不重复维护秒数。
 
-```text
-非执行调用说明（不可直接运行；page 已指向当前网页，time 已导入）：
-
-page.wait_load_completed(timeout=60)
-time.sleep(3)
-# 后续再定位菜单、筛选框、业务数据
-```
-
-这是开发等待约定，不是 `wait_load_completed()` 的内置行为，也不能保证所有异步数据都已出现；特定数据、按钮、导出任务仍需根据真实状态等待。不要对每次普通点击都无条件叠加 3 秒。
+页面加载完成不代表异步业务数据、按钮或导出任务已就绪；仍需根据实际业务状态等待，不对每次普通点击无条件叠加固定等待。
 
 | 方法 | 参数 | 说明 |
 |---|---|---|

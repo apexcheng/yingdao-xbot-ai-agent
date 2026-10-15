@@ -76,17 +76,17 @@ run.main(args)
 
 ## 状态、重试、保存与通知的真实边界
 
-- [run.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/087daae0440a3d69045caf8808bcc0611a7184b2/run.py) 的 `update_sheet()` 对**整个 Sheet 的下载、读取、写入操作最多尝试 2 次**，最终失败记状态并继续处理独立 Sheet；ERP 或抖店初始化失败则按来源分组标记受影响任务。存在依赖时遵守当前项目的实际失败分组，而不是假定所有任务独立。
+- [run.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/087daae0440a3d69045caf8808bcc0611a7184b2/run.py) 的 `update_sheet()` 按源码注释约定，对**整个 Sheet 的下载、读取、写入操作最多尝试 2 次（首次执行 + 失败后重试 1 次）**，最终失败记状态并继续处理独立 Sheet；实际次数由未收录在固定提交中的私有配置 `SHEET_ATTEMPTS` 决定。ERP 或抖店初始化失败则按来源分组标记受影响任务。存在依赖时遵守当前项目的实际失败分组，而不是假定所有任务独立。
 - 看板的记录包含 Sheet、结果、尝试次数、处理时间、说明；「今日跳过」在本轮结果中保留原成功时间，写回看板时仍记「成功」。单个 Sheet 的「成功」表示业务写入步骤已完成，**不意味着统一保存已经成功**。
 - 普通事实层可能先清空再写入；如果中途失败且主流程最终保存，可能保留部分修改，**不是原子更新**。产品库以 ID 事件辅助通知，不是完整的持久化审计：失败重试时可能清空前次尝试的事件。
-- 浏览器清理和 `target_workbook.save()` 由**独立的 `try/except`** 处理，保持清理在保存之前的业务顺序；清理异常不会阻止保存，两个失败分别记错误。程序 `finally` 仍会结束 WPS，即使保存失败也不保留 WPS 现场。
+- **日常任务完成后的收尾浏览器清理**与 `target_workbook.save()` 由独立的 `try/except` 处理，保持清理在保存之前的业务顺序；这次收尾清理异常不会阻止保存，两个失败分别记错误。**启动阶段清理历史 Page** 未单独捕获异常，失败会中断本轮并跳过保存。程序 `finally` 仍会结束 WPS，即使保存失败也不保留 WPS 现场。
 - [notify.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/087daae0440a3d69045caf8808bcc0611a7184b2/notify.py) 按 Sheet 结果分组显示本轮更新、今日跳过和失败；额外列出产品库 ID 变化或异常、采购成本变更摘要，以及独立的「表格是否已保存」状态。采购成本没有变化且全部日常 Sheet 今日跳过、无异常时不发送通知；通知失败不会反向修改已保存的 Sheet 结果。
 
 ## 文件职责与按需阅读路径
 
 | 首先读 | 需要回答的问题 |
 | --- | --- |
-| [run.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/087daae0440a3d69045caf8808bcc0611a7184b2/run.py) | 十项任务顺序、ERP/抖店初始化、跨日跳过、两次重试、统一保存和异常收尾 |
+| [run.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/087daae0440a3d69045caf8808bcc0611a7184b2/run.py) | 十项任务顺序、ERP/抖店初始化、跨日跳过、最多两次尝试、统一保存和异常收尾 |
 | [utils.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/087daae0440a3d69045caf8808bcc0611a7184b2/utils.py) | 多来源文件如何用 WPS 读取、复用对象、写入约定事实层 |
 | [update_product_library.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/087daae0440a3d69045caf8808bcc0611a7184b2/update_product_library.py) | 怎样从页面操作和网络响应获取业务数据并增量写入 |
 | [update_purchase_cost.py](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/087daae0440a3d69045caf8808bcc0611a7184b2/update_purchase_cost.py) | 怎样将直接 HTTP API 与差异对比、WPS 写入结合 |
