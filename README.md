@@ -125,7 +125,7 @@ run.py
 python scripts/sync_agent_rules.py
 ```
 
-脚本自动扫描 `%LOCALAPPDATA%/ShadowBot/users/*/apps/*/xbot_robot` 下有 `package.json` 的项目（包括 `_Release` 目录）；只同步 Agent 规则文件并清理已淘汰的旧 Skill，不修改业务代码。重复运行只更新有差异的文件，完成后会校验并显示成功、跳过和失败数量。
+脚本自动扫描 `%LOCALAPPDATA%/ShadowBot/users/*/apps/*/xbot_robot` 下有 `package.json` 的项目（包括 `_Release` 目录）；只同步 Agent 规则、Skill 和部署脚本，清理已淘汰的旧 Skill 及 `sync_codeflows.py`、`publish_app.py`，不修改业务代码。重复运行只更新有差异的文件，完成后会校验并显示成功、跳过和失败数量。
 
 ## 开发与维护风格
 

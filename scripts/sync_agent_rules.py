@@ -16,6 +16,10 @@ OLD_REFERENCES = (
     ".agents/skills/rpa-practices/references/excel-wps.md",
     ".agents/skills/rpa-practices/references/workflow-composition.md",
 )
+OLD_DEPLOY_SCRIPTS = (
+    ".agents/skills/xbot-tools/scripts/sync_codeflows.py",
+    ".agents/skills/xbot-tools/scripts/publish_app.py",
+)
 
 
 def remove(path):
@@ -39,6 +43,9 @@ def sync(project, sources):
 
     for old in OLD_REFERENCES:
         (project / old).unlink(missing_ok=True)
+    # 部署能力已合并到 deploy_app.py；同步完成后清理旧入口，避免 Agent 误用。
+    for old in OLD_DEPLOY_SCRIPTS:
+        (project / old).unlink(missing_ok=True)
     for name in OLD_SKILLS:
         for parent in (".agents/skills", ".claude/skills"):
             remove(project / parent / name)
@@ -55,6 +62,8 @@ def sync(project, sources):
     if any((project / source.relative_to(TEMPLATE)).read_bytes() != source.read_bytes()
            for source in sources):
         raise RuntimeError("同步文件校验失败")
+    if any((project / old).exists() for old in OLD_DEPLOY_SCRIPTS):
+        raise RuntimeError("旧部署脚本未清理完成")
     if any(not (project / ".claude" / "skills" / name).is_dir() for name in SKILLS):
         raise RuntimeError("Claude Skill 链接校验失败")
     return updated
