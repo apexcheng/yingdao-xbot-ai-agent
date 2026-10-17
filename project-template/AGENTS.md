@@ -44,8 +44,8 @@ ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明
 
 1. 按风险做最小必要验证；默认不新增测试或运行无关全量检查。高风险写入前提示具体数据风险和可能影响，不默认设计回退方案。
 2. 新增项目根目录 `.py` 文件时，文件名去扩展名后不得与 `package.json` 中已有 flow 的 `name` 重复，例如已有名为 `init` 的 Visual flow 时不能新建 `init.py`；撞名登记后 Studio 打开项目可能报“应用文件已损坏”，排查与修复见 `.agents/skills/xbot-tools/references/project-diagnostics.md`。
-3. 新增或删除项目根目录 `.py` 文件时，需要运行 `python .agents/skills/xbot-tools/scripts/sync_codeflows.py` 同步 Code flow 注册并编译；仅修改现有 `.py` 文件时不运行。
-4. 用户说 'push' 时指的是 git commit 并 push 到 GitHub / Gitee 远程仓库。执行前确认有改动需要提交，并使用清晰的 commit 信息。
+3. 用户说“部署”或“push 并部署”时，按 `.agents/skills/xbot-tools/SKILL.md` 直接单次调用 `scripts/deploy_app.py`，传入 Commit / 版本说明，自动完成 Git、必要的 Code flow 注册、Studio 同步、发布及线上版本核验，不重复手动拆步执行。
+4. 用户单独说“push”时，Agent 正常执行 git commit 并 push 到 GitHub / Gitee 远程仓库，不部署影刀。执行前确认有改动需要提交，并使用清晰的 commit 信息。
 
 ## 安全与汇报
 

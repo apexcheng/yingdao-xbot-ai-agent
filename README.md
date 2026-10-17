@@ -103,7 +103,7 @@ run.py
 .claude/skills/spreadsheet-operations/
 ```
 
-模板默认由 `config.py` 管理必要配置。`code-quality` 提供代码简化与审查，`spreadsheet-operations` 负责 WPS 表格操作，`rpa-practices` 提供 Web、日志和流程组合经验；`xbot-tools` 负责 CLI、项目诊断及发布，其 `scripts/sync_codeflows.py` 只处理新增 / 删除 Code Flow，`scripts/publish_app.py` 负责保存、同步、发布与版本校验。使用 CLI 时需本机已安装影刀 CLI。骨架见 [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)。
+模板默认由 `config.py` 管理必要配置。`code-quality` 提供代码简化与审查，`spreadsheet-operations` 负责 WPS 表格操作，`rpa-practices` 提供 Web、日志和流程组合经验；`xbot-tools` 负责 CLI、项目诊断及部署，只有 `scripts/deploy_app.py` 一个部署脚本，单次完成 Git 提交推送、必要的 Code Flow 注册、Studio 同步、发布及线上版本校验。单独“push”由 Agent 正常使用 Git，不调用部署脚本。使用 CLI 时需本机已安装影刀 CLI。骨架见 [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)。
 
 ### 4. 告诉 AI Agent 两个目录
 

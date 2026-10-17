@@ -49,7 +49,7 @@ ShadowBot.Common.PackageUnreadableException: 应用文件已损坏
 
 1. 确认影刀当前没有正在运行该应用，也没有打开该项目 Studio。
 2. 保留现场；不要先删除 `package.sigstore`。
-3. 先核对 Code flow 注册与实际文件是否一致；仅在项目根目录新增 / 删除了 `.py` 文件、需要同步注册时，按 [应用开发闭环](../SKILL.md#应用开发闭环) 规则执行 `python .agents/skills/xbot-tools/scripts/sync_codeflows.py`。只修改已有文件或仅排查签名时不运行同步 helper；如需检查 Python 语法则单独检查，不为此改写 flow 注册。
+3. 先核对 Code flow 注册与实际文件是否一致，发现差异时记录并报告，不在诊断时自动修改。根目录新增 / 删除 `.py` 所需的注册同步仅在明确要求“部署”时由 `deploy_app.py` 自动完成；只排查签名或修改现有文件时不执行部署。如需检查 Python 语法则单独检查。
 4. 先只校验，不写入：
 
 ```powershell
@@ -89,14 +89,14 @@ System.ArgumentException: An item with the same key has already been added. Key:
    at ShadowBot.Runtime.Development.FlowCollection..ctor(...)
 ```
 
-Studio 按 `<活动代码>.<流程名>` 建 flow 字典，`package.json` 的 `flows` 中只要有两个同名 flow，加载即崩溃，界面就弹“应用文件已损坏”。常见来源：`sync_codeflows.py` 登记新 `.py` 时 flow 名 = 文件名去扩展名，与已有 Visual flow 名撞车，例如项目已有名为 `init` 的 Visual flow 时新建了 `init.py`。
+Studio 按 `<活动代码>.<流程名>` 建 flow 字典，`package.json` 的 `flows` 中只要有两个同名 flow，加载即崩溃，界面就弹“应用文件已损坏”。常见来源：新增 `.py` 登记 Code flow 时 flow 名 = 文件名去扩展名，与已有 Visual flow 名撞车，例如项目已有名为 `init` 的 Visual flow 时新建了 `init.py`。
 
 指令项目（`robot_type: "activity"`）还要同时检查 `prototype.block.json`：其 `blocks[].name` 同样是 `<活动代码>.<流程名>`、`function` 指向流程文件名；影刀打开项目时只重写 `package.json`，不会自动修复重复的 block。
 
 修复顺序：
 
 1. `git mv` 重命名撞名的 `.py`（不要改 Visual flow 的名字），并更新引用它的 import。
-2. 运行 `sync_codeflows.py`，让 `package.json` 移除旧注册、登记新文件名。
+2. 核对旧 Code flow 注册和新文件名的对应关系；如本轮明确要求部署，由 `deploy_app.py` 自动同步注册。诊断时不直接改写 `package.json`，独立修复需另行明确处理。
 3. 把 `prototype.block.json` 中对应 block 的 `name`、`function`、`title` 一并改为新名。
 4. 最后做 Sigstore 只读校验；`before=True` 则无需重签。
 5. 重新打开 Studio 验证日志中不再出现 `Failed to load app`。
