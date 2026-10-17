@@ -341,6 +341,8 @@ sheet.set_range(row_num=3, col_name="A", values=[["李四", 20]])
 | `set_column(column, values, begin_row_num=1)` | `values: list` | 覆盖一列 |
 | `set_range(row_num, col_name, values)` | `values: list[list]` | 从指定位置写入二维数组；也可按位置传参 |
 
+**`set_range()` 注意：** 使用 WPS 驱动批量写入时，业务文本若以 `=` 开头，可能被当作公式解析并触发 COM 异常。写入前只需对这类文本加英文单引号；数字和 `pywintypes.datetime` 无需统一转成字符串，真正的公式则不能转义。原因、错误码与实测示例见 [11.3 WPS 批量写入以 `=` 开头的文本](#113-wps-批量写入以--开头的文本)。
+
 ### 11.2 可视化封装写数据：`write_data_to_workbook`
 
 `write_range` 可选值：
@@ -408,6 +410,8 @@ sheet.set_range(1, "A", cleaned_data)
 ```
 
 本次在影刀 + WPS 环境实测，增加英文单引号后可一次性写入数千行数据，单元格显示内容仍以 `=` 开头，不会把英文单引号显示出来。
+
+**复现补充（2026-10-17，影刀 6.3.34，WPS 驱动）：** 对一份 6,323 行、79 列的 CSV，通过 `get_range()` 读取后包含 31,233 个 `pywintypes.datetime` 值及 5 个以 `=` 开头的业务文本。原样 `set_range()` 抛出上述 COM 错误；单独写入日期对象成功，单独写入以 `=` 开头的业务文本复现相同错误。仅为这 5 个文本添加英文单引号，**其余日期、数字、空值全部不变**，整批 `set_range()` 即成功。保存后再次读取，日期仍是日期值，异常文本显示以 `=` 开头且不是公式。因此此类错误不能仅凭数据包含 `pywintypes.datetime` 就判断是日期类型不兼容，应优先隔离实际失败的单元格值。
 
 注意：只处理确定属于文本的字段。真正需要执行的 Excel / WPS 公式不能加英文单引号，否则会按普通文本保存。
 
