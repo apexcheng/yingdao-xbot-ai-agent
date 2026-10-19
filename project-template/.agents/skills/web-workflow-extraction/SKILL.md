@@ -25,6 +25,7 @@ description: 仅在用户明确要求探测网页操作流程、提取或验证 
 - 元素库复用、XPath 构造及相对查找原则统一见 [browser.md](../../../../xbot-api-docs/docs/browser.md)。已有元素库名称可作为线索，不能冒充已提取的 XPath；无法取得 XPath 时标明缺口。
 - iframe 按外到内分别记录各层 iframe XPath 与框内目标 XPath，并在各自上下文核对匹配；调用契约见 [iframe2-extension.md](../../../../xbot-api-docs/docs/iframe2-extension.md)，不将跨文档路径拼成普通 XPath。
 - 业务取数、异步导出任务绑定及动态元素处理按需查 [网页自动化实践](../rpa-practices/references/web.md)；提取交互 XPath 不等于选择 XPath 读取业务数据，不额外扩展取数任务。
+- 探测 Excel/CSV 导出流程时，不为额外核验文件格式、表头或数据而下载真实报表；交付时提示“真实导出文件结构未验证，首次运行可能需适配”。用户明确要求实际下载或文件核验时除外。
 - 浏览器探测通过不代表影刀运行通过；标明验证环境及影刀兼容性未验证的范围，不为补充兼容性结论运行 RPA。
 
 ## 交付格式
