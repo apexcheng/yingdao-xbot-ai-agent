@@ -7,6 +7,7 @@
 - 来源项目：`douyin-bow-profit-report-rpa`；**冻结来源 Git 提交：`7cb4751675d9b062b30527bcc15320a34579ffc1`**（2026-10-15）。
 - **源码已存入本知识库的 [snapshot/](snapshot/) 目录**：`run.py`、`utils.py`、`notify.py`、10 个 `update_*.py` 和 `requirements.txt`。后续阅读不依赖原项目仓库，即使原仓库继续提交或不可访问，本快照也保持独立。只有明确要求更新案例时才重新冻结新版本。
 - 快照忠实保留该提交的业务流程，**仅脱敏**：`run.py` 注释中的 3 处历史本机路径、`update_global_promotion.py` 和 `update_influencer_promotion.py` URL 中各 1 处广告账户 ID（替换为 `EXAMPLE_ACCOUNT_ID`）。不将这类替换视为原始源码本身的实现事实。
+- **已知历史缺陷（2026-10-19）**：冻结快照的 `snapshot/run.py` 把结束时的浏览器清理放在 `all_succeeded` 条件内；有 Sheet 失败或 9 个日常 Sheet 全部今日跳过时，可能不执行收尾清理。**不要照搬该条件**；现行正确写法见下文「浏览器收尾的已知缺陷与正确做法」。保留快照原文以维持来源提交可追溯，不将修复伪装成原始实现。
 - 这是静态代码参考，未经独立的全流程实机验收；不能据此承诺网页、外部服务或 WPS 在其它机器上直接运行成功。
 - 适合参考：一个目标 WPS 工作簿、多来源文件导出、网页网络响应、独立 HTTP API、全量覆盖和增量/差异更新、跨日跳过、逐 Sheet 结果、统一保存及钉钉通知。
 - 原项目中的私有 `config.py`、`package.py`、元素库及影刀应用资源、账号授权和已安装市场指令未收录；**快照不是可直接部署的影刀应用**。只学习结构与数据交接，不复制真实配置、店铺路径、授权信息或专有字段值。
@@ -26,7 +27,7 @@ run.main(args)
              → 抖店有未执行 Sheet：切换抖店 Profile、清理该 Profile 历史 Page
                → 初始化抖店 → 仅更新未执行的 7 个抖店相关 Sheet
              → 某平台的 Sheet 均已完成：跳过该平台初始化及启动清理
-             → 日常任务全部成功时按 Profile 清理多余 Page
+             → [历史缺陷，不可照搬] 仅日常任务全部成功时按 Profile 清理多余 Page
   → 经营看板写入各 Sheet 状态 / 按条件更新完成时间
   → 统一保存目标工作簿
   → finally 结束 WPS → 统计结果 → 按条件发送钉钉
@@ -85,8 +86,28 @@ run.main(args)
 - [run.py](snapshot/run.py) 的 `update_sheet()` 按源码注释约定，对**整个 Sheet 的下载、读取、写入操作最多尝试 2 次（首次执行 + 失败后重试 1 次）**，最终失败记状态并继续处理独立 Sheet；实际次数由未收录在固定提交中的私有配置 `SHEET_ATTEMPTS` 决定。ERP 或抖店初始化失败则按来源分组标记受影响任务。存在依赖时遵守当前项目的实际失败分组，而不是假定所有任务独立。
 - 看板的记录包含 Sheet、结果、尝试次数、处理时间、说明；「今日跳过」在本轮结果中保留原成功时间，写回看板时仍记「成功」。单个 Sheet 的「成功」表示业务写入步骤已完成，**不意味着统一保存已经成功**。
 - 普通事实层可能先清空再写入；如果中途失败且主流程最终保存，可能保留部分修改，**不是原子更新**。产品库以 ID 事件辅助通知，不是完整的持久化审计：失败重试时可能清空前次尝试的事件。
-- **日常任务完成后的收尾浏览器清理**与 `target_workbook.save()` 由独立的 `try/except` 处理，保持清理在保存之前的业务顺序；这次收尾清理仍遍历两个 Profile，即使某个平台本轮未初始化；清理异常不会阻止保存，两个失败分别记错误。**启动阶段只清理需要初始化的平台的历史 Page**，该清理未单独捕获异常，失败会中断本轮并跳过保存。程序 `finally` 仍会结束 WPS，即使保存失败也不保留 WPS 现场。
+- **历史实现事实，不作为推荐写法**：本快照把浏览器清理和保存分别放在 `try/except` 中，但浏览器清理额外受到 `all_succeeded` 限制，且位于「不是全部今日跳过」分支；Sheet 失败或提前进入全跳过分支时可能遗留多余 Page。**启动阶段只清理需要初始化的平台的历史 Page**，该清理未单独捕获异常，失败会中断本轮并跳过保存。程序 `finally` 会结束 WPS，即使保存失败也不保留 WPS 现场。
 - [notify.py](snapshot/notify.py) 按 Sheet 结果分组显示本轮更新、今日跳过和失败；额外列出产品库 ID 变化或异常、采购成本变更摘要，以及独立的「表格是否已保存」状态。采购成本没有变化且全部日常 Sheet 今日跳过、无异常时不发送通知；通知失败不会反向修改已保存的 Sheet 结果。
+
+### 浏览器收尾的已知缺陷与正确做法
+
+**结束清理属于资源生命周期，不属于日常 Sheet 成功判定。** 不管业务成功、失败、全部今日跳过还是中途发生异常，均在最外层 `finally` 清理 ERP 和店铺浏览器的多余 Page；对每个 Profile 只关闭 `web.get_all(mode="chrome")[:-1]`，留下最后一个 Page。各 Profile 独立处理清理失败，不能阻止 WPS 结束与钉钉通知。已确认的正式项目修复见 `douyin-bow-profit-report-rpa` 提交 `aa943a5`；下方只摘录清理结构，**不是冻结快照的代码**。
+
+```python
+finally:
+    for profile in dict.fromkeys((ERP_PROFILE, DOUYIN_PROFILE)):
+        try:
+            web.set_user_environment(mode="chrome", profile_name=profile)
+            for page in web.get_all(mode="chrome")[:-1]:
+                page.close()
+        except Exception as error:
+            errors.append(f"浏览器清理失败（Profile={profile}）：{error}")
+            logging.error(f"【浏览器】清理失败｜Profile={profile}｜异常={traceback.format_exc()}")
+
+    # 此后仍独立完成 WPS 收尾、状态统计及通知。
+```
+
+`all_succeeded` 仍可用于决定经营看板的完成时间，**不得再用于决定是否清理浏览器**。不修改 `snapshot/run.py`，避免失去与冻结来源提交的对应关系。
 
 ## 文件职责与按需阅读路径
 
