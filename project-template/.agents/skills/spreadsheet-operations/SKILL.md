@@ -7,6 +7,8 @@ description: 影刀编码版使用 WPS 更新 Excel/CSV 表格的固定操作规
 
 开发影刀表格更新程序时遵守本页。API 参数和返回值查 [xbot.excel 正式文档](../../../../xbot-api-docs/docs/excel.md)；业务模块命名与函数边界见 [编程风格](../code-quality/references/coding-style.md)。不重复加载其它表格操作规范。
 
+测试时，用户明确指定专用测试工作簿就直接使用，不强制复制；若要求保留 WPS 打开且不保存，则按要求跳过测试收尾的保存与关闭。生产运行仍遵守下述规则。
+
 ## 打开与使用工作簿
 
 1. 本轮程序第一次打开 WPS 前，直接调用 `xbot.excel.kill_excel_process("wps", True)` 结束残留进程；不判断其他 WPS 文件是否正在编辑。本轮已经打开目标工作簿后，不在打开源文件前再次结束 WPS。
