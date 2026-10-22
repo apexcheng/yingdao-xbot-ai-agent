@@ -5,7 +5,7 @@ description: Check existing-project implementation consistency, simplify recent 
 
 # 代码质量：一致性、简化与审查
 
-先读取项目 `AGENTS.md`，只进入当前任务涉及的部分：比较已有实现时用「代码一致性」，用户要求精简时用「代码简化」，要求审查时用「代码审查」。需要过程式主流程、变量内联、函数边界或异常收尾等标准时，按需读取 [编码标准](references/coding-style.md)；普通明确小改无需全量加载。
+先读取项目 `AGENTS.md`，只进入当前任务涉及的部分：比较已有实现时用「代码一致性」，用户要求精简时用「代码简化」，要求审查时用「代码审查」。需要过程式主流程、变量内联、函数边界或异常收尾等标准时，按需读取 [编码标准](references/coding-style.md)；新增或调整网页操作流程时，按项目 `AGENTS.md` 要求在编码前读取其中的「变量与内联」一节。普通明确小改无需全量加载。
 
 ## 代码一致性
 
@@ -67,7 +67,7 @@ description: Check existing-project implementation consistency, simplify recent 
 以下情况应保留显式结构：
 
 - 分支包含多个业务动作、副作用或异常处理。
-- 中间变量会复用、参与后续判断，或名称能明显解释业务含义。
+- 运行时中间结果会复用、参与后续判断，或名称能明显解释计算结果的业务含义；固定字面量是否提取按 [变量与内联](references/coding-style.md#3-变量与内联) 判断。
 - 函数 / 类确实隐藏一组实现细节，并向调用方提供稳定完整的结果或后置条件。
 - 展开写法更方便排查、调试或理解真实业务顺序。
 
@@ -80,6 +80,7 @@ description: Check existing-project implementation consistency, simplify recent 
 1. 只修改了本次简化范围。
 2. 没有引入与当前项目不同的新实现模式。
 3. 业务行为、失败语义和关键常量没有变化。
+4. 本次新增的模块常量、局部变量和配置项符合 [变量与内联](references/coding-style.md#3-变量与内联)，没有将应就地内联的固定值提取出去。
 
 按项目 `AGENTS.md` 的验证规则做与本次简化直接相关的最小必要验证。没有实际运行或可验证证据时，只能说明静态检查结果，不能声称业务运行行为已经验证一致。
 
@@ -119,6 +120,7 @@ description: Check existing-project implementation consistency, simplify recent 
 - 是否违反当前项目 `AGENTS.md` 中的编码与执行约束、[编码标准](references/coding-style.md) 或明确的 API 规范。
 - 同类问题已有成熟实现时，是否无理由改用了另一套 API、控制流、异常或日志方式。
 - 是否为一个小改动引入无必要的新抽象、封装层或长期状态。
+- 新增的模块常量、局部变量和配置项是否符合 [变量与内联](references/coding-style.md#3-变量与内联) 的例外和最小作用域要求。
 - 是否为了理论上的失败新增无需求的回滚 / 重新打开工作簿 / 跨轮下载缓存。
 
 #### 3. Standards｜xbot / 外部能力
