@@ -1,18 +1,18 @@
 ---
 name: spreadsheet-operations
-description: 影刀编码版使用 WPS 更新 Excel/CSV 表格的固定操作规范，包括打开、最大化、区域读写、多 Sheet 更新、保存与关闭。
+description: 影刀业务代码运行时通过 xbot.excel / WPS 更新 Excel/CSV 的固定规范，不约束 Agent 开发期读取表格的工具。
 ---
 
 # 表格操作（影刀 WPS）
 
-开发影刀表格更新程序时遵守本页。API 参数和返回值查 [xbot.excel 正式文档](../../../../xbot-api-docs/docs/excel.md)；业务模块命名与函数边界见 [编程风格](../code-quality/references/coding-style.md)。不重复加载其它表格操作规范。
+开发影刀表格更新程序时遵守本页。**本页只规定业务程序运行时的表格操作，不要求 Agent 在开发期检查工作簿结构、公式或数据时启动 WPS、导入 `xbot`。**API 参数和返回值查 [xbot.excel 正式文档](../../../../xbot-api-docs/docs/excel.md)；业务模块命名与函数边界见 [编程风格](../code-quality/references/coding-style.md)。不重复加载其它表格操作规范。
 
 测试时，用户明确指定专用测试工作簿就直接使用，不强制复制；若要求保留 WPS 打开且不保存，则按要求跳过测试收尾的保存与关闭。生产运行仍遵守下述规则。
 
 ## 打开与使用工作簿
 
 1. 本轮程序第一次打开 WPS 前，直接调用 `xbot.excel.kill_excel_process("wps", True)` 结束残留进程；不判断其他 WPS 文件是否正在编辑。本轮已经打开目标工作簿后，不在打开源文件前再次结束 WPS。
-2. **所有表格文件，包括 Excel 和 CSV，都使用 `xbot.excel.open()` 的 WPS 驱动打开**，不改用 `openpyxl`、`pandas` 或其它方式加载。
+2. **业务程序运行时**，所有表格文件，包括 Excel 和 CSV，都使用 `xbot.excel.open()` 的 WPS 驱动打开，不改用 `openpyxl`、`pandas` 或其它方式加载；该限制不适用于 Agent 的开发期文件检查。
 3. 统一使用 `workbook = xbot.excel.open(file_name=str(target), kind="wps", visible=True, update_links=False)`；不使用 `visible=False`。
 4. 每次打开工作簿后，立即激活并最大化：
 
