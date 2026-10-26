@@ -21,7 +21,7 @@
 
 ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明确指定，否则不得启动影刀主程序。
 
-**Agent 开发期浏览器工具：**开发、调试影刀 RPA 时，如需实际操作网页或探测 DOM / XPath，Codex 环境优先使用原生 Computer Use；Computer Use 不可用或无法操作目标浏览器会话时，再使用 browser-control。其他 Agent 按各自环境选择可用工具。这不改变下文影刀运行时代码默认使用 `xbot.web` 的要求。浏览器探测步骤及现场保留规则见 `.agents/skills/web-workflow-extraction/SKILL.md`。
+**Agent 开发期浏览器工具：**开发、调试影刀 RPA 时，如需实际操作网页或探测 DOM / XPath，Codex 环境使用原生 Computer Use；ChatGPT 环境使用 browser-control；其他 Agent 按各自环境选择可用工具。这不改变下文影刀运行时代码默认使用 `xbot.web` 的要求。浏览器探测步骤及现场保留规则见 `.agents/skills/web-workflow-extraction/SKILL.md`。
 
 ## 代码实现
 
