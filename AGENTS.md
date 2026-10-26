@@ -12,7 +12,7 @@
 - `reference-projects/` 是完整项目案例的唯一位置，收录具有固定来源 commit 的脱敏源码快照或引用固定 Git 提交的完整流程案例，仅供实现参考，不代替 API 事实或开发规范。Skill 的 `references/` 只维护专项技术经验，不再放项目级 Demo。允许保留历史痕迹；已知不推荐写法在案例 README 中说明，不把快照改造成未经运行的示例，也不自动跟随来源项目更新。
 - `llms.txt` 是 AI 知识导航，`README.md` 是人类使用说明，`CONTRIBUTING.md` 负责证据与脱敏要求；这些入口不复制正式知识正文。新增或调整知识时先选唯一事实源，其它位置只写必要链接。
 - 根与模板的 `.claude/CLAUDE.md` 各自只加载对应 `AGENTS.md`，不维护第二套规则，也不能混用。
-- 本库仅收录影刀 xbot、编码版和 RPA 的稳定知识。宿主侧 ChatGPT、Claude Code、Codex 的插件、MCP、DevSpace、Computer Use、设备连接、模型和工具路由不在维护范围；影刀自身的 CLI、API、项目格式与 Studio / Flow / Console 运行机制仍属于本库。
+- 本库仅收录影刀 xbot、编码版和 RPA 的稳定知识。宿主侧 ChatGPT、Claude Code、Codex 的插件、MCP、DevSpace、Computer Use、设备连接、模型和通用工具路由不在维护范围，不得将影刀规则写入宿主全局配置；影刀项目开发期的工具选择原则归 `project-template/AGENTS.md`，具体操作流程归对应 Skill；影刀自身的 CLI、API、项目格式与 Studio / Flow / Console 运行机制仍属于本库。
 
 ## 审查与维护
 
