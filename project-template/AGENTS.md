@@ -39,7 +39,7 @@ ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明
 4. 网页业务默认使用 `xbot.web`；所有 Page 新建、跳转、刷新等加载完成后，先 `page.wait_load_completed(...)`，再统一 `time.sleep(2)`，然后开始业务操作，避免 JS 仍在初始化。需要等待异步业务结果时仍须检查实际状态，不用不断叠加固定等待。
    程序开始运行时先获取所有浏览器 Page，只关闭 `all_page[:-1]`，保留最后一个 Page，避免 Chrome 进程退出。业务执行到一半异常中断时，不关闭正在操作的 Page，方便排查。
    网页数据优先从网络响应获取，DOM / XPath 主要用于触发操作；用户提供数据提取 XPath 时不先探测网络响应，直接询问是否确认放弃网络响应、改用 XPath 提取，确认后再执行。详情见 `.agents/skills/rpa-practices/references/web.md`。
-   仅在用户明确要求网页操作流程探测、XPath 提取或验证时使用 `.agents/skills/web-workflow-extraction/SKILL.md`，交付流程与 XPath 文档及证据；普通网页开发不自动触发。
+   网页 RPA 开发优先复用用户提供的 XPath、截图/步骤、现有代码与参考项目；截图/描述是强参考，对缺失、不清楚或未经可靠验证的交互，先用浏览器补全操作步骤和 XPath，再编码并静态验收。用户说“探测”默认包含后续开发；明确要求只读、不修改或不使用浏览器时遵守限制。细则见 `.agents/skills/web-workflow-extraction/SKILL.md`。
 5. 影刀日志使用 `from xbot.app import logging`；动态内容使用完整 f-string，异常堆栈使用 `traceback.format_exc()`。业务日志默认采用简洁的中文上下文格式，记录业务对象、动作和必要结果；示例见 `.agents/skills/rpa-practices/references/logging.md`。
 6. **严格禁止 Agent 直接修改 `selectorsV2.xml`**：不得创建、编辑、格式化、覆盖或补丁修改该文件。需要增删或调整元素库时，Agent 只能提示用户自行通过影刀编辑器修改，不得代替用户修改文件；业务代码只读取并使用项目中已有的元素库名称。
 7. 需要操作 ShadowBot CLI 时，按需读取 `.agents/skills/xbot-tools/SKILL.md`；命令参数以本机帮助为准。
