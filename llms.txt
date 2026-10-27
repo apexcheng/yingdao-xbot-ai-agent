@@ -14,7 +14,7 @@
 - 新建或补全影刀编码版项目：[xbot-tools / base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
 - 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[code-quality / 编程风格](project-template/.agents/skills/code-quality/references/coding-style.md)
 - `config.py` 配置归属、凭据与示例脱敏、配置整改验收：[code-quality / 配置变更](project-template/.agents/skills/code-quality/references/coding-style.md#配置变更的核对与验收)
-- 钉钉业务通知的文案结构、排版偏好、状态 emoji 与示例：[rpa-practices / 钉钉通知](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
+- 钉钉执行结果通知的运维追溯、逐店铺/对象状态、阶段汇总、失败原因、排版与示例：[rpa-practices / 钉钉通知](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
 - 中文业务上下文日志、关键节点与失败示例：[rpa-practices / 日志实践](project-template/.agents/skills/rpa-practices/references/logging.md)
 - Excel / CSV 全部用 WPS、工作簿最大化、Sheet 区域更新、统一保存与关闭：[spreadsheet-operations](project-template/.agents/skills/spreadsheet-operations/SKILL.md)
 - 跨轮次处理状态示例、失败重试与通知状态区分：[rpa-practices / 跨轮次状态与重试](project-template/.agents/skills/rpa-practices/references/cross-run-state-and-retries.md)
