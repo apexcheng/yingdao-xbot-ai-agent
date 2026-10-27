@@ -30,7 +30,7 @@
 
 ### 浏览器
 
-遇到 XPath 查到却无法点击、Code 106 或页面行为异常时，结合当前 URL / 登录状态、iframe、遮罩与 SPA 重绘判断原因。元素可能因重绘失效，必要时重新定位；不要仅凭错误码认定广告遮挡或一味增加超时。异常中断时保留当前业务 Page 供排查。
+遇到 XPath 查到却无法点击、Code 106 或页面行为异常时，结合当前 URL / 登录状态、iframe、遮罩与 SPA 重绘判断原因。元素可能因重绘失效，必要时重新定位；不要仅凭错误码认定广告遮挡或一味增加超时。
 
 网页加载等待及具体 API 见 [browser.md](../../../../../xbot-api-docs/docs/browser.md)，跨 iframe 见 [iframe2-extension.md](../../../../../xbot-api-docs/docs/iframe2-extension.md)，异步任务表元素失效见 [网页实践](web.md)。
 

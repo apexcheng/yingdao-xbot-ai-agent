@@ -141,15 +141,16 @@ page = _get_page(url)
 
 ## 5. 直白与可读
 
-变量名同时说明**业务含义和对象类型**，如 `seaya_workbook`（工作簿）、`shopee_workbooks`（工作簿列表）、`download_path`（文件路径），避免笼统使用 `data`。函数业务意图不明显或参数、返回值需要解释时，写简短文档注释；可采用 Sphinx `:param:` / `:return:`，无需为每个显而易见的单次小函数强制添加模板。示例如下：
+变量名同时说明**业务含义和对象类型**，如 `seaya_workbook`（工作簿）、`shopee_workbooks`（工作簿列表）、`download_path`（文件路径），避免笼统使用 `data`。函数业务意图不明显或参数、返回值需要解释时，写简短文档字符串，统一采用 reStructuredText（reST，也称 Sphinx）风格，用 `:param 参数名:` 和 `:return:` 描述参数和返回值；无需为每个显而易见的单次小函数强制添加模板。示例如下：
 
 ```python
-def get_page(url):
-    """
-    获取并返回可直接用于业务操作的页面。
+def _record_failure(client, started_at, error):
+    """将本轮失败摘要写入航桥运行记录表。
 
-    :param url: 目标页面地址
-    :return: 已完成必要检查的页面对象
+    :param client: 航桥客户端。
+    :param started_at: 本轮运行的开始时间。
+    :param error: 本轮运行中发生的异常。
+    :return: 无。
     """
 ```
 

@@ -121,4 +121,4 @@ finally:
 
 其它业务模块从上方十项清单按需打开 1～2 个即可。不单独维护 XPath 清单、可复制的业务账号或配置内容；全部业务模块源码已在本案例 `snapshot/` 内冻结，不需要再访问其它仓库。
 
-**规范边界**：这是来源提交当时的运行事实。影刀 Page、网络监听、Excel/WPS、钉钉等 API 优先查 [正式 API 文档](../../xbot-api-docs/docs/browser.md)、[表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md) 与 [Web 实践](../../project-template/.agents/skills/rpa-practices/references/web.md)；案例中的日期边界、状态字段、写入区域、外部接口、通知阈值不能自动套给其它项目。固定版本的达人投流页面有特定的右键交互与 `time.sleep(3)`，属于项目实现差异，不替代模板中加载完成后等待 2 秒的通用规则。
+**规范边界**：这是来源提交当时的运行事实。影刀 Page、网络监听、Excel/WPS、钉钉等 API 优先查 [正式 API 文档](../../xbot-api-docs/docs/browser.md)、[表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md) 与 [Web 实践](../../project-template/.agents/skills/rpa-practices/references/web.md)；案例中的日期边界、状态字段、写入区域、外部接口、通知阈值不能自动套给其它项目。固定版本的达人投流页面有特定的右键交互与 `time.sleep(3)`，属于项目实现差异，不替代模板中加载完成后等待 1 秒的通用规则。

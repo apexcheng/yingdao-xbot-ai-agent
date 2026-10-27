@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import subprocess
 from pathlib import Path
 
 
@@ -55,9 +56,22 @@ def sync(project, sources):
         destination = Path("../../.agents/skills") / name
         if link.is_symlink() and link.readlink() == destination:
             continue
+        target = (project / ".agents" / "skills" / name).resolve()
+        if hasattr(link, "is_junction") and link.is_junction() and link.resolve() == target:
+            continue
         link.parent.mkdir(parents=True, exist_ok=True)
         remove(link)
-        link.symlink_to(destination, target_is_directory=True)
+        try:
+            link.symlink_to(destination, target_is_directory=True)
+        except OSError as error:
+            if error.winerror != 1314:
+                raise
+            subprocess.run(
+                ["cmd.exe", "/c", "mklink", "/J", str(link), str(target)],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
 
     if any((project / source.relative_to(TEMPLATE)).read_bytes() != source.read_bytes()
            for source in sources):
