@@ -104,7 +104,9 @@ browser = web.get_active(mode="chrome")
 browsers = web.get_all(mode="chrome")
 ```
 
-注意：`web.get_active()` 依赖浏览器已经启动；如果当前还没有启动浏览器，这里会获取失败。初始化浏览器时建议直接用 `web.create('')`，再按业务需要传入 `mode` 和 `url`。
+注意：`web.get_active()` 依赖浏览器已经启动；如果当前还没有启动浏览器，这里会获取失败。`web.get_all()` 在指定用户环境没有浏览器窗口（包括浏览器进程未启动）时也会抛异常，而不是返回空列表。普通业务需要打开目标 Page 时直接使用 `web.create(url=..., mode=...)`，无需先调用 `get_all()`。
+
+只有确实需要枚举已有 Page（如批量清理或接管网页新开的标签页）时才使用 `web.get_all()`。批量清理时可将“未找到指定用户环境的浏览器窗口”视为没有待清理页面，其它异常仍应抛出。
 
 多 Chrome Profile 场景要特别注意：`web.get_all(mode="chrome")` 受当前用户环境影响。要获取或关闭某个 Profile 下的页面，必须先用 `web.set_user_environment(...)` 切换到该 Profile，再调用 `web.get_all(...)`；不要在一个 Profile 环境下直接假设能拿到其它 Profile 的页面。
 
@@ -118,7 +120,14 @@ browsers = web.get_all(mode="chrome")
 for profile in dict.fromkeys(profiles):
     profile = str(profile or "Default").strip() or "Default"
     web.set_user_environment(mode="chrome", profile_name=profile, specifield_userdata=False, user_data_dir=None)
-    for page in web.get_all(mode="chrome")[:-1]:
+    try:
+        pages = web.get_all(mode="chrome")
+    except Exception as e:
+        if "未找到指定用户环境的浏览器窗口" in str(e):
+            pages = []
+        else:
+            raise
+    for page in pages[:-1]:
         page.close()
 ```
 
