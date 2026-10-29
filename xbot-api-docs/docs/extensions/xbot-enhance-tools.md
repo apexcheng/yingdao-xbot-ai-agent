@@ -1,5 +1,7 @@
 # 增强工具2026 (xbot_enhance_tools)
 
+> **旧项目维护专用 API 事实页，不再是新项目默认技术路线。** 新项目中的登录、XPath 等待、下载等待、ntfy 与普通通知，优先参考[功能模板索引](../../../project-template/.agents/skills/rpa-practices/references/feature-templates/README.md)，使用原生 xbot API / Python 标准库直接编写；本页公开签名与已核行为仍保留供现有项目兼容，**不要因知识迁移直接删除在用市场指令**。
+
 > 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../../AGENTS.md)。
 
 > 调用类型：`direct python`  

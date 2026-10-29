@@ -4,13 +4,14 @@
 
 ## 查找顺序
 
-1. 需要影刀 xbot API、市场指令的入口、参数、返回值和用法时，先查对应 Skill 及本导航指向的正式知识页，不跳过知识库直接查源码。
+1. 新项目实现登录、验证码、下载等待和通知，先查[功能模板](project-template/.agents/skills/rpa-practices/references/feature-templates/README.md)，优先原生 xbot API 和 Python 标准库，不使用「增强工具2026」。需要影刀 xbot API、其他市场指令的入口、参数、返回值和用法时，再查对应正式知识页，不跳过知识库直接查源码。
 2. 项目专有的业务规则、配置、字段和当前行为仍从真实项目的 `AGENTS.md`、正式规范及相关代码确认；只读取完成当前任务所需的内容。
 3. Skill 与正式知识页都没有所需用法时，才按需核对公开源码，不能凭猜测实现；有正式知识时不额外查源码，也不复制市场指令源码到业务项目。
-4. 文档所述入口在项目中缺失时，先提示检查、更新或重新安装相应市场指令；若市场尚无包含该入口的版本，应明确说明发布缺口，不擅自改写文档中的调用方式。
+4. **实际决定使用市场指令**且入口在项目中缺失时，提示检查、更新或重新安装相应指令；若市场尚无包含该入口的版本，应明确说明发布缺口，不擅自改写文档中的调用方式。功能模板的原生实现不以安装旧市场指令为前提。
 
 ## 按任务直达
 
+- 站点登录（抖店手机号、拼多多、千牛、京麦、支付宝）、下载完成等待、ntfy 验证码、钉钉 Webhook、原生简写：[rpa-practices / 功能模板索引](project-template/.agents/skills/rpa-practices/references/feature-templates/README.md)；未来新项目不使用「增强工具2026」
 - 新建或补全影刀编码版项目：[xbot-tools / base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
 - 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[code-quality / 编程风格](project-template/.agents/skills/code-quality/references/coding-style.md)
 - `config.py` 配置归属、凭据与示例脱敏、配置整改验收：[code-quality / 配置变更](project-template/.agents/skills/code-quality/references/coding-style.md#配置变更的核对与验收)
@@ -37,6 +38,6 @@
 - 市场指令、Visual / Code / Direct Python 入口、扩展能力及已核验参数和返回值：[extension-instructions.md](xbot-api-docs/docs/extension-instructions.md)
 - 网页数英验证码图片识别、云码 token 与元素库参数：[activity-jfbym.md](xbot-api-docs/docs/extensions/activity-jfbym.md)
 - C-ERP可视化版开发项目内的 Python Code Flow、ERP 初始化及库存 / 铺货 / 发货 / 退货下载模块：[activity-a90a8311.md](xbot-api-docs/docs/extensions/activity-a90a8311.md)
-- 钉钉群机器人、XPath 出现等待、下载等待、共享文件占用者识别：[xbot-enhance-tools.md](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
+- 旧项目仍使用「增强工具2026」时的原接口事实（非新项目推荐）：[xbot-enhance-tools.md](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
 
 文档贡献的证据和脱敏要求见 [CONTRIBUTING.md](CONTRIBUTING.md)。

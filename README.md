@@ -34,13 +34,14 @@
 
 - [AGENTS.md](AGENTS.md)：知识库自身的维护规则；真实项目的常驻开发规则见 [project-template/AGENTS.md](project-template/AGENTS.md)。
 - [llms.txt](llms.txt)：给 AI Agent 使用的精简文档导航。
-- [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口和四个 Skill（`code-quality`、`xbot-tools`、`rpa-practices`、`spreadsheet-operations`）。
+- [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口和五个 Skill（`code-quality`、`xbot-tools`、`rpa-practices`、`spreadsheet-operations`、`web-workflow-extraction`）。
 
 ### Skills 与完整开发经验
 
 - [代码质量 Skill](project-template/.agents/skills/code-quality/SKILL.md)：一致性、简化、审查。
 - [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)：CLI、项目创建、同步、发布、项目诊断。
 - [开发经验 Skill](project-template/.agents/skills/rpa-practices/SKILL.md)：网页、钉钉通知、跨轮状态及通用排错。
+- [功能模板索引](project-template/.agents/skills/rpa-practices/references/feature-templates/README.md)：新项目直接复用站点登录、ntfy、下载等待、钉钉 Webhook 与原生写法，不再依赖「增强工具2026」；旧项目仍可查询原指令事实页。
 - [表格操作 Skill](project-template/.agents/skills/spreadsheet-operations/SKILL.md)：Excel/CSV 用 WPS 打开、更新、保存和关闭。
 
 - [影刀编码版编程风格详解](project-template/.agents/skills/code-quality/references/coding-style.md)

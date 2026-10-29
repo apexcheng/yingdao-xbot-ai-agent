@@ -1,6 +1,6 @@
 # 钉钉通知实践
 
-本页约束业务自动化项目中的钉钉通知**怎么写得清楚、可用于执行汇总和运维追溯、方便快速处理**。API 调用方式、参数和返回值以 [增强工具的钉钉机器人说明](../../../../../xbot-api-docs/docs/extensions/xbot-enhance-tools.md) 为准。
+本页约束业务自动化项目中的钉钉通知**怎么写得清楚、可用于执行汇总和运维追溯、方便快速处理**。新项目简单群通知优先使用[钉钉 Webhook 功能模板](feature-templates/dingtalk-webhook.md)；现有项目若仍调用「增强工具2026」，其旧接口签名与返回值见 [增强工具 API 事实](../../../../../xbot-api-docs/docs/extensions/xbot-enhance-tools.md)。Webhook 不能替代企业机器人私聊/图片能力。
 
 ## 1. 总体风格
 
