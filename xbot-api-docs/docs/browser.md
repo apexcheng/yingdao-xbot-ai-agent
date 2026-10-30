@@ -29,7 +29,7 @@
 
 ## 2. 元素库与 XPath / CSS
 
-项目已有元素库名称时，可直接使用 `browser.find("元素名")`。没有可复用元素时，再按真实 DOM 使用 XPath / CSS；不要自行猜测或转换选择器。
+项目已有元素库名称时，可直接使用 `browser.find("元素名")`。已有用户确认或实测的 XPath / CSS 时直接复用；没有可靠定位时，只能依据当前真实 DOM 提取，不得凭印象猜测标签、属性、层级或自行转换选择器。无法获得真实定位时应停止该定位步骤并索取依据；具体探测与阻塞处理见 [网页操作流程与 XPath 探测](../../project-template/.agents/skills/web-workflow-extraction/SKILL.md)。
 
 ```python
 element = browser.find("搜索框", timeout=10)
