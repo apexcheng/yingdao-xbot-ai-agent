@@ -382,10 +382,6 @@ def git(project_dir, *args):
 
 def deploy(args):
     project_dir = resolve_project_dir(args.project_dir)
-    repo_root = Path(git(project_dir, "rev-parse", "--show-toplevel")).resolve()
-    if repo_root != project_dir:
-        raise RuntimeError(f"影刀项目目录不是 Git 仓库根目录：{repo_root}")
-
     # 新增/删除根目录 Python 流程时同步注册；普通代码修改不重复编译全部流程。
     package = json.loads((project_dir / "package.json").read_text(encoding="utf-8"))
     existing = {path.stem for path in project_dir.glob("*.py") if path.name not in EXCLUDED_PYTHON_FILES}
@@ -400,6 +396,28 @@ def deploy(args):
         if synced_registered != existing:
             raise RuntimeError(f"Code Flow 同步后注册仍不一致：未注册={sorted(existing - synced_registered)}，残留={sorted(synced_registered - existing)}")
 
+    git_result = {"git_commit": None, "git_changed": False, "git_pushed": False,
+                  "git_error": None, "untracked_skipped": []}
+    try:
+        git_result.update(deploy_git(project_dir, args, git_result))
+    except (RuntimeError, OSError) as error:
+        git_result["git_error"] = str(error)
+
+    try:
+        result = publish_app(argparse.Namespace(project_dir=str(project_dir), update_log=args.update_log))
+    except Exception as error:
+        git_status = f"Git 已推送（{git_result['git_commit']}）" if git_result["git_pushed"] else f"Git 未推送（{git_result['git_error']}）"
+        raise RuntimeError(f"{git_status}，但影刀同步/发布未完成：{error}") from error
+    result.update(git_result)
+    result["codeflows_synced"] = codeflows_synced
+    return result
+
+
+def deploy_git(project_dir, args, result):
+    """Attempt Git operations without making them a prerequisite for publication."""
+    repo_root = Path(git(project_dir, "rev-parse", "--show-toplevel")).resolve()
+    if repo_root != project_dir:
+        raise RuntimeError(f"影刀项目目录不是 Git 仓库根目录：{repo_root}")
     # 避免盲目 git add -A 将 .idea、备份目录、临时文件等无关内容提交。
     # 已跟踪文件全部暂存；新增根目录 .py 自动暂存以支持新 Code flow。
     git(project_dir, "add", "--update", "--", ".")
@@ -413,24 +431,14 @@ def deploy(args):
         git(project_dir, "add", "--", *args.add)
 
     changed = bool(git(project_dir, "diff", "--cached", "--name-only", "--", "."))
-    commit = None
+    result["git_changed"] = changed
+    result["untracked_skipped"] = sorted(set(untracked) - set(new_python) - set(args.add))
     if changed:
         message = args.commit_message or f"deploy: {args.update_log or 'update ShadowBot application'}"
         git(project_dir, "commit", "-m", message)
-        commit = git(project_dir, "rev-parse", "--short", "HEAD")
+    result["git_commit"] = git(project_dir, "rev-parse", "--short", "HEAD")
     git(project_dir, "push")
-
-    try:
-        result = publish_app(argparse.Namespace(project_dir=str(project_dir), update_log=args.update_log))
-    except Exception as error:
-        raise RuntimeError(f"Git 已推送（{git(project_dir, 'rev-parse', '--short', 'HEAD')}），但影刀同步/发布未完成：{error}") from error
-    result.update({
-        "git_commit": commit or git(project_dir, "rev-parse", "--short", "HEAD"),
-        "git_changed": changed,
-        "git_pushed": True,
-        "codeflows_synced": codeflows_synced,
-        "untracked_skipped": sorted(set(untracked) - set(new_python) - set(args.add)),
-    })
+    result["git_pushed"] = True
     return result
 
 

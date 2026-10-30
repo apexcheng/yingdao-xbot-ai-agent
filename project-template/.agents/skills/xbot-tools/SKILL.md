@@ -68,7 +68,7 @@ Console-only operations can return `not_supported` in Assistant mode. Check `sys
 
 1. 用户说 **“push”** 时，Agent 正常调用 Git 完成 commit 和 push，不运行影刀部署。用户说 **“部署”** 或 **“push 并部署”** 时，只执行一次 `python .agents/skills/xbot-tools/scripts/deploy_app.py --project-dir <项目目录> --commit-message "<提交说明>" --update-log "<发布说明>"`，由脚本自动完成必要的 Code flow 注册、Git 提交（无改动不产生空提交）和 push、Studio 重载/保存/同步、发布与线上版本校验；Agent 不再单独调用 Git、同步、发布和版本查询。
 2. 新增根目录 `.py` 会自动纳入 Git；其余已有跟踪文件的修改自动提交。为了防止将备份、临时文件等误推送，**其它新增文件默认不提交**，需在同一次部署命令中通过可重复的 `--add <相对路径>` 明确纳入。请在部署结果中关注 `untracked_skipped`。`--commit-message` 可指定 Git 提交信息；不传时使用发布说明生成。
-3. 部署过程中任何步骤失败即停止，返回 `status=failed` 与非零退出码；仅当 Git 推送成功，且新版本成为线上版本并通过 `versionId` 校验，才返回 `status=success`。若 Git 已推送但发布失败，必须报告部分完成，不能称为部署成功。
+3. Git 为可选步骤：缺少 Git、仓库或远程仓库，以及 Git 操作失败时，记录 `git_error` 并继续部署；根据 `git_pushed` 和 `git_commit` 报告实际结果。影刀同步、发布或线上版本校验失败时返回 `status=failed` 与非零退出码；新版本成为线上版本并通过 `versionId` 校验后返回 `status=success`。若 Git 已推送但发布失败，必须报告部分完成，不能称为部署成功。
 4. 仅保留 `deploy_app.py` 一个部署脚本，原 Code flow 注册和发布校验逻辑已合并其中。外部修改必须先让 Studio reload 再保存同步，不能仅凭 `console app publish` 成功认定磁盘改动已发布。
 5. 脚本成功后 Agent **无需再次调用 `console app versions` 重复校验版本**；直接汇报版本和 Git 提交信息。线上 `versionId` 变化不等于已证明业务运行正确；只有用户明确要求实际运行时才再按任务状态与日志验收。
 6. 未经发布运行验证，不得假定 Code flow 可以直接作为应用的 `startup`；历史实验和验证边界见 [应用生命周期特殊案例](references/app-lifecycle-cases.md)。整应用复制的已知限制也在该参考文档中。
