@@ -1,4 +1,4 @@
-model = "gpt-6-luna"
+model = "gpt-6.1-terra"
 model_reasoning_effort = "high"
 
 approval_policy = "never"
