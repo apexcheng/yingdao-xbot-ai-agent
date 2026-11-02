@@ -21,6 +21,8 @@
 
 ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明确指定，否则不得启动影刀主程序。
 
+**CLI 触发失败必须停止：** 通过 ShadowBot CLI 触发影刀任务时，只要 CLI 报告触发失败或拒绝执行，无论是应用正在编辑、模式冲突、连接异常还是其他原因，都立即停止触发尝试，把 CLI 返回的具体错误和「任务未启动」的事实反馈给用户。**不得绕过 CLI**，包括改用 GUI、Studio 运行按钮、直接运行代码或其他接口；也不得为了继续触发而擅自关闭编辑器、切换模式、解除占用或另找执行入口。后续操作由用户另行决定。
+
 **Agent 开发期浏览器工具：**开发、调试影刀 RPA 时，如需实际操作网页或探测 DOM / XPath，Codex 环境使用原生 Computer Use；ChatGPT 环境使用 browser-control；其他 Agent 按各自环境选择可用工具。这不改变下文影刀运行时代码默认使用 `xbot.web` 的要求。浏览器探测步骤及现场保留规则见 `.agents/skills/web-workflow-extraction/SKILL.md`。
 
 ## 代码实现
