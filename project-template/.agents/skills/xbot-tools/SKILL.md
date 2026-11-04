@@ -5,7 +5,7 @@ description: Operate ShadowBot/Yingdao CLI, develop and publish xbot Code apps, 
 
 # 影刀工具：CLI、应用生命周期与项目诊断
 
-该 Skill 汇总影刀工具与项目级操作。根据任务进入「CLI 操作」「应用开发闭环」或「项目诊断」，不要求执行无关流程。默认先只读；启动任务、同步发布、改写项目文件和修复签名都要遵守各部分原有的执行边界。
+该 Skill 汇总影刀工具与项目级操作，**不是普通代码开发任务的默认执行清单**。默认仅编写代码和静态检查；仅在用户明确要求查询影刀状态、运行、部署或操作 Studio 等具体事项时，按需进入「CLI 操作」「应用开发闭环」或「项目诊断」。Visual Flow 编辑及市场指令 / 项目 Python 包安装默认交由用户；职责边界以项目 `AGENTS.md` 为准。
 
 新建或补全影刀编码版项目时，按需先阅读 [最小 base 项目骨架与验收说明](references/base-project-skeleton.md)。模板文件仍位于当前项目的 `project-template/`，不使用参考文档替代真实项目文件。普通 CLI 账户 / 任务查询无需加载骨架说明。
 
@@ -36,6 +36,8 @@ Do not pin commands to versioned directories such as `shadowbot-6.x.x`; ShadowBo
 
 ### Studio operations
 
+仅用户明确要求操作 Studio，或已明确授权部署且发布流程需要时才使用以下命令；不得为验证代码自行打开 Studio。这里的 Code Flow 登记不等于编辑 Visual Flow。
+
 ShadowBot 6.3.22 已验证：`studio create` **新建**应用后同步关闭，且不返回 App ID；`studio open` **不带 `--app-id`** 时新建应用并保持 Studio 打开。要打开**已有应用**，在当前 PowerShell 进程设置 `SWITCH_STUDIO_MCP_CLI_SUPPORT=1`，通过 `studio open -h` 确认支持 `--app-id` 后执行 `studio open --app-id <uuid>`。不同版本先以当前 CLI 帮助为准，不要把不带 ID 的 `studio open` 误用为打开已有项目。
 
 2026-10-14 本机发布流程确认：核对已打开的 Studio 应用时，使用 `studio app get` 并读取 `data.app.app_id`。`studio current get` 可能只返回 Studio 状态，不含应用 ID；不要据此误判无法识别应用。若当前打开的是其它应用，停止并提示处理，不自动同步或关闭其它应用。不同版本以当前 CLI 帮助和实际返回结构为准。
@@ -62,11 +64,11 @@ Console-only operations can return `not_supported` in Assistant mode. Check `sys
 
 ## 应用开发闭环
 
-按需读取真实项目 `AGENTS.md` 与相关正式知识；CLI 操作按上方章节及本机帮助执行。新建应用及模板合并步骤见 [最小 base 项目骨架](references/base-project-skeleton.md)。
+**仅用户明确要求部署时执行本节发布流程。**普通开发任务写完代码、完成静态检查即交付，不因项目尚未发布而自行启动 Studio、登记 Flow、同步或运行任务。按需读取真实项目 `AGENTS.md` 与相关正式知识；CLI 操作按上方章节及本机帮助执行。新建应用及模板合并步骤见 [最小 base 项目骨架](references/base-project-skeleton.md)。
 
 市场指令或依赖未安装时的编码与交付边界，遵守项目 `AGENTS.md` 中“xbot 与知识库”的规则；不将安装排查提前为编码前置步骤。
 
-1. 用户说 **“push”** 时，Agent 正常调用 Git 完成 commit 和 push，不运行影刀部署。用户说 **“部署”** 或 **“push 并部署”** 时，只执行一次 `python .agents/skills/xbot-tools/scripts/deploy_app.py --project-dir <项目目录> --commit-message "<提交说明>" --update-log "<发布说明>"`，由脚本自动完成必要的 Code flow 注册、Git 提交（无改动不产生空提交）和 push、Studio 重载/保存/同步、发布与线上版本校验；Agent 不再单独调用 Git、同步、发布和版本查询。
+1. 用户说 **“push”** 时，Agent 正常调用 Git 完成 commit 和 push，不运行影刀部署。用户说 **“部署”** 或 **“push 并部署”** 时，只执行一次 `python .agents/skills/xbot-tools/scripts/deploy_app.py --project-dir <项目目录> --commit-message "<提交说明>" --update-log "<发布说明>"`，由脚本自动完成必要的 Code Flow 元数据登记、Git 提交（无改动不产生空提交）和 push、Studio 重载/保存/同步、发布与线上版本校验；**不编辑 Visual Flow，不自动执行发布后的业务任务**。Agent 不再单独调用 Git、同步、发布和版本查询。
 2. 新增根目录 `.py` 会自动纳入 Git；其余已有跟踪文件的修改自动提交。为了防止将备份、临时文件等误推送，**其它新增文件默认不提交**，需在同一次部署命令中通过可重复的 `--add <相对路径>` 明确纳入。请在部署结果中关注 `untracked_skipped`。`--commit-message` 可指定 Git 提交信息；不传时使用发布说明生成。
 3. Git 为可选步骤：缺少 Git、仓库或远程仓库，以及 Git 操作失败时，记录 `git_error` 并继续部署；根据 `git_pushed` 和 `git_commit` 报告实际结果。影刀同步、发布或线上版本校验失败时返回 `status=failed` 与非零退出码；新版本成为线上版本并通过 `versionId` 校验后返回 `status=success`。若 Git 已推送但发布失败，必须报告部分完成，不能称为部署成功。
 4. 仅保留 `deploy_app.py` 一个部署脚本，原 Code flow 注册和发布校验逻辑已合并其中。外部修改必须先让 Studio reload 再保存同步，不能仅凭 `console app publish` 成功认定磁盘改动已发布。
