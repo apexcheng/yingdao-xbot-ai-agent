@@ -9,8 +9,8 @@
 1. 复用指定 Chrome Profile，先打开业务页检查 URL；已登录时不执行登录。
 2. 未登录时在原 Page 导航到 `/login/common`，等待页面加载后等待 1 秒。
 3. 尝试点击 `//div[contains(@class, '--qr')]`，查找最多 3 秒，未找到不阻塞。
-4. 切换「手机登录」、填手机号、点击「验证码」（完整 XPath 在下方代码）。
-5. 从点击前记录的本轮时间开始匹配 ntfy 短信，最长等待 300 秒；本轮确认的正文为 `【抖店】验证码123456，用于手机验证码登录，5分钟内有效。`（数字仅为虚构示例）。
+4. 切换「手机登录」、填手机号；点击「验证码」前读取 ntfy 并记下已有消息 ID，然后点击（完整 XPath 在下方代码）。
+5. 跳过已有消息 ID，匹配新出现的 ntfy 短信，最长等待 300 秒；已确认的正文格式包括 `【抖店】验证码123456，用于手机验证码登录，5分钟内有效。`（数字仅为虚构示例）。
 6. 输入验证码；仅在服务协议未勾选时点击勾选框；点击登录。
 7. 10 秒内检测到 URL 不再包含 `/login` 即返回同一 Page；否则报错。此条件**不等于已验证业务权限**。
 
@@ -46,13 +46,18 @@ def login_douyin_phone(page):
     page.find_by_xpath("//div[contains(@class, 'daren-login-container')]//*[contains(text(), '手机登录')]", timeout=5).click(delay_after=0.3)
     page.find_by_xpath("//div[contains(@class, 'daren-login-container')]//input[@title='手机号码']", timeout=5).input(str(DOUYIN_PHONE), delay_after=0.3)
 
-    requested_at = int(time.time())
+    url = f"{NTFY_SERVER.rstrip('/')}/{quote(NTFY_TOPIC, safe='')}/json?since=10m&poll=1"
+    with urlopen(url, timeout=15) as response:
+        previous_ids = {
+            message["id"]
+            for line in response.read().decode("utf-8").splitlines() if line.strip()
+            for message in [json.loads(line)] if message.get("event") == "message"
+        }
     page.find_by_xpath("//div[contains(@class, 'login-custom')]//div[contains(@class, 'input-row')]//div[contains(text(), '验证码')]", timeout=5).click(delay_after=0.3)
 
     deadline = time.monotonic() + 300
     while time.monotonic() < deadline:
         # ntfy JSON 轮询协议；与旧增强工具无关。每次重新读取近 10 分钟的缓存消息。
-        url = f"{NTFY_SERVER.rstrip('/')}/{quote(NTFY_TOPIC, safe='')}/json?since=10m&poll=1"
         with urlopen(url, timeout=15) as response:
             messages = [
                 json.loads(line)
@@ -60,9 +65,9 @@ def login_douyin_phone(page):
                 if line.strip()
             ]
         for message in messages:
-            if message.get("event") != "message" or (message.get("time") or 0) < requested_at:
+            if message.get("event") != "message" or message["id"] in previous_ids:
                 continue
-            match = re.search(r"【(?:抖店|抖音电商)】验证码\s*([0-9]{6})", message.get("message") or "")
+            match = re.search(r"【(?:抖店|抖音电商|巨量百应)】验证码\s*([0-9]{6})", message.get("message") or "")
             if match:
                 code = match.group(1)
                 break
@@ -88,6 +93,6 @@ def login_douyin_phone(page):
 
 已有项目调用方式：先 `web.set_user_environment(mode="chrome", profile_name=DOUYIN_PROFILE)`，打开目标业务页，`wait_load_completed()` 后确认 URL 是否包含 `login`；仅未登录时调用 `login_douyin_phone(page)`。登录函数返回同一 Page；后续业务页另行确认登录态和授权。无需新增通用 LoginService、扫码 fallback、跨轮验证码缓存。
 
-**验证码过滤边界**：ntfy 的 `time` 只有秒精度，`requested_at=int(time.time())` 并使用 `<` 排除旧秒消息，仍可能匹配本秒内的先前消息；若同一 topic 多账号并发接码，必须依据业务确认更严格的关联规则，不能默默把第一条当作本次验证码。登录前不要将验证码写日志。
+**验证码过滤边界**：消息 ID 基线不依赖运行机与 ntfy 的时钟一致，但无法排除基线读取后、点击前到达的消息，也无法区分延迟转发或共享 topic 并发请求。原因、证据和适用条件见 [ntfy 验证码接收](../ntfy-messages.md#验证码接收)。此示例的 ID 筛选已做离线模拟验证，尚未实机完成短信登录端到端验收。不要将验证码写入日志。
 
 旧邮箱登录 `login_douyin_seller(account, password, profile)` 仅保留在历史市场 API 文档，**不作为新项目默认实现**。

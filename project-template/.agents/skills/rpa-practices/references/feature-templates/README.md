@@ -12,7 +12,7 @@
 | 千牛账密登录 | [千牛](site-logins/qianniu.md) | 同上；需独立 iframe2 市场指令，不依赖增强工具2026 |
 | 支付宝账密登录 | [支付宝](site-logins/alipay.md) | 同上；不含风控、短信二次验证 |
 | 本轮文件下载完成 | [下载等待](download-wait.md) | 基于现有市场指令能力/行为提炼，需按浏览器与目录实测 |
-| ntfy 发送、轮询接收、短信时间过滤 | [ntfy 消息](ntfy-messages.md) | ntfy JSON 轮询接口与现有已核实现；标准库写法待新项目实测 |
+| ntfy 发送、轮询接收、验证码消息 ID 筛选 | [ntfy 消息](ntfy-messages.md) | JSON 轮询与消息 ID 已只读核实；验证码筛选已离线模拟，待实机登录验收 |
 | 钉钉群 Webhook 发送 | [钉钉 Webhook](dingtalk-webhook.md) | 标准 HTTP 写法；企业机器人私聊等不在此模板内 |
 | XPath 等待、异常堆栈、文件占用等 | [原生简写与功能边界](native-shortcuts.md) | 已核原生 API / 标准库能力与尚不具备的能力 |
 
