@@ -14,6 +14,7 @@
 | 本轮文件下载完成 | [下载等待](download-wait.md) | 基于现有市场指令能力/行为提炼，需按浏览器与目录实测 |
 | ntfy 发送、轮询接收、验证码消息 ID 筛选 | [ntfy 消息](ntfy-messages.md) | JSON 轮询与消息 ID 已只读核实；验证码筛选已离线模拟，待实机登录验收 |
 | 钉钉群 Webhook 发送 | [钉钉 Webhook](dingtalk-webhook.md) | 标准 HTTP 写法；企业机器人私聊等不在此模板内 |
+| 企业机器人互动卡片群告警、截图和 @ | [企业机器人互动卡片](dingtalk-enterprise-card.md) | 2026-11-13 用户确认单成员 @ 可触发；多成员尚未单独验证 |
 | XPath 等待、异常堆栈、文件占用等 | [原生简写与功能边界](native-shortcuts.md) | 已核原生 API / 标准库能力与尚不具备的能力 |
 
 ## 「增强工具2026」公开能力处置清单

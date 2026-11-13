@@ -85,14 +85,14 @@ to_markdown_table(data, headers=None, max_cell_length=None)
 | `open_conversation_id` | 企业机器人群聊的目标会话 ID。 |
 | `webhook_url`、`webhook_secret` | 群聊文本 / Markdown 的 Webhook 地址及可选加签密钥。 |
 | `title` | Markdown 标题。 |
-| `at_mobiles`、`at_all` | Webhook 群聊的 @ 手机号列表、@ 全员开关；企业机器人群消息不支持 @。 |
+| `at_mobiles`、`at_all` | Webhook 群聊的 @ 手机号列表、@ 全员开关；本指令的企业机器人群消息不支持 @。 |
 | `user_ids`、`user_mobiles` | 私聊接收人 ID 列表或手机号列表；手机号会先换取 userId。至少提供一种。 |
 | `timeout` | 请求超时秒数，默认 `10.0`。 |
 
 - 群聊文本和 Markdown：传 `webhook_url` 时使用 Webhook；不传时需提供 `app_key`、`app_secret`、`open_conversation_id`，使用企业机器人。Webhook 可用 `webhook_secret` 加签，可用 `at_mobiles` / `at_all` 指定 @。
 - Webhook 群聊 Markdown 使用 `at_all=True` 时，会在 Markdown 消息后再发送一条“请查看上方消息”的 @ 全员文本。
 - 群聊图片：使用企业机器人，需要 `app_key`、`app_secret`、`open_conversation_id`；私聊三种类型也都使用企业机器人。
-- 图片支持 PNG、JPEG、GIF、BMP、WebP，文件最大 20 MiB；图片会先上传再发送。企业机器人群消息不支持 @。
+- 图片支持 PNG、JPEG、GIF、BMP、WebP，文件最大 20 MiB；图片会先上传再发送。本指令的企业机器人群消息不支持 @；企业机器人互动卡片的独立实现见[功能模板](../../../project-template/.agents/skills/rpa-practices/references/feature-templates/dingtalk-enterprise-card.md)。
 - `to_markdown_table()` 接收字典行或列表行；`headers` 可指定表头，`max_cell_length` 可限制单元格长度，空数据返回空字符串。生成的文本可作为 Markdown 消息的 `content`。
 
 按目标选用以下调用形式，传入项目已确认的凭据和目标：
