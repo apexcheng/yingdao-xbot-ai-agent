@@ -683,6 +683,29 @@ workbook.workbook.Application.WindowState = -4137  # xlMaximized
 
 表格更新项目的启动清理与窗口最大化要求见 [表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md)。
 
+### 16.5 WPS 图片嵌入单元格
+
+影刀以 `kind="wps"` 打开或创建工作簿后，可通过 WPS COM 扩展接口 `EtRangeEx.InsertCellPicture(PicPath)` 把本地图片写为指定单元格的内容。参数 `PicPath` 是已有图片文件的完整路径。此接口属于 Windows 桌面版 WPS，影刀原生 `xbot.excel` 未提供对应的公开方法。
+
+```text
+非执行调用说明（不可直接运行）：
+
+from pythoncom import IID_IDispatch
+from win32com.client import Dispatch
+
+# workbook 为已打开的影刀 WPS 工作簿，Sheet1 为已存在的目标工作表。
+sheet = workbook.workbook.Worksheets("Sheet1")
+cell = sheet.Range("U2")
+cell_ex = Dispatch(cell._oleobj_.QueryInterface(
+    "{766FBB6D-7576-4C00-8CE7-C548751812B3}", IID_IDispatch,
+))
+cell_ex.InsertCellPicture(image_path)  # image_path 指向已有的本地图片
+```
+
+- **直接指定地址。** 插图用 `Range("U2")`，设置区域样式用 `Range("A1:V1")`。一次实际导出中，链式调用 `Range("A1").Offset(...)` 让首图从预期的 U2 偏到 T1，覆盖了邻列表头。链式调用 `Range(...).Resize(...)` 时，原本要应用到整段的表头样式只落在 V1。
+- **实机验收。** 插图后在明确指定的目标格检查 `Formula` 是否含 `DISPIMG`。保存后重新用 WPS 打开，确认缩略图仍在目标格且相邻单元格的值完整。仅检查插图调用未报错，无法确认位置正确。
+- **核验证据。** 2026-11-16 已在 WPS `12.1.0.28022` 的 COM 类型库中确认签名和接口标识，旧版实际导出复现了上述错位。改用明确地址后，已从新版保存的文件确认列宽和行高正确，修正后的图片保存重开效果尚未核验。
+
 ---
 
 ## 17. 排错速查
