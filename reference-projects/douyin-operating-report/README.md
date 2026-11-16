@@ -8,6 +8,7 @@
 - **源码已存入本知识库的 [snapshot/](snapshot/) 目录**：`run.py`、`utils.py`、`notify.py`、10 个 `update_*.py` 和 `requirements.txt`。后续阅读不依赖原项目仓库，即使原仓库继续提交或不可访问，本快照也保持独立。只有明确要求更新案例时才重新冻结新版本。
 - 快照忠实保留该提交的业务流程，**仅脱敏**：`run.py` 注释中的 3 处历史本机路径、`update_global_promotion.py` 和 `update_influencer_promotion.py` URL 中各 1 处广告账户 ID（替换为 `EXAMPLE_ACCOUNT_ID`）。不将这类替换视为原始源码本身的实现事实。
 - **已知历史缺陷（2026-10-19）**：冻结快照的 `snapshot/run.py` 把结束时的浏览器清理放在 `all_succeeded` 条件内；有 Sheet 失败或 9 个日常 Sheet 全部今日跳过时，可能不执行收尾清理。**不要照搬该条件**；现行正确写法见下文「浏览器收尾的已知缺陷与正确做法」。保留快照原文以维持来源提交可追溯，不将修复伪装成原始实现。
+- **RAW 搬运的历史差异（2026-11-16）**：本快照的达人投流会跳过后续文件的首行，直播链接会跳过每份日报的首行。采用下文「多份 RAW 合并与尾部追加」的现行做法。
 - 这是静态代码参考，未经独立的全流程实机验收；不能据此承诺网页、外部服务或 WPS 在其它机器上直接运行成功。
 - 适合参考：一个目标 WPS 工作簿、多来源文件导出、网页网络响应、独立 HTTP API、全量覆盖和增量/差异更新、跨日跳过、逐 Sheet 结果、统一保存及钉钉通知。
 - 原项目中的私有 `config.py`、`package.py`、元素库及影刀应用资源、账号授权和已安装市场指令未收录；**快照不是可直接部署的影刀应用**。只学习结构与数据交接，不复制真实配置、店铺路径、授权信息或专有字段值。
@@ -47,10 +48,10 @@ run.main(args)
 | ERP 发货｜[update_erp_deliveries.py](snapshot/update_erp_deliveries.py) | 同一个 ERP Page，市场指令下载发货明细 | 文件经 WPS 读取，覆盖事实层 |
 | 平台订单｜[update_order_data.py](snapshot/update_order_data.py) | 抖店页面导出、短信验证码及加密 ZIP 解压 | 文件经 WPS 读取，覆盖事实层 |
 | 全域投放｜[update_global_promotion.py](snapshot/update_global_promotion.py) | 网页筛选、导出投放报表 | 文件经 WPS 读取，覆盖事实层 |
-| 直播链接｜[update_live_links.py](snapshot/update_live_links.py) | 逐日网页导出直播商品数据 | 按已有日期向后追加 |
+| 直播链接｜[update_live_links.py](snapshot/update_live_links.py) | 逐日网页导出直播商品数据 | 按日追加，表头处理见下文现行做法 |
 | 达人佣金｜[update_selected_alliance.py](snapshot/update_selected_alliance.py) | 联盟财务页查询、等待导出任务 | 文件经 WPS 读取，覆盖事实层 |
 | 团长服务费｜[update_leader_fee.py](snapshot/update_leader_fee.py) | 联盟财务页查询、等待导出任务 | 文件经 WPS 读取，覆盖事实层 |
-| 达人投流｜[update_influencer_promotion.py](snapshot/update_influencer_promotion.py) | 多账户网页下载投放数据并合并 | 合并后覆盖事实层 |
+| 达人投流｜[update_influencer_promotion.py](snapshot/update_influencer_promotion.py) | 多账户网页下载投放数据并合并 | 合并后覆盖事实层，表头处理见下文现行做法 |
 | 产品库｜[update_product_library.py](snapshot/update_product_library.py) | DOM 负责查询/排序/翻页，网络响应提供商品数据 | 补齐旧商品时间，再按创建时间降序增量追加 |
 | 采购成本｜[update_purchase_cost.py](snapshot/update_purchase_cost.py) | `urllib.request` 使用只读 Token 分页请求航桥 API | 全量读取并比较规格代码；有变化才覆盖成本区域 |
 
@@ -59,6 +60,15 @@ run.main(args)
 - `download()` 获取文件或已打开的源工作簿；`update(target_workbook, ...)` 只处理自己负责的 Sheet。复用的 ERP Page 从主流程传入，避免重复初始化。
 - [utils.py](snapshot/utils.py) 中的 `open_source_workbook()` 使用 WPS 打开来源文件；`replace_fact_area()` 只清空约定事实层，读取来源二维矩阵并批量写入目标。订单号等长标识在写入前按当前业务需求保留文本形态。
 - 某些业务是多来源合并或按日追加，**不是所有 Sheet 都适合无条件覆盖**；例如直播链接按日期追加。固定列坐标和业务字段映射来自项目配置，不应被提升为通用规则。
+
+#### 多份 RAW 合并与尾部追加
+
+现行实现依据为抖音经营报表提交 `d7a010f`（影刀版本 56），通用规则见[表格操作规范](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md#打开与使用工作簿)。
+
+| 现行流程 | 写入示例 |
+| --- | --- |
+| 全域投放、达人投流、商品乘方投放 | 各账号保留自己的 RAW 首行。拼成 `A 表头 → A 数据 → B 表头 → B 数据`，清空旧 RAW 后分别从 `J2`、`H2`、`H2` 写入。「下载账号」列按项目约定填充。 |
+| 直播链接数据 | 逐日下载并保留每份首行。目标 RAW 占前 10 行时，第 11 行是本批第一份日报表头。目标 RAW 为空时从 `K1` 写入。 |
 
 ### 模式二：网页操作触发请求 → 读取响应 → 增量补录
 
