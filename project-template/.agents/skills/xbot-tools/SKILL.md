@@ -69,6 +69,7 @@ Console-only operations can return `not_supported` in Assistant mode. Check `sys
 市场指令或依赖未安装时的编码与交付边界，遵守项目 `AGENTS.md` 中“xbot 与知识库”的规则；不将安装排查提前为编码前置步骤。
 
 1. 用户说 **“push”** 时，Agent 正常调用 Git 完成 commit 和 push，不运行影刀部署。用户说 **“部署”** 或 **“push 并部署”** 时，只执行一次 `python .agents/skills/xbot-tools/scripts/deploy_app.py --project-dir <项目目录> --commit-message "<提交说明>" --update-log "<发布说明>"`，由脚本自动完成必要的 Code Flow 元数据登记、Git 提交（无改动不产生空提交）和 push、Studio 重载/保存/同步、发布与线上版本校验；**不编辑 Visual Flow，不自动执行发布后的业务任务**。Agent 不再单独调用 Git、同步、发布和版本查询。
+   **部署内容以当前项目工作区的完整代码状态为准。** 用户明确要求部署时，不因存在其他已完成但尚未提交的代码修改而自动 stash、隔离、恢复或拆分部署范围；这些已有修改允许随本次部署一起提交、push、同步和发布。只需避免把明显的临时文件、备份文件等无关新增文件纳入提交。
 2. 新增根目录 `.py` 会自动纳入 Git；其余已有跟踪文件的修改自动提交。为了防止将备份、临时文件等误推送，**其它新增文件默认不提交**，需在同一次部署命令中通过可重复的 `--add <相对路径>` 明确纳入。请在部署结果中关注 `untracked_skipped`。`--commit-message` 可指定 Git 提交信息；不传时使用发布说明生成。
 3. Git 为可选步骤：缺少 Git、仓库或远程仓库，以及 Git 操作失败时，记录 `git_error` 并继续部署；根据 `git_pushed` 和 `git_commit` 报告实际结果。影刀同步、发布或线上版本校验失败时返回 `status=failed` 与非零退出码；新版本成为线上版本并通过 `versionId` 校验后返回 `status=success`。若 Git 已推送但发布失败，必须报告部分完成，不能称为部署成功。
 4. 仅保留 `deploy_app.py` 一个部署脚本，原 Code flow 注册和发布校验逻辑已合并其中。外部修改必须先让 Studio reload 再保存同步，不能仅凭 `console app publish` 成功认定磁盘改动已发布。
