@@ -34,12 +34,20 @@ def remove(path):
 
 def sync(project, sources):
     updated = 0
+    verify = []
+    retained_agents = False
     for source in sources:
-        target = project / source.relative_to(TEMPLATE)
-        if target.is_file() and target.read_bytes() == source.read_bytes():
-            continue
+        relative = source.relative_to(TEMPLATE)
+        target = project / relative
+        if target.is_file():
+            if relative == Path("AGENTS.md"):
+                retained_agents = target.read_text(encoding="utf-8-sig") != source.read_text(encoding="utf-8-sig")
+                continue
+            if target.read_bytes() == source.read_bytes():
+                continue
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
+        verify.append((source, target))
         updated += 1
 
     for old in OLD_REFERENCES:
@@ -73,14 +81,13 @@ def sync(project, sources):
                 text=True,
             )
 
-    if any((project / source.relative_to(TEMPLATE)).read_bytes() != source.read_bytes()
-           for source in sources):
+    if any(target.read_bytes() != source.read_bytes() for source, target in verify):
         raise RuntimeError("同步文件校验失败")
     if any((project / old).exists() for old in OLD_DEPLOY_SCRIPTS):
         raise RuntimeError("旧部署脚本未清理完成")
     if any(not (project / ".claude" / "skills" / name).is_dir() for name in SKILLS):
         raise RuntimeError("Claude Skill 链接校验失败")
-    return updated
+    return updated, retained_agents
 
 
 def main():
@@ -96,17 +103,25 @@ def main():
     projects = sorted(APPS.glob("*/apps/*/xbot_robot"))
     successful = skipped = updated = 0
     failed = []
+    retained_rules = []
     for project in projects:
         if not (project / "package.json").is_file():
             skipped += 1
             continue
         try:
-            updated += sync(project, sources)
+            count, retained_agents = sync(project, sources)
+            updated += count
+            if retained_agents:
+                retained_rules.append(project / "AGENTS.md")
             successful += 1
         except Exception as error:
             failed.append((project, error))
 
     print(f"扫描 {len(projects)} 个目录；成功 {successful}，跳过 {skipped}，失败 {len(failed)}；更新规则文件 {updated} 个")
+    if retained_rules:
+        print(f"保留 {len(retained_rules)} 份与模板不同的项目规则，需按差异合并：")
+        for path in retained_rules:
+            print(path)
     for project, error in failed:
         print(f"失败：{project}：{error}")
     if failed:

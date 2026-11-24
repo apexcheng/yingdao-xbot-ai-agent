@@ -34,6 +34,8 @@ Do not pin commands to versioned directories such as `shadowbot-6.x.x`; ShadowBo
 
 **只有用户明确要求运行时才启动应用或任务。** 运行不是只读检查；不能为了查看配置、字段、凭证等就实际执行。运行前按需核实应用和输入参数，再使用 `console task run`；默认同步执行并输出日志，仅在业务明确需要时使用 `--async`。任务查询与停止按需使用 `console task status/history/logs/stop`，参数以当前帮助为准。
 
+项目任务触发失败按项目 `AGENTS.md` 停止并报告，即使报错为每日额度耗尽。Windows 全局说明中的桌面备用运行只适用于允许桌面回退的任务。
+
 ### Studio operations
 
 仅用户明确要求操作 Studio，或已明确授权部署且发布流程需要时才使用以下命令；不得为验证代码自行打开 Studio。这里的 Code Flow 登记不等于编辑 Visual Flow。
@@ -46,8 +48,10 @@ ShadowBot 6.3.22 已验证：`studio create` **新建**应用后同步关闭，�
 
 The CLI supports `console` and `assistant` mode switching:
 
-`"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" mode switch --to console`
-`"C:\Program Files\ShadowBot\shadowbot.shell-cli.exe" mode switch --to assistant`
+```powershell
+& 'C:\Program Files\ShadowBot\shadowbot.shell-cli.exe' mode switch --to console
+& 'C:\Program Files\ShadowBot\shadowbot.shell-cli.exe' mode switch --to assistant
+```
 
 Console-only operations can return `not_supported` in Assistant mode. Check `system state` before switching. Do not use `--force` to switch to Console while a task is running unless the user explicitly wants that interruption/risk.
 
@@ -72,7 +76,7 @@ Console-only operations can return `not_supported` in Assistant mode. Check `sys
    **部署内容以当前项目工作区的完整代码状态为准。** 用户明确要求部署时，不因存在其他已完成但尚未提交的代码修改而自动 stash、隔离、恢复或拆分部署范围；这些已有修改允许随本次部署一起提交、push、同步和发布。只需避免把明显的临时文件、备份文件等无关新增文件纳入提交。
 2. 新增根目录 `.py` 会自动纳入 Git；其余已有跟踪文件的修改自动提交。为了防止将备份、临时文件等误推送，**其它新增文件默认不提交**，需在同一次部署命令中通过可重复的 `--add <相对路径>` 明确纳入。请在部署结果中关注 `untracked_skipped`。`--commit-message` 可指定 Git 提交信息；不传时使用发布说明生成。
 3. Git 为可选步骤：缺少 Git、仓库或远程仓库，以及 Git 操作失败时，记录 `git_error` 并继续部署；根据 `git_pushed` 和 `git_commit` 报告实际结果。影刀同步、发布或线上版本校验失败时返回 `status=failed` 与非零退出码；新版本成为线上版本并通过 `versionId` 校验后返回 `status=success`。若 Git 已推送但发布失败，必须报告部分完成，不能称为部署成功。
-4. 仅保留 `deploy_app.py` 一个部署脚本。用 CLI 打开目标应用后，经 `xbot-bash` 核对应用 ID；重载前检查未保存编辑，从磁盘重载并保存编译，再用 CLI 同步关闭、发布和核验线上版本。命令回执成功后仍须核对线上版本 ID。
+4. 仅保留 `deploy_app.py` 一个部署脚本。脚本先核对登录账号对应的开发目录、影刀任务状态和已打开应用的保存状态，再变更 Code Flow 或推送 Git。`_Release` 和其它副本不能用来发起部署。到发布阶段，经 `xbot-bash` 重核目标应用及保存状态、从磁盘重载并保存编译，再用 CLI 同步关闭、发布并核对线上版本 ID。
 5. 脚本成功后 Agent **无需再次调用 `console app versions` 重复校验版本**；直接汇报版本和 Git 提交信息。线上 `versionId` 变化不等于已证明业务运行正确；只有用户明确要求实际运行时才再按任务状态与日志验收。
 6. 未经发布运行验证，不得假定 Code flow 可以直接作为应用的 `startup`；历史实验和验证边界见 [应用生命周期特殊案例](references/app-lifecycle-cases.md)。整应用复制的已知限制也在该参考文档中。
 

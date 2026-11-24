@@ -17,7 +17,21 @@
 
 ## 从 Windows DevSpace 查当前应用
 
-`xbot-bash` 是 Studio 接口中的工具名。先用 CLI `system state` 确认编辑器已打开；用户指定已有应用且当前没有打开应用时，用 CLI `studio open --app-id <UUID>` 打开。只读查询可复用部署脚本中的客户端，从真实项目根目录运行：
+`xbot-bash` 是 Studio 接口中的工具名。先在 PowerShell 查看编辑器状态：
+
+```powershell
+$shadowbotCli = 'C:\Program Files\ShadowBot\shadowbot.shell-cli.exe'
+& $shadowbotCli system state
+```
+
+仅在用户要求打开指定已有应用、且当前没有打开应用时，替换下面的应用 ID 后执行：
+
+```powershell
+$env:SWITCH_STUDIO_MCP_CLI_SUPPORT = '1'
+& $shadowbotCli studio open --app-id '替换为目标应用的 UUID'
+```
+
+编辑器已打开时，只读查询可复用部署脚本中的客户端，从真实项目根目录运行：
 
 ```powershell
 python -c "import json,runpy; studio=runpy.run_path('.agents/skills/xbot-tools/scripts/deploy_app.py')['StudioClient'](); print(json.dumps(studio.command('app info','查看当前应用'),ensure_ascii=False))"

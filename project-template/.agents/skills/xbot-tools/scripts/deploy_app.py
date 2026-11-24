@@ -369,26 +369,52 @@ def get_online_version(app_id):
     return None
 
 
-def publish_app(args):
-    """Reload, save, sync and publish one existing ShadowBot app."""
-    project_dir = resolve_project_dir(args.project_dir)
-    app_id = load_app_id(project_dir)
-
-    # 发布前确认服务、任务状态和当前线上版本。
-    run_cli("system", "health")
+def deployment_state():
     state = run_cli("system", "state").get("data", {})
-    if state.get("hasRunningTask"):
-        raise RuntimeError("当前影刀有正在运行的任务，停止发布以避免打断任务")
-    before = get_online_version(app_id)
+    if state.get("hasRunningTask") is not False:
+        raise RuntimeError("影刀正在运行任务或任务状态不明，停止部署")
+    if not isinstance(state.get("hasStudioOpened"), bool):
+        raise RuntimeError("无法确认 Studio 是否打开，停止部署")
+    return state
 
-    # 外部修改必须先让 Studio 载入目标应用及磁盘最新状态。
-    if not state.get("hasStudioOpened"):
+
+def require_saved_studio_app(studio, app_id):
+    if confirm_studio_app(studio, app_id).get("has_unsaved_changes") is not False:
+        raise RuntimeError("Studio 有未保存的编辑，或保存状态不明，停止部署")
+
+
+def preflight_deploy(project_dir):
+    """Check the live project and Studio before changing local files or Git."""
+    if project_dir.parent.name.casefold().endswith("_release"):
+        raise RuntimeError("不能从 _Release 目录部署，请切换到影刀开发目录")
+    app_id = load_app_id(project_dir)
+    run_cli("system", "health")
+    state = deployment_state()
+    account = run_cli("auth", "current").get("data", {})
+    user_id = account.get("userId")
+    if account.get("loggedIn") is not True or not user_id:
+        raise RuntimeError("无法识别已登录的影刀账号，停止部署")
+    expected = (Path(os.environ["LOCALAPPDATA"]) / "ShadowBot" / "users" / str(user_id)
+                / "apps" / app_id / "xbot_robot").resolve()
+    if project_dir != expected:
+        raise RuntimeError(f"部署必须从当前影刀账号的开发目录发起：{expected}")
+
+    studio = StudioClient()
+    if state["hasStudioOpened"]:
+        require_saved_studio_app(studio, app_id)
+    return app_id
+
+
+def publish_app(app_id, update_log):
+    """Reload, save, sync and publish the verified ShadowBot app."""
+    # Git 等操作结束后，重新确认运行状态；已打开的应用还须核对 ID 和保存状态。
+    state = deployment_state()
+    before = get_online_version(app_id)
+    if not state["hasStudioOpened"]:
         run_cli("studio", "open", "--app-id", app_id)
 
     studio = StudioClient()
-    app = confirm_studio_app(studio, app_id)
-    if app.get("has_unsaved_changes") is not False:
-        raise RuntimeError("无法确认 Studio 的编辑已保存，停止重载以免丢失编辑内容")
+    require_saved_studio_app(studio, app_id)
 
     # 重载后可能出现待保存状态，保存和同步前分别确认仍是目标应用。
     if studio.command("app reload", "从磁盘重新加载应用").get("success") is not True:
@@ -396,16 +422,15 @@ def publish_app(args):
     confirm_studio_app(studio, app_id)
     if studio.command("app save", "保存并编译应用").get("success") is not True:
         raise RuntimeError("影刀未确认应用已保存")
-    if confirm_studio_app(studio, app_id).get("has_unsaved_changes") is not False:
-        raise RuntimeError("Studio 仍有未保存的编辑，停止同步")
+    require_saved_studio_app(studio, app_id)
     synced = run_cli("studio", "current", "sync").get("data", {})
     if (synced.get("state") or {}).get("hasStudioOpened") is not False:
         raise RuntimeError("影刀未确认 Studio 已同步并关闭")
 
     # 发布同步后的版本，并以线上 versionId 真正变化作为成功标准。
     publish_args = ["console", "app", "publish", "--app-id", app_id]
-    if args.update_log:
-        publish_args.extend(["--update-log", args.update_log])
+    if update_log:
+        publish_args.extend(["--update-log", update_log])
     run_cli(*publish_args)
     after = get_online_version(app_id)
     if not after:
@@ -443,6 +468,7 @@ def git(project_dir, *args):
 
 def deploy(args):
     project_dir = resolve_project_dir(args.project_dir)
+    app_id = preflight_deploy(project_dir)
     # 新增/删除根目录 Python 流程时同步注册；普通代码修改不重复编译全部流程。
     package = json.loads((project_dir / "package.json").read_text(encoding="utf-8"))
     existing = {path.stem for path in project_dir.glob("*.py") if path.name not in EXCLUDED_PYTHON_FILES}
@@ -465,7 +491,7 @@ def deploy(args):
         git_result["git_error"] = str(error)
 
     try:
-        result = publish_app(argparse.Namespace(project_dir=str(project_dir), update_log=args.update_log))
+        result = publish_app(app_id, args.update_log)
     except Exception as error:
         git_status = f"Git 已推送（{git_result['git_commit']}）" if git_result["git_pushed"] else f"Git 未推送（{git_result['git_error']}）"
         raise RuntimeError(f"{git_status}，但影刀同步/发布未完成：{error}") from error
