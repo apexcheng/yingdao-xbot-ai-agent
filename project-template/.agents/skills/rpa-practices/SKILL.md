@@ -14,6 +14,7 @@ description: Apply proven ShadowBot/Yingdao RPA practices for Web automation, Ch
 | 站点登录、下载完成等待、ntfy 收发、简单钉钉 Webhook、原生简写：新项目**不使用「增强工具2026」** | [功能模板直达索引](references/feature-templates/README.md)；只读当前所需的单篇模板 |
 | Web 自动化：响应优先取数、后台异步导出任务绑定、SPA 动态元素失效 | [网页实践](references/web.md) |
 | 中文业务上下文日志：输出格式、关键节点、异常记录与示例 | [日志实践](references/logging.md) |
+| 用户明确要求调查某次影刀运行的日志或故障（不适用于晨检或日报） | [专项日志查证与现场交付](references/incident-log-investigation.md) |
 | 钉钉机器人业务通知：排版、分组、@ 规则及真实示例 | [钉钉通知实践](references/dingtalk.md) |
 | 跨轮次状态示例、失败重试判断、业务结果与通知结果区分 | [跨轮次处理状态与重试](references/cross-run-state-and-retries.md) |
 | 跨数据、网页、Excel / WPS、接口或环境的复杂故障，按实际证据分层排查 | [影刀编码版通用排错](references/troubleshooting.md) |
