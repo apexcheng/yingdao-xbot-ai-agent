@@ -1,6 +1,6 @@
 ---
 name: xbot-tools
-description: Operate ShadowBot/Yingdao CLI, develop and publish xbot Code apps, synchronize flows, and diagnose or repair project metadata and Sigstore problems. Read only the task-relevant section; execution, publication, and repair require the user's explicit intent.
+description: Operate ShadowBot/Yingdao Studio editor (xbot-bash) and CLI, inspect apps or flows, develop and publish xbot Code apps, synchronize flows, and diagnose project metadata and Sigstore problems. Read only the task-relevant section; execution, publication, and repair require the user's explicit intent.
 ---
 
 # 影刀工具：CLI、应用生命周期与项目诊断
@@ -9,9 +9,9 @@ description: Operate ShadowBot/Yingdao CLI, develop and publish xbot Code apps, 
 
 新建或补全影刀编码版项目时，按需先阅读 [最小 base 项目骨架与验收说明](references/base-project-skeleton.md)。模板文件仍位于当前项目的 `project-template/`，不使用参考文档替代真实项目文件。普通 CLI 账户 / 任务查询无需加载骨架说明。
 
-## CLI 操作
+## Studio 与 CLI 操作
 
-ShadowBot CLI 只用于影刀自身运行和生命周期操作；普通源码、配置与业务分析直接在项目工作区完成。
+影刀 6.4.14 中，CLI 负责打开应用、同步关闭、发布、版本与正式任务管理。当前 Studio 应用的识别、重载、保存和流程检查走新版 `xbot-bash`。需要直接操作编辑器时先读 [Studio 6.4.14 的命令与验证范围](references/studio-copilot.md)。普通源码、配置与业务分析直接在项目工作区完成。
 
 ### Executable
 
@@ -40,7 +40,7 @@ Do not pin commands to versioned directories such as `shadowbot-6.x.x`; ShadowBo
 
 ShadowBot 6.3.22 已验证：`studio create` **新建**应用后同步关闭，且不返回 App ID；`studio open` **不带 `--app-id`** 时新建应用并保持 Studio 打开。要打开**已有应用**，在当前 PowerShell 进程设置 `SWITCH_STUDIO_MCP_CLI_SUPPORT=1`，通过 `studio open -h` 确认支持 `--app-id` 后执行 `studio open --app-id <uuid>`。不同版本先以当前 CLI 帮助为准，不要把不带 ID 的 `studio open` 误用为打开已有项目。
 
-2026-10-14 本机发布流程确认：核对已打开的 Studio 应用时，使用 `studio app get` 并读取 `data.app.app_id`。`studio current get` 可能只返回 Studio 状态，不含应用 ID；不要据此误判无法识别应用。若当前打开的是其它应用，停止并提示处理，不自动同步或关闭其它应用。不同版本以当前 CLI 帮助和实际返回结构为准。
+当前使用 `xbot-bash app info` 读取 `app.app_id`，核对它与目标项目 `package.json` 的 `uuid` 一致。若当前打开的是其它应用，停止并提示处理。`studio current get` 可用于读取 Studio 状态；在 6.4.14 上，旧的 `studio app get/reload` 会调用已返回 404 的旧接口。
 
 ### Runtime modes
 
@@ -72,7 +72,7 @@ Console-only operations can return `not_supported` in Assistant mode. Check `sys
    **部署内容以当前项目工作区的完整代码状态为准。** 用户明确要求部署时，不因存在其他已完成但尚未提交的代码修改而自动 stash、隔离、恢复或拆分部署范围；这些已有修改允许随本次部署一起提交、push、同步和发布。只需避免把明显的临时文件、备份文件等无关新增文件纳入提交。
 2. 新增根目录 `.py` 会自动纳入 Git；其余已有跟踪文件的修改自动提交。为了防止将备份、临时文件等误推送，**其它新增文件默认不提交**，需在同一次部署命令中通过可重复的 `--add <相对路径>` 明确纳入。请在部署结果中关注 `untracked_skipped`。`--commit-message` 可指定 Git 提交信息；不传时使用发布说明生成。
 3. Git 为可选步骤：缺少 Git、仓库或远程仓库，以及 Git 操作失败时，记录 `git_error` 并继续部署；根据 `git_pushed` 和 `git_commit` 报告实际结果。影刀同步、发布或线上版本校验失败时返回 `status=failed` 与非零退出码；新版本成为线上版本并通过 `versionId` 校验后返回 `status=success`。若 Git 已推送但发布失败，必须报告部分完成，不能称为部署成功。
-4. 仅保留 `deploy_app.py` 一个部署脚本，原 Code flow 注册和发布校验逻辑已合并其中。外部修改必须先让 Studio reload 再保存同步，不能仅凭 `console app publish` 成功认定磁盘改动已发布。
+4. 仅保留 `deploy_app.py` 一个部署脚本。用 CLI 打开目标应用后，经 `xbot-bash` 核对应用 ID；重载前检查未保存编辑，从磁盘重载并保存编译，再用 CLI 同步关闭、发布和核验线上版本。命令回执成功后仍须核对线上版本 ID。
 5. 脚本成功后 Agent **无需再次调用 `console app versions` 重复校验版本**；直接汇报版本和 Git 提交信息。线上 `versionId` 变化不等于已证明业务运行正确；只有用户明确要求实际运行时才再按任务状态与日志验收。
 6. 未经发布运行验证，不得假定 Code flow 可以直接作为应用的 `startup`；历史实验和验证边界见 [应用生命周期特殊案例](references/app-lifecycle-cases.md)。整应用复制的已知限制也在该参考文档中。
 

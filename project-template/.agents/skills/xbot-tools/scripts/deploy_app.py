@@ -2,12 +2,17 @@
 
 import argparse
 import contextlib
+import ctypes
+import ctypes.wintypes
 import io
 import json
 import os
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.request import ProxyHandler, Request, build_opener
 
 
 EXCLUDED_PYTHON_FILES = {"__init__.py", "package.py"}
@@ -271,37 +276,88 @@ def run_cli(*args):
     env["SWITCH_STUDIO_MCP_CLI_SUPPORT"] = "1"
     result = subprocess.run(
         [str(SHADOWBOT_CLI), *args],
-        check=True,
         capture_output=True,
         text=True,
         encoding="utf-8",
+        errors="replace",
         env=env,
     )
+    if result.returncode:
+        detail = result.stdout.strip() or result.stderr.strip() or f"退出码 {result.returncode}"
+        raise RuntimeError(f"影刀 CLI 执行失败：{' '.join(args)}\n{detail}")
     try:
         payload = json.loads(result.stdout.lstrip("\ufeff"))
     except json.JSONDecodeError as error:
         raise RuntimeError(f"影刀 CLI 未返回合法 JSON：{' '.join(args)}\n{result.stdout}") from error
-    if payload.get("ok") is not True:
+    if payload.get("ok") is not True or (payload.get("data") or {}).get("success") is False:
         raise RuntimeError(f"影刀 CLI 执行失败：{' '.join(args)}\n{result.stdout}")
     return payload
 
 
-def find_app_id(value):
-    """Find an app UUID from a nested CLI response."""
-    if isinstance(value, dict):
-        for key in ("app_id", "appId", "uuid"):
-            if value.get(key):
-                return str(value[key]).strip()
-        for item in value.values():
-            app_id = find_app_id(item)
-            if app_id:
-                return app_id
-    elif isinstance(value, list):
-        for item in value:
-            app_id = find_app_id(item)
-            if app_id:
-                return app_id
-    return ""
+class StudioClient:
+    """Call the local ShadowBot Copilot endpoint for Studio operations."""
+
+    def __init__(self):
+        session_id = ctypes.wintypes.DWORD()
+        if not ctypes.windll.kernel32.ProcessIdToSessionId(os.getpid(), ctypes.byref(session_id)):
+            raise RuntimeError("无法确定当前 Windows 会话")
+        port_file = Path(tempfile.gettempdir()) / f"shadowbot.cli.{session_id.value}.port"
+        try:
+            port = int(port_file.read_text(encoding="utf-8-sig").strip())
+            if not 1 <= port <= 65535:
+                raise ValueError(port)
+        except (OSError, ValueError) as error:
+            raise RuntimeError(f"无法读取影刀本机端口：{port_file}") from error
+
+        self.url = f"http://127.0.0.1:{port}/api/v1/copilot-mcp/mcp"
+        self.opener = build_opener(ProxyHandler({}))
+        self.headers = {"Content-Type": "application/json", "Accept": "application/json, text/event-stream"}
+        self.request_id = 0
+        self.request("initialize", {
+            "protocolVersion": "2025-03-26",
+            "capabilities": {},
+            "clientInfo": {"name": "shadowbot-project-deploy", "version": "1"},
+        })
+
+    def request(self, method, params):
+        self.request_id += 1
+        body = json.dumps({"jsonrpc": "2.0", "id": self.request_id, "method": method, "params": params})
+        request = Request(self.url, data=body.encode("utf-8"), headers=self.headers, method="POST")
+        try:
+            with self.opener.open(request, timeout=60) as response:
+                session = response.headers.get("Mcp-Session-Id")
+                if session:
+                    self.headers["Mcp-Session-Id"] = session
+                payload = json.load(response)
+        except HTTPError as error:
+            detail = error.read(2000).decode("utf-8", errors="replace")
+            raise RuntimeError(f"影刀编辑器接口 {method} 返回 HTTP {error.code}：{detail}") from error
+        except (URLError, TimeoutError, ValueError) as error:
+            raise RuntimeError(f"影刀编辑器接口 {method} 失败：{error}") from error
+        if "result" not in payload:
+            raise RuntimeError(f"影刀编辑器接口 {method} 失败：{payload.get('error', payload)}")
+        return payload["result"]
+
+    def command(self, command, explanation):
+        try:
+            result = self.request("tools/call", {
+                "name": "xbot-bash",
+                "arguments": {"command": f"xbot-bash {command}", "explanation": explanation},
+            })
+        except RuntimeError as error:
+            raise RuntimeError(f"xbot-bash {command} 失败：{error}") from error
+        data = result.get("structuredContent")
+        if result.get("isError") or not isinstance(data, dict) or data.get("success") is False:
+            raise RuntimeError(f"xbot-bash {command} 失败：{data or result.get('content')}")
+        return data
+
+
+def confirm_studio_app(studio, app_id):
+    app = studio.command("app info", "核对当前影刀应用").get("app") or {}
+    current_app_id = app.get("app_id")
+    if not current_app_id or current_app_id.lower() != app_id.lower():
+        raise RuntimeError(f"Studio 当前应用与部署目标不一致：{current_app_id or '无法识别'}")
+    return app
 
 
 def get_online_version(app_id):
@@ -326,20 +382,25 @@ def publish_app(args):
     before = get_online_version(app_id)
 
     # 外部修改必须先让 Studio 载入目标应用及磁盘最新状态。
-    if state.get("hasStudioOpened"):
-        current = run_cli("studio", "app", "get")
-        current_app_id = find_app_id(current.get("data", {}))
-        if not current_app_id:
-            raise RuntimeError("Studio 已打开，但无法确认当前应用 ID")
-        if current_app_id != app_id:
-            raise RuntimeError(f"Studio 当前打开的是其它应用：{current_app_id}")
-    else:
+    if not state.get("hasStudioOpened"):
         run_cli("studio", "open", "--app-id", app_id)
 
-    # 重新载入、保存编译并同步关闭 Studio。
-    run_cli("studio", "app", "reload")
-    run_cli("studio", "app", "save")
-    run_cli("studio", "current", "sync")
+    studio = StudioClient()
+    app = confirm_studio_app(studio, app_id)
+    if app.get("has_unsaved_changes") is not False:
+        raise RuntimeError("无法确认 Studio 的编辑已保存，停止重载以免丢失编辑内容")
+
+    # 重载后可能出现待保存状态，保存和同步前分别确认仍是目标应用。
+    if studio.command("app reload", "从磁盘重新加载应用").get("success") is not True:
+        raise RuntimeError("影刀未确认应用已重新加载")
+    confirm_studio_app(studio, app_id)
+    if studio.command("app save", "保存并编译应用").get("success") is not True:
+        raise RuntimeError("影刀未确认应用已保存")
+    if confirm_studio_app(studio, app_id).get("has_unsaved_changes") is not False:
+        raise RuntimeError("Studio 仍有未保存的编辑，停止同步")
+    synced = run_cli("studio", "current", "sync").get("data", {})
+    if (synced.get("state") or {}).get("hasStudioOpened") is not False:
+        raise RuntimeError("影刀未确认 Studio 已同步并关闭")
 
     # 发布同步后的版本，并以线上 versionId 真正变化作为成功标准。
     publish_args = ["console", "app", "publish", "--app-id", app_id]

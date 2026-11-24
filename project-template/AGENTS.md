@@ -51,7 +51,7 @@ ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明
 5. 影刀日志使用 `from xbot.app import logging`；动态内容使用完整 f-string，异常堆栈使用 `traceback.format_exc()`。业务日志默认采用简洁的中文上下文格式，记录业务对象、动作和必要结果；示例见 `.agents/skills/rpa-practices/references/logging.md`。
    **已配置执行结果通知的 RPA 必须具备运维追溯价值**：多业务对象逐对象说明成功、正常跳过、异常或未执行的真实状态、实际成果与未完成原因；已成功的部分不得因后续失败而被抹除。通知内容和状态口径统一按 `.agents/skills/rpa-practices/references/dingtalk.md` 执行，不强制原本没有通知需求的项目新增钉钉通知。
 6. **严格禁止 Agent 直接修改 `selectorsV2.xml`**：不得创建、编辑、格式化、覆盖或补丁修改该文件。需要增删或调整元素库时，Agent 只能提示用户自行通过影刀编辑器修改，不得代替用户修改文件；业务代码只读取并使用项目中已有的元素库名称。
-7. 需要操作 ShadowBot CLI 时，按需读取 `.agents/skills/xbot-tools/SKILL.md`；命令参数以本机帮助为准。
+7. 需要操作影刀 Studio 编辑器或 ShadowBot CLI 时，先读取 `.agents/skills/xbot-tools/SKILL.md`；命令参数以本机帮助为准。
 8. 开发 Excel / CSV 表格更新程序时按需读取 `.agents/skills/spreadsheet-operations/SKILL.md`；跨轮次状态、Web 导出、多技术流程组合、钉钉通知及跨层排错，按需读取 `.agents/skills/rpa-practices/SKILL.md`，不默认加载全部材料。
 
 ## 验证与同步
