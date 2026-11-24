@@ -56,9 +56,44 @@
 - 需要优先使用后打开的目标 Page，且已确认新页面排在 `web.get_all()` 返回列表后部时，倒序遍历并取第一个符合 URL / 标题条件的页面。
 - 未登录时先完成登录，登录成功后**新建 Page 打开目标业务 URL，并关闭旧登录 Page**；不依赖登录 Page 自动跳回原网址。
 - 非表格更新场景，需要重试的下载操作最多执行 3 次（首次加 2 次重试）；下载失败时重试完整下载过程，不为重试额外增加框架。表格更新按 [表格操作 Skill](../../spreadsheet-operations/SKILL.md) 执行整个 Sheet 最多 2 次尝试，不套用这里的下载重试次数。
-- Page 新建、跳转、刷新后，先 `page.wait_load_completed()`，再 `time.sleep(2)`，再操作业务页面；启动清理 Page 的规定见项目 `AGENTS.md`。
+- Page 新建、跳转、刷新后的基础等待及启动时清理 Page 的规定见[项目规则](../../../../AGENTS.md#xbot-与知识库)。
 
 **GUI 并发限制（2026-11-04 实测）：**不要依赖 Python 多线程或多进程实现影刀 GUI 操作的真正并行。同一影刀任务中，Profile 1 的 Bing 模拟输入持续 30.44 秒，Profile 2 的百度点击调用等待 30.79 秒、直到输入结束才完成，表明 `xbot.web` 多线程操作会互相阻塞；即使使用不同 Chrome Profile，也不能把线程调用时间重叠视为实际并发。**多进程尚未实测**，不应写成已证实不支持，但同样不能未经验证就作为并发优化方案；默认按 GUI 操作串行设计。
+
+## 页面加载后的首次元素操作
+
+`page.wait_load_completed()` 返回后，业务区域仍可能异步渲染。XPath 能找到元素时，元素可能还未显示，或者已经显示但尚未响应操作。若新建、跳转或刷新后的首次点击、输入等业务操作存在这类渲染时序问题，在项目原有的基础等待之后，按以下顺序等待该元素：
+
+1. 最多轮询 **3 秒**。每轮用已确认的 XPath 重新查找，再用 `is_displayed()` 判断是否可见。
+2. 元素可见后固定等待 **0.5 秒**，再执行点击、输入等首次操作。
+3. **3 秒内未可见则抛出 `TimeoutError`**，错误信息写明业务环节和元素名称。
+
+这组时间用于上述场景。同页后续操作根据实际就绪条件处理。元素可见只说明它已经显示；如果页面已有明确的就绪信号，例如加载遮罩消失或按钮变为可用，应优先等待该信号。`delay_after` 是操作后的等待，首次操作前的 0.5 秒用 `time.sleep(0.5)`。
+
+以下点击示例假定 `page` 已完成基础等待，且已核实 XPath 最多匹配一个可见的业务目标。将示例中的按钮文字和异常信息替换为当前页面的实际内容。
+
+```text
+非执行调用说明（不可直接运行）
+
+import time
+
+deadline = time.monotonic() + 3
+while True:
+    elements = page.find_all_by_xpath(
+        "//button[normalize-space(.)='查询']", timeout=0.1
+    )
+    visible_elements = [element for element in elements if element.is_displayed()]
+    if visible_elements and time.monotonic() <= deadline:
+        break
+    if time.monotonic() >= deadline:
+        raise TimeoutError("【报表查询】3秒内未显示「查询」按钮")
+    time.sleep(0.1)
+
+time.sleep(0.5)
+visible_elements[0].click(delay_after=0.1)
+```
+
+此写法已有影刀项目采用，等待逻辑已通过源码核对。3 秒和 0.5 秒是示例时长，实际效果以目标页面运行验证为准。
 
 ## 批量配置与元素操作性能
 
