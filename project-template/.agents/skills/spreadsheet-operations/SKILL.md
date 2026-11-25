@@ -14,8 +14,10 @@ description: 影刀 RPA 运行时 Excel/CSV 处理规范；不规定 Agent 直�
 ## 打开与使用工作簿
 
 1. 本轮程序第一次打开 WPS 前，直接调用 `xbot.excel.kill_excel_process("wps", True)` 结束残留进程；不判断其他 WPS 文件是否正在编辑。本轮已经打开目标工作簿后，不在打开源文件前再次结束 WPS。
-2. 采用 WPS 的业务流程使用 `xbot.excel.open()` 的 WPS 驱动打开 Excel / CSV。
-3. 统一使用 `workbook = xbot.excel.open(file_name=str(target), kind="wps", visible=True, update_links=False)`；不使用 `visible=False`。
+2. 普通打开流程使用 `workbook = xbot.excel.open(file_name=str(target), kind="wps", visible=True, update_links=False)`。采用 WPS 打开 Excel / CSV 时保持窗口可见。
+3. **只搬运 RAW、且本轮和下游无需立即使用最新公式结果时，在打开目标工作簿前切换为手动计算。** 先创建可见空白工作簿，再在同一个 WPS 实例内设置计算模式并打开目标工作簿。调用方式见 [WPS 打开前切换为手动计算](../../../../xbot-api-docs/docs/excel.md#wps-打开前切换为手动计算)。
+   - 计算模式作用于整个 WPS 实例。切换前确认不会影响该实例内已打开的其他业务工作簿，打开前后检查手动模式是否生效，临时空白工作簿用完后关闭且不保存。
+   - 手动计算下保存的文件可能仍带有上次计算的结果。需要最新公式值时，保留已确定的重算步骤，例如截图前重算。下游程序读取保存的公式值时，须在它读取前完成重算并保存。
 4. 每次打开工作簿后，立即激活并最大化：
 
    ```python

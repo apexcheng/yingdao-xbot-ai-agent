@@ -142,7 +142,7 @@ workbook = xbot.excel.open(
 
 #### 已有工作簿更新：推荐调用顺序
 
-已有 Excel 文件需要通过 WPS 更新时，`file_name` 直接传**正式目标文件路径**；`save()` 会保存当前打开的文件。
+按普通打开流程更新已有 Excel 文件时，`file_name` 直接传**正式目标文件路径**；`save()` 会保存当前打开的文件。
 
 ```text
 非执行调用说明（不可直接运行，target 已指向正式工作簿）：
@@ -154,6 +154,24 @@ workbook.close()
 ```
 
 多 Sheet 的实际更新与保存流程见 [表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md)。
+
+#### WPS 打开前切换为手动计算
+
+`xbot.excel.open()` 没有计算模式参数。WPS 的 `Calculation` 和 `CalculateBeforeSave` 是应用实例属性。先创建空白工作簿以取得 WPS 实例，再通过该实例的 `Workbooks.Open()` 打开目标文件。
+
+```text
+非执行调用说明（不可直接运行，target 已指向待打开的工作簿）：
+
+blank = xbot.excel.create(kind="wps", visible=True)
+app = blank.workbook.Application
+app.Calculation = -4135  # 手动计算
+app.CalculateBeforeSave = False  # 保存前不自动重算
+book = app.Workbooks.Open(str(target), UpdateLinks=0)
+```
+
+`book` 是 WPS 原生工作簿对象。后续需要影刀工作簿接口时，先激活目标表，再用 `xbot.excel.get_active_workbook()` 获取对象并核对文件路径。
+
+2026-11-25 在影刀的 WPS 环境用大型 XLSM 副本只读实测，目标表打开前后均为手动计算模式。适用范围及收尾要求见 [打开与使用工作簿](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md#打开与使用工作簿)。
 
 `kind="openpyxl"` 的历史 API 故障事实（仅用于排查该后端，不是表格更新项目的推荐方式）：本机影刀 `workbook.close()` 曾报 Code 1259（`openpyxl目前不支持关闭操作`）；部分 Shopee XLSX 文件的样式定义使该后端读取时报 `could not read stylesheet`。这些故障不代表 WPS 打开相同文件时也会失败。
 
