@@ -157,7 +157,7 @@ workbook.close()
 
 #### WPS 打开前切换为手动计算
 
-`xbot.excel.open()` 没有计算模式参数。WPS 的 `Calculation` 和 `CalculateBeforeSave` 是应用实例属性。先创建空白工作簿以取得 WPS 实例，再通过该实例的 `Workbooks.Open()` 打开目标文件。
+`xbot.excel.open()` 没有计算模式参数。WPS 的 `Calculation` 和 `CalculateBeforeSave` 是应用实例属性，对同一 WPS 实例内的工作簿生效，并非单个工作簿的独立设置。先创建空白工作簿以取得 WPS 实例，再通过该实例的 `Workbooks.Open()` 打开目标文件。
 
 ```text
 非执行调用说明（不可直接运行，target 已指向待打开的工作簿）：
