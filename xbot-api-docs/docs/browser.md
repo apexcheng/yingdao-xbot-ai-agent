@@ -268,6 +268,8 @@ buttons = row.find_all_by_xpath('.//button[contains(@class, "action")]', timeout
 | `find_all_by_xpath` | `xpath_selector` | `str` |
 | 所有查找方法 | `timeout` | `int` / `float` |
 
+参数允许小数，实际等待见 [Win / Web 元素查找的超时下限](win32.md#元素查找的超时下限)。
+
 | 方法 | 未找到 | 匹配多个 |
 |---|---|---|
 | `find()` | 抛异常 | 抛异常 |
@@ -486,21 +488,22 @@ element.set_attribute("data-id", "123")
 
 ### 15.1 `get_text()` 暂时读取不到动态渲染文本
 
-动态页面中，元素已经可以定位时，`get_text()` 仍可能拿不到完整业务文本。先区分两种情况：
+动态页面中，元素已经可以定位时，`get_text()` 仍可能拿不到完整业务文本。先区分文字更新与界面替换元素，见[读取已有元素的文本](win32.md#77-读取已有元素的文本)。
 
 另有一类不同故障：SPA / React 刷新后，已定位的旧元素在读取 `get_text()` 或点击时出现 Code 106（元素 ID 失效）。此时重新定位当前 DOM，必要时一次性通过 `page.execute_javascript()` 读取当前行数据，不要反复操作旧的 `row`、`td` 对象。先检查实际页面、遮挡和登录状态；不要把 Code 106 与文本尚未渲染混为一谈。异步导出任务处理见 [网页自动化实践](../../project-template/.agents/skills/rpa-practices/references/web.md)。
 
-1. 文本只是尚未加载完成：继续用“短间隔轮询 + 总超时”，每轮重新定位元素并读取。
+1. 若已确认文字会在同一个节点上更新，先定位一次，再在总超时内轮询读取同一个对象。已经确认界面替换了节点时，按状态变化重新定位。
 2. 页面视觉上已经显示值，但 `get_text()` / `get_html()` 始终缺少动态渲染内容：不要继续重复 `get_text()`；改从真实 DOM 的 `textContent` 读取，再按业务格式判断。
 
 ```python
 import re
 import time
 
+element = page.find_by_xpath(value_xpath, timeout=1)
 deadline = time.monotonic() + 3
 
 while True:
-    text = page.find_by_xpath(value_xpath, timeout=1).get_text()
+    text = element.get_text()
 
     if re.fullmatch(r"\d+", text.strip()):
         break
