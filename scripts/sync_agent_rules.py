@@ -8,6 +8,8 @@ from pathlib import Path
 
 TEMPLATE = Path(__file__).resolve().parent.parent / "project-template"
 APPS = Path(os.environ["LOCALAPPDATA"]) / "ShadowBot" / "users"
+MACHINE_BOUNDARY_HEADING = "## 项目分析与执行边界"
+MACHINE_BOUNDARY_PREFIX = "**开发机与运行机：**"
 SKILLS = ("code-quality", "rpa-practices", "spreadsheet-operations", "xbot-tools")
 OLD_SKILLS = (
     "code-consistency", "code-review", "code-simplifier",
@@ -32,6 +34,32 @@ def remove(path):
         path.unlink()
 
 
+def sync_machine_boundary(source, target):
+    rule = next(line for line in source.read_text(encoding="utf-8-sig").splitlines()
+                if line.startswith(MACHINE_BOUNDARY_PREFIX))
+    if not target.is_file():
+        shutil.copy2(source, target)
+        return True
+
+    original = target.read_bytes()
+    content = original.decode("utf-8")
+    existing = [line for line in content.splitlines() if line.startswith(MACHINE_BOUNDARY_PREFIX)]
+    if existing == [rule]:
+        return False
+    if len(existing) > 1:
+        raise ValueError(f"项目规则包含多处开发机与运行机约定：{target}")
+    if existing:
+        merged = content.replace(existing[0], rule, 1)
+    else:
+        newline = "\r\n" if "\r\n" in content else "\n"
+        heading = MACHINE_BOUNDARY_HEADING + newline
+        if heading not in content:
+            raise ValueError(f"项目规则缺少执行边界章节：{target}")
+        merged = content.replace(heading, heading + newline + rule + newline, 1)
+    target.write_bytes(merged.encode("utf-8"))
+    return True
+
+
 def sync(project, sources):
     updated = 0
     verify = []
@@ -41,6 +69,7 @@ def sync(project, sources):
         target = project / relative
         if target.is_file():
             if relative == Path("AGENTS.md"):
+                updated += sync_machine_boundary(source, target)
                 retained_agents = target.read_text(encoding="utf-8-sig") != source.read_text(encoding="utf-8-sig")
                 continue
             if target.read_bytes() == source.read_bytes():
