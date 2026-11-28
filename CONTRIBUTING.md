@@ -17,7 +17,7 @@
 
 ## 内容边界
 
-- 真实影刀项目的跨项目常驻核心约束以 [project-template/AGENTS.md](project-template/AGENTS.md) 为唯一规范源；[编程风格详解](project-template/.agents/skills/code-quality/references/coding-style.md) 只保存示例和低频边界，不削弱项目规则。根 [AGENTS.md](AGENTS.md) 只维护知识库本身的职责、审查和路由规则。
+- 真实影刀项目的跨项目常驻核心约束以 [SKILL.md](SKILL.md) 为唯一规范源；[编程风格详解](references/code-quality/references/coding-style.md) 只保存示例和低频边界，不削弱项目规则。根 [AGENTS.md](AGENTS.md) 只维护知识库本身的职责、审查和路由规则。
 - API 签名、参数、返回值和限制写入对应的 `xbot-api-docs/docs/` 页面。
 - 市场指令参数和返回值写入对应事实页；只有新增指令时才在总索引补一条链接。
 - 项目专用流程、页面字段和业务口径留在真实项目文档中。
@@ -46,8 +46,8 @@ API Python 片段须注明前置对象和适用条件，不声称可独立运行
 
 ## 链接而不是复制
 
-知识库维护规则引用根 [AGENTS.md](AGENTS.md)，真实项目开发规则引用 [project-template/AGENTS.md](project-template/AGENTS.md)，查找入口引用 [llms.txt](llms.txt)，API 事实引用其唯一页面。不要为了让每个文件“独立完整”而复制规则、教程或长示例。
+知识库维护规则引用根 [AGENTS.md](AGENTS.md)，真实项目开发规则引用 [SKILL.md](SKILL.md)，查找入口引用 [llms.txt](llms.txt)，API 事实引用其唯一页面。不要为了让每个文件“独立完整”而复制规则、教程或长示例。
 
 提交前检查：链接有效、事实等级清楚、示例最小、内容已脱敏、没有新增重复规则。
 
-修改真实项目开发行为的核心约束时，只在 `project-template/AGENTS.md` 维护其正文；不要把同一规则复制回根 `AGENTS.md`。
+修改真实项目开发行为的核心约束时，只在 `SKILL.md` 维护其正文；不要把同一规则复制回根 `AGENTS.md`。

@@ -9,6 +9,7 @@
 - 快照忠实保留该提交的业务流程，**仅脱敏**：`run.py` 注释中的 3 处历史本机路径、`update_global_promotion.py` 和 `update_influencer_promotion.py` URL 中各 1 处广告账户 ID（替换为 `EXAMPLE_ACCOUNT_ID`）。不将这类替换视为原始源码本身的实现事实。
 - **已知历史缺陷（2026-10-19）**：冻结快照的 `snapshot/run.py` 把结束时的浏览器清理放在 `all_succeeded` 条件内；有 Sheet 失败或 9 个日常 Sheet 全部今日跳过时，可能不执行收尾清理。**不要照搬该条件**；现行正确写法见下文「浏览器收尾的已知缺陷与正确做法」。保留快照原文以维持来源提交可追溯，不将修复伪装成原始实现。
 - **RAW 搬运的历史差异（2026-11-16）**：本快照的达人投流会跳过后续文件的首行，直播链接会跳过每份日报的首行。采用下文「多份 RAW 合并与尾部追加」的现行做法。
+- **工作簿打开顺序（2026-11-25）**：下面的流程图和快照记录的是旧版的直接打开流程。现行抖音经营报表已采用先在 WPS 空白工作簿上设置手动计算、再用同一个 WPS 实例打开目标表的写法。开发时按[打开与使用工作簿](../../references/spreadsheet-operations/guide.md#打开与使用工作簿)判断是否适用，代码参考[抖音经营报表 V63 的打开函数](https://github.com/apexcheng/douyin-bow-profit-report-rpa/blob/7951257052a15c74362a1b7ffa74efd4c0ab53d8/wps_workbook.py)。
 - 这是静态代码参考，未经独立的全流程实机验收；不能据此承诺网页、外部服务或 WPS 在其它机器上直接运行成功。
 - 适合参考：一个目标 WPS 工作簿、多来源文件导出、网页网络响应、独立 HTTP API、全量覆盖和增量/差异更新、跨日跳过、逐 Sheet 结果、统一保存及钉钉通知。
 - 原项目中的私有 `config.py`、`package.py`、元素库及影刀应用资源、账号授权和已安装市场指令未收录；**快照不是可直接部署的影刀应用**。只学习结构与数据交接，不复制真实配置、店铺路径、授权信息或专有字段值。
@@ -63,7 +64,7 @@ run.main(args)
 
 #### 多份 RAW 合并与尾部追加
 
-现行实现依据为抖音经营报表提交 `d7a010f`（影刀版本 56），通用规则见[表格操作规范](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md#打开与使用工作簿)。
+现行实现依据为抖音经营报表提交 `d7a010f`（影刀版本 56），通用规则见[表格操作规范](../../references/spreadsheet-operations/guide.md#打开与使用工作簿)。
 
 | 现行流程 | 写入示例 |
 | --- | --- |
@@ -78,7 +79,7 @@ run.main(args)
 2. 以补齐后的最大创建时间为下界，网页按创建时间降序排序；依次通过查询、下一页动作触发网络请求，解析响应中的商品列表。
 3. 到达时间边界停止，追加未见过的较新 ID，商品 ID 保留文本形态；变更及未找到 ID 供钉钉通知使用。
 
-**真实边界**：增量扫描在 `created_at <= MAX` 时结束，同一时间或更早但缺失的商品不会被扫描补齐；监听读取第一个匹配响应，尚不能称为经过查询条件校验的严格请求唯一关联。第一阶段失败仍尝试第二阶段，结果按模块现有异常语义处理。用户提供用于取业务数据的 XPath 时，优先遵循正式 [Web 规则](../../project-template/.agents/skills/rpa-practices/references/web.md)，不要从示例推导为必须做 DOM 取数。
+**真实边界**：增量扫描在 `created_at <= MAX` 时结束，同一时间或更早但缺失的商品不会被扫描补齐；监听读取第一个匹配响应，尚不能称为经过查询条件校验的严格请求唯一关联。第一阶段失败仍尝试第二阶段，结果按模块现有异常语义处理。用户提供用于取业务数据的 XPath 时，优先遵循正式 [Web 规则](../../references/rpa-practices/references/web.md)，不要从示例推导为必须做 DOM 取数。
 
 ### 模式三：HTTP API → 完整读取 → 差异写入
 
@@ -131,4 +132,4 @@ finally:
 
 其它业务模块从上方十项清单按需打开 1～2 个即可。不单独维护 XPath 清单、可复制的业务账号或配置内容；全部业务模块源码已在本案例 `snapshot/` 内冻结，不需要再访问其它仓库。
 
-**规范边界**：这是来源提交当时的运行事实。影刀 Page、网络监听、Excel/WPS、钉钉等 API 优先查 [正式 API 文档](../../xbot-api-docs/docs/browser.md)、[表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md) 与 [Web 实践](../../project-template/.agents/skills/rpa-practices/references/web.md)；案例中的日期边界、状态字段、写入区域、外部接口、通知阈值不能自动套给其它项目。固定版本的达人投流页面有特定的右键交互与 `time.sleep(3)`，属于项目实现差异，不替代模板中加载完成后等待 1 秒的通用规则。
+**规范边界**：这是来源提交当时的运行事实。影刀 Page、网络监听、Excel/WPS、钉钉等 API 优先查 [正式 API 文档](../../xbot-api-docs/docs/browser.md)、[表格操作 Skill](../../references/spreadsheet-operations/guide.md) 与 [Web 实践](../../references/rpa-practices/references/web.md)；案例中的日期边界、状态字段、写入区域、外部接口、通知阈值不能自动套给其它项目。固定版本的达人投流页面有特定的右键交互与 `time.sleep(3)`，属于项目实现差异，不替代模板中加载完成后等待 1 秒的通用规则。

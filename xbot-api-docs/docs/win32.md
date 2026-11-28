@@ -259,7 +259,7 @@ def get_window(name, timeout):
 
 关闭窗口、判断激活状态、等待激活、等待关闭。
 
-窗口关闭及异常收尾统一遵守[项目开发规则](../../project-template/AGENTS.md)。
+窗口关闭及异常收尾统一遵守[项目开发规则](../../SKILL.md)。
 
 ### 6.6 `find()` / `find_all()` / `wait_appear()` / `wait_disappear()`
 
@@ -287,7 +287,7 @@ search_input.input("影刀")
 
 影刀 Win 和 Web 的原生元素查找在未命中、需要等到超时时，最小有效等待是 0.5 秒。`timeout=0.1` 或 `timeout=0.2` 不会让这类调用在相应时间内返回。元素提前命中时可以更快返回。外层总超时和 `sleep` 都无法打断正在阻塞的单次查找，轮询频率要看每次调用的实际耗时。
 
-Win 侧在影刀 6.4.14 的实际业务流程中，外层轮询 5 秒、单次设 `timeout=0.1`，一轮约 5.25 秒只完成了 5 次未命中的查找。Win、Web 的下限口径经用户确认（2026-11-26），该次耗时是 Win 侧记录。需要快速读取短暂提示时，见[短暂提示的定位与读取](../../project-template/.agents/skills/rpa-practices/references/troubleshooting.md#短暂提示的定位与读取)。
+Win 侧在影刀 6.4.14 的实际业务流程中，外层轮询 5 秒、单次设 `timeout=0.1`，一轮约 5.25 秒只完成了 5 次未命中的查找。Win、Web 的下限口径经用户确认（2026-11-26），该次耗时是 Win 侧记录。需要快速读取短暂提示时，见[短暂提示的定位与读取](../../references/rpa-practices/references/troubleshooting.md#短暂提示的定位与读取)。
 
 ### 6.7 推荐代码结构
 

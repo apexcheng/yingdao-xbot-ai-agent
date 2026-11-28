@@ -49,7 +49,7 @@
 - 拼多多 / 天猫当前页面结构和登录方式。
 - 来源项目中仍存在的 TODO、调试痕迹和局部历史代码。
 
-具体 API 调用先以 `xbot-api-docs/` 为准，代码风格和开发行为先以 `project-template/AGENTS.md` 与 `project-template/.agents/skills/code-quality/references/coding-style.md` 为准。
+具体 API 调用先以 `xbot-api-docs/` 为准，代码风格和开发行为先以 `SKILL.md` 与 `references/code-quality/references/coding-style.md` 为准。
 
 ## 已知不应作为推荐写法直接模仿的内容
 

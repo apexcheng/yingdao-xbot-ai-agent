@@ -32,25 +32,27 @@
 
 ### AI Agent 开发规则
 
-- [AGENTS.md](AGENTS.md)：知识库自身的维护规则；真实项目的常驻开发规则见 [project-template/AGENTS.md](project-template/AGENTS.md)。
+- [AGENTS.md](AGENTS.md)：知识库自身的维护规则；真实项目的常驻开发规则见 [SKILL.md](SKILL.md)。
 - [llms.txt](llms.txt)：给 AI Agent 使用的精简文档导航。
-- [project-template](project-template/)：可复制到真实影刀项目的 base 骨架、Claude 入口和五个 Skill（`code-quality`、`xbot-tools`、`rpa-practices`、`spreadsheet-operations`、`web-workflow-extraction`）。
+- [project-template](project-template/)：可按需合并到真实影刀项目的 `run.py`、`config.py` 和 `.gitignore`。
 
-### Skills 与完整开发经验
+### 专项参考与完整开发经验
 
-- [代码质量 Skill](project-template/.agents/skills/code-quality/SKILL.md)：一致性、简化、审查。
-- [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)：CLI、项目创建、同步、发布、项目诊断。
-- [开发经验 Skill](project-template/.agents/skills/rpa-practices/SKILL.md)：网页、钉钉通知、跨轮状态及通用排错。
-- [功能模板索引](project-template/.agents/skills/rpa-practices/references/feature-templates/README.md)：新项目直接复用站点登录、ntfy、下载等待、钉钉 Webhook 与原生写法，不再依赖「增强工具2026」；旧项目仍可查询原指令事实页。
-- [表格操作 Skill](project-template/.agents/skills/spreadsheet-operations/SKILL.md)：Excel/CSV 用 WPS 打开、更新、保存和关闭。
+- [网页操作流程与 XPath 探测](references/web-workflow-extraction/guide.md)：复用已确认的定位并在需要时探测真实网页。
 
-- [影刀编码版编程风格详解](project-template/.agents/skills/code-quality/references/coding-style.md)
-- [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)
-- [网页自动化实践](project-template/.agents/skills/rpa-practices/references/web.md)
-- [钉钉通知实践](project-template/.agents/skills/rpa-practices/references/dingtalk.md)
+- [代码质量专题](references/code-quality/guide.md)：一致性、简化、审查。
+- [影刀工具专题](references/xbot-tools/guide.md)：CLI、项目创建、同步、发布、项目诊断。
+- [开发经验专题](references/rpa-practices/guide.md)：网页、钉钉通知、跨轮状态及通用排错。
+- [功能模板索引](references/rpa-practices/references/feature-templates/README.md)：新项目直接复用站点登录、ntfy、下载等待、钉钉 Webhook 与原生写法，不再依赖「增强工具2026」；旧项目仍可查询原指令事实页。
+- [表格操作专题](references/spreadsheet-operations/guide.md)：Excel/CSV 用 WPS 打开、更新、保存和关闭。
+
+- [影刀编码版编程风格详解](references/code-quality/references/coding-style.md)
+- [最小 base 骨架](references/xbot-tools/references/base-project-skeleton.md)
+- [网页自动化实践](references/rpa-practices/references/web.md)
+- [钉钉通知实践](references/rpa-practices/references/dingtalk.md)
 - [项目参考案例库](reference-projects/README.md)：抖音经营报表和库存监控的本地冻结源码案例。
 - [抖音经营报表真实案例（内置源码快照）](reference-projects/douyin-operating-report/README.md)
-- [影刀编码版通用排错](project-template/.agents/skills/rpa-practices/references/troubleshooting.md)
+- [影刀编码版通用排错](references/rpa-practices/references/troubleshooting.md)
 
 ### xbot API 与自动化文档
 
@@ -74,59 +76,34 @@
 
 ## 快速开始
 
-### 1. 克隆知识库
+### 安装与更新
 
-```bash
-git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git
+在 Windows PowerShell 将这个独立 Git 仓库直接克隆到共享 Skill 目录：
+
+```powershell
+git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git "$HOME/.agents/skills/shadowbot-development"
 ```
 
-### 2. 确认真实影刀项目
+更新时在同一个仓库执行 `git pull --ff-only`。Windows DevSpace 和本机 Codex 都从共享目录发现 [shadowbot-development](SKILL.md)。打开任意工作区后，说明影刀应用名称、App ID 或已知项目路径即可。需要修改业务代码时，先定位到有 `package.json` 的真实影刀目录。知识库自己的 [AGENTS.md](AGENTS.md) 用于维护本仓库。
 
-本仓库只保存知识，不是实际运行的影刀应用。请确认真实项目根目录中存在 `package.json`，再让 AI Agent 进入该目录修改业务代码。
+新应用按 [base 骨架](references/xbot-tools/references/base-project-skeleton.md) 合并缺失的模板文件，已有同名文件按需最小合并。公共开发规则、专题正文和部署脚本都从本 Skill 读取。项目的 PRD、运行交接和业务配置仍随项目维护。
 
-### 3. 复制 base 项目模板
+### 查找知识与使用工具
 
-将 `project-template/` 中缺失的文件复制到已存在 `package.json` 的真实项目根目录。同名文件先保留，再按需最小合并，不覆盖已有业务入口、配置、`.gitignore` 或规则：
+旧项目或历史交接文档里的入口可按下表定位。右列路径相对于全局 Skill 根目录。
 
-```text
-AGENTS.md
-config.py
-run.py
-.gitignore
-.agents/skills/code-quality/
-.agents/skills/xbot-tools/
-.agents/skills/rpa-practices/
-.agents/skills/spreadsheet-operations/
-.claude/CLAUDE.md
-.claude/skills/code-quality/
-.claude/skills/xbot-tools/
-.claude/skills/rpa-practices/
-.claude/skills/spreadsheet-operations/
-```
+| 旧入口 | 全局位置或用途 |
+| --- | --- |
+| 项目根 `AGENTS.md` 的公共开发规则 | [SKILL.md](SKILL.md) |
+| 项目 `.agents/skills/<专题>/SKILL.md` | `references/<专题>/guide.md`，原专项资料仍在同专题的 `references/` 下 |
+| 项目 `.agents/skills/xbot-tools/scripts/` | [scripts/](scripts/)，运行时指定真实项目目录 |
+| 知识库的 API、完整案例 | [xbot-api-docs/docs/](xbot-api-docs/docs/) 和 [reference-projects/](reference-projects/) |
+| 模板中的 QMD 与 Codex 配置 | [integrations/](integrations/) 中保留可选接入样例 |
+| 跨项目规则同步脚本 | 更新这个独立仓库，各工作区从同一份 Skill 读取 |
 
-模板默认由 `config.py` 管理必要配置。`code-quality` 提供代码简化与审查，`spreadsheet-operations` 负责 WPS 表格操作，`rpa-practices` 提供 Web、日志和流程组合经验；`xbot-tools` 负责 CLI、项目诊断及部署，只有 `scripts/deploy_app.py` 一个部署脚本，单次完成 Git 提交推送、必要的 Code Flow 注册、Studio 同步、发布及线上版本校验。单独“push”由 Agent 正常使用 Git，不调用部署脚本。使用 CLI 时需本机已安装影刀 CLI。骨架见 [最小 base 骨架](project-template/.agents/skills/xbot-tools/references/base-project-skeleton.md)。
+[核心开发规则](SKILL.md) 与 [任务导航](llms.txt) 提供直达入口。也可在全局 Skill 根目录使用 QMD，首次安装或知识更新后执行 `qmd update`，再运行 `qmd search "Sigstore" -c yingdao-skills --full-path`。可选 QMD 接入样例和已有只读审查角色配置见 `integrations/`，使用样例时按实际安装位置设置路径。
 
-### 4. 告诉 AI Agent 两个目录
-
-```text
-知识库目录：<本仓库的本地路径>
-真实项目目录：<影刀项目路径>
-
-先读取真实项目中的 AGENTS.md，再检查现有代码。
-只修改当前需求相关内容；无法确认 xbot API 或市场指令时，按知识库 llms.txt 查找事实页。
-```
-
-## 影刀同步
-
-同步的触发条件、执行命令和验证边界统一见 [真实项目的同步规则](project-template/AGENTS.md#验证与同步)，操作步骤见 [影刀工具 Skill](project-template/.agents/skills/xbot-tools/SKILL.md)。
-
-要将知识库最新的 `AGENTS.md`、Skills 和 Claude/Codex 规则同步到本机全部账号、全部影刀项目，在知识库根目录运行：
-
-```bash
-python scripts/sync_agent_rules.py
-```
-
-脚本自动扫描 `%LOCALAPPDATA%/ShadowBot/users/*/apps/*/xbot_robot` 下有 `package.json` 的项目（包括 `_Release` 目录）；只同步 Agent 规则、Skill 和部署脚本，清理已淘汰的旧 Skill 及 `sync_codeflows.py`、`publish_app.py`，不修改业务代码。项目缺少 `AGENTS.md` 时补齐，已有文件与模板不同则保留并列出路径，由维护者按差异合并。完成后校验写入结果并显示同步、跳过和失败数量。
+影刀官方 CLI 的账户、控制台及任务查询由独立 `shadowbot-cli` 提供。[影刀工具指南](references/xbot-tools/guide.md) 记录 Studio 的版本差异、项目定位、诊断和部署。单独 “push” 时只提交推送 Git；要求影刀部署时，从全局脚本传入真实项目路径，单次完成 Git、必要的 Code Flow 登记、Studio 同步、发布及线上版本核验。
 
 ## 开发与维护风格
 
@@ -142,16 +119,20 @@ python scripts/sync_agent_rules.py
 ## 目录结构
 
 ```text
-AGENTS.md                    # Agent 常驻核心约束
+SKILL.md                     # Windows DevSpace / Codex 共享的影刀开发入口
+AGENTS.md                    # 知识库维护规则
 llms.txt                     # AI / LLM 文档索引
 README.md                    # 项目介绍与使用入口
 CONTRIBUTING.md              # 事实证据、内容边界与脱敏规则
-project-template/            # 真实影刀项目 base 模板与 4 个 Skill
-  .agents/skills/
-    code-quality/            # 代码规范、简化与审查；详细编程风格
-    xbot-tools/              # CLI、项目生命周期、诊断、脚本与项目骨架
-    rpa-practices/           # Web、日志、钉钉、跨轮状态、排错
-    spreadsheet-operations/  # WPS 表格操作规范
+project-template/            # run.py、config.py、.gitignore
+references/                  # 五个按需读取的专题，各自从 guide.md 进入
+  code-quality/              # 代码规范、简化与审查
+  xbot-tools/                # CLI、应用生命周期、诊断、项目骨架
+  rpa-practices/             # Web、日志、钉钉、跨轮状态、排错与功能模板
+  spreadsheet-operations/    # 影刀运行时 WPS 表格操作
+  web-workflow-extraction/   # 网页流程与 XPath 探测
+scripts/                     # 部署、Sigstore 诊断与 QMD 入口
+integrations/                # 可选工具配置示例
 reference-projects/          # 真实项目参考案例：固定 Git commit 或脱敏冻结源码
 xbot-api-docs/
   AGENTS.md                  # API 文档维护边界

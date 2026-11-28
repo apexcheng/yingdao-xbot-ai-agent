@@ -1,6 +1,6 @@
 # 增强工具2026 (xbot_enhance_tools)
 
-> **旧项目维护专用 API 事实页，不再是新项目默认技术路线。** 新项目中的登录、XPath 等待、下载等待、ntfy 与普通通知，优先参考[功能模板索引](../../../project-template/.agents/skills/rpa-practices/references/feature-templates/README.md)，使用原生 xbot API / Python 标准库直接编写；本页公开签名与已核行为仍保留供现有项目兼容，**不要因知识迁移直接删除在用市场指令**。
+> **旧项目维护专用 API 事实页，不再是新项目默认技术路线。** 新项目中的登录、XPath 等待、下载等待、ntfy 与普通通知，优先参考[功能模板索引](../../../references/rpa-practices/references/feature-templates/README.md)，使用原生 xbot API / Python 标准库直接编写；本页公开签名与已核行为仍保留供现有项目兼容，**不要因知识迁移直接删除在用市场指令**。
 
 > 保留的 Python 片段依赖当前流程已取得的对象、输入数据和项目已确认的参数。片段不是独立脚本；[示例边界](../../AGENTS.md)。
 
@@ -92,7 +92,7 @@ to_markdown_table(data, headers=None, max_cell_length=None)
 - 群聊文本和 Markdown：传 `webhook_url` 时使用 Webhook；不传时需提供 `app_key`、`app_secret`、`open_conversation_id`，使用企业机器人。Webhook 可用 `webhook_secret` 加签，可用 `at_mobiles` / `at_all` 指定 @。
 - Webhook 群聊 Markdown 使用 `at_all=True` 时，会在 Markdown 消息后再发送一条“请查看上方消息”的 @ 全员文本。
 - 群聊图片：使用企业机器人，需要 `app_key`、`app_secret`、`open_conversation_id`；私聊三种类型也都使用企业机器人。
-- 图片支持 PNG、JPEG、GIF、BMP、WebP，文件最大 20 MiB；图片会先上传再发送。本指令的企业机器人群消息不支持 @；企业机器人互动卡片的独立实现见[功能模板](../../../project-template/.agents/skills/rpa-practices/references/feature-templates/dingtalk-enterprise-card.md)。
+- 图片支持 PNG、JPEG、GIF、BMP、WebP，文件最大 20 MiB；图片会先上传再发送。本指令的企业机器人群消息不支持 @；企业机器人互动卡片的独立实现见[功能模板](../../../references/rpa-practices/references/feature-templates/dingtalk-enterprise-card.md)。
 - `to_markdown_table()` 接收字典行或列表行；`headers` 可指定表头，`max_cell_length` 可限制单元格长度，空数据返回空字符串。生成的文本可作为 Markdown 消息的 `content`。
 
 按目标选用以下调用形式，传入项目已确认的凭据和目标：

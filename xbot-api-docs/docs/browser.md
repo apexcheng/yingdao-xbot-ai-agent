@@ -6,7 +6,7 @@
 > 重点：把 `xbot.web` 常用方法、参数、默认值、可选值写清楚。
 > 规则：字符串参数必须按文档中的值原样传入，例如 `mode="chrome"`。
 
-网页实现路线及 HTTP 例外统一遵守[项目开发规则](../../project-template/AGENTS.md)：默认使用 `xbot.web` 和浏览器对象能力；用户明确要求接口方式，或项目已有稳定接口实现时，沿用对应路线。
+网页实现路线及 HTTP 例外统一遵守[项目开发规则](../../SKILL.md)：默认使用 `xbot.web` 和浏览器对象能力；用户明确要求接口方式，或项目已有稳定接口实现时，沿用对应路线。
 
 ---
 
@@ -29,7 +29,7 @@
 
 ## 2. 元素库与 XPath / CSS
 
-项目已有元素库名称时，可直接使用 `browser.find("元素名")`。已有用户确认或实测的 XPath / CSS 时直接复用；没有可靠定位时，只能依据当前真实 DOM 提取，不得凭印象猜测标签、属性、层级或自行转换选择器。无法获得真实定位时应停止该定位步骤并索取依据；具体探测与阻塞处理见 [网页操作流程与 XPath 探测](../../project-template/.agents/skills/web-workflow-extraction/SKILL.md)。
+项目已有元素库名称时，可直接使用 `browser.find("元素名")`。已有用户确认或实测的 XPath / CSS 时直接复用；没有可靠定位时，只能依据当前真实 DOM 提取，不得凭印象猜测标签、属性、层级或自行转换选择器。无法获得真实定位时应停止该定位步骤并索取依据；具体探测与阻塞处理见 [网页操作流程与 XPath 探测](../../references/web-workflow-extraction/guide.md)。
 
 ```python
 element = browser.find("搜索框", timeout=10)
@@ -152,7 +152,7 @@ browser.close(ignore_beforeunload=False)
 web.close_all(mode="chrome", task_kill=False, ignore_beforeunload=False)
 ```
 
-网页关闭及异常收尾统一遵守[项目开发规则](../../project-template/AGENTS.md)；关闭范围仍须符合本页的页面所有权和 Profile 边界。
+网页关闭及异常收尾统一遵守[项目开发规则](../../SKILL.md)；关闭范围仍须符合本页的页面所有权和 Profile 边界。
 
 | 参数 | 类型 | 默认值 | 说明 |
 |---|---|---|---|
@@ -221,7 +221,7 @@ browser.wait_load_completed(timeout=20)
 
 ### Page 加载后的统一等待
 
-`wait_load_completed()` 只用于等待 Page 加载完成，不包含额外的 JS 初始化等待；新建、跳转、刷新后的固定等待约定统一查 [项目模板 AGENTS.md](../../project-template/AGENTS.md#xbot-与知识库)，本 API 文档不重复维护秒数。
+`wait_load_completed()` 只用于等待 Page 加载完成，不包含额外的 JS 初始化等待；新建、跳转、刷新后的固定等待约定统一查 [影刀开发规则](../../SKILL.md#xbot-与知识库)，本 API 文档不重复维护秒数。
 
 页面加载完成不代表异步业务数据、按钮或导出任务已就绪；仍需根据实际业务状态等待，不对每次普通点击无条件叠加固定等待。
 
@@ -490,7 +490,7 @@ element.set_attribute("data-id", "123")
 
 动态页面中，元素已经可以定位时，`get_text()` 仍可能拿不到完整业务文本。先区分文字更新与界面替换元素，见[读取已有元素的文本](win32.md#77-读取已有元素的文本)。
 
-另有一类不同故障：SPA / React 刷新后，已定位的旧元素在读取 `get_text()` 或点击时出现 Code 106（元素 ID 失效）。此时重新定位当前 DOM，必要时一次性通过 `page.execute_javascript()` 读取当前行数据，不要反复操作旧的 `row`、`td` 对象。先检查实际页面、遮挡和登录状态；不要把 Code 106 与文本尚未渲染混为一谈。异步导出任务处理见 [网页自动化实践](../../project-template/.agents/skills/rpa-practices/references/web.md)。
+另有一类不同故障：SPA / React 刷新后，已定位的旧元素在读取 `get_text()` 或点击时出现 Code 106（元素 ID 失效）。此时重新定位当前 DOM，必要时一次性通过 `page.execute_javascript()` 读取当前行数据，不要反复操作旧的 `row`、`td` 对象。先检查实际页面、遮挡和登录状态；不要把 Code 106 与文本尚未渲染混为一谈。异步导出任务处理见 [网页自动化实践](../../references/rpa-practices/references/web.md)。
 
 1. 若已确认文字会在同一个节点上更新，先定位一次，再在总超时内轮询读取同一个对象。已经确认界面替换了节点时，按状态变化重新定位。
 2. 页面视觉上已经显示值，但 `get_text()` / `get_html()` 始终缺少动态渲染内容：不要继续重复 `get_text()`；改从真实 DOM 的 `textContent` 读取，再按业务格式判断。
@@ -780,7 +780,7 @@ result = browser.http_request(
 )
 ```
 
-`stop_monitor_network()` 和 `stop_load()` 的异常收尾方式遵守[项目开发规则](../../project-template/AGENTS.md)。
+`stop_monitor_network()` 和 `stop_load()` 的异常收尾方式遵守[项目开发规则](../../SKILL.md)。
 
 | 参数 | 类型 | 默认值 | 说明 |
 |---|---|---|---|

@@ -14,7 +14,7 @@
 
 ---
 
-新增影刀 Excel / WPS 操作默认优先使用 `xbot.excel`。涉及公式刷新、界面交互、宏、格式或文件占用时，不为了图快改用其他后台读写库；项目已有稳定实现路线时遵守[项目开发规则](../../project-template/AGENTS.md)。真实 Office / WPS 行为需要对应环境运行证据，静态检查不能代替。
+新增影刀 Excel / WPS 操作默认优先使用 `xbot.excel`。涉及公式刷新、界面交互、宏、格式或文件占用时，不为了图快改用其他后台读写库；项目已有稳定实现路线时遵守[项目开发规则](../../SKILL.md)。真实 Office / WPS 行为需要对应环境运行证据，静态检查不能代替。
 
 ## 2. 参数取值
 
@@ -34,7 +34,7 @@
 | 自动检查 | `kind="auto_check"` | 优先 Office，失败再尝试 WPS |
 | WPS 插件 | `kind="wps_addon"` | WPS 插件方式 |
 
-以上仅记录 API 支持的参数值。影刀表格更新程序统一使用 WPS，具体开发规则见 [表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md)。
+以上仅记录 API 支持的参数值。影刀表格更新程序统一使用 WPS，具体开发规则见 [表格操作 Skill](../../references/spreadsheet-operations/guide.md)。
 
 ---
 
@@ -138,7 +138,7 @@ workbook = xbot.excel.open(
 )
 ```
 
-影刀表格更新程序的驱动选择见 [表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md)；本页仅记录 API 支持的参数。
+影刀表格更新程序的驱动选择见 [表格操作 Skill](../../references/spreadsheet-operations/guide.md)；本页仅记录 API 支持的参数。
 
 #### 已有工作簿更新：推荐调用顺序
 
@@ -153,11 +153,11 @@ workbook.save()
 workbook.close()
 ```
 
-多 Sheet 的实际更新与保存流程见 [表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md)。
+多 Sheet 的实际更新与保存流程见 [表格操作 Skill](../../references/spreadsheet-operations/guide.md)。
 
 #### WPS 打开前切换为手动计算
 
-`xbot.excel.open()` 没有计算模式参数。WPS 的 `Calculation` 和 `CalculateBeforeSave` 是应用实例属性，对同一 WPS 实例内的工作簿生效，并非单个工作簿的独立设置。先创建空白工作簿以取得 WPS 实例，再通过该实例的 `Workbooks.Open()` 打开目标文件。
+`xbot.excel.open()` 没有计算模式参数。WPS 的 `Calculation` 和 `CalculateBeforeSave` 是应用实例属性，对同一 WPS 实例内的工作簿生效，并非单个工作簿的独立设置。要避开打开目标文件时触发的自动重算，必须在打开前设置计算模式。先创建空白工作簿以取得 WPS 实例，再设置手动计算并通过同一个实例的 `Workbooks.Open()` 打开目标文件。
 
 ```text
 非执行调用说明（不可直接运行，target 已指向待打开的工作簿）：
@@ -171,7 +171,7 @@ book = app.Workbooks.Open(str(target), UpdateLinks=0)
 
 `book` 是 WPS 原生工作簿对象。后续需要影刀工作簿接口时，先激活目标表，再用 `xbot.excel.get_active_workbook()` 获取对象并核对文件路径。
 
-2026-11-25 在影刀的 WPS 环境用大型 XLSM 副本只读实测，目标表打开前后均为手动计算模式。适用范围及收尾要求见 [打开与使用工作簿](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md#打开与使用工作簿)。
+2026-11-25 在影刀的 WPS 环境用大型 XLSM 副本只读实测，目标表打开前后均为手动计算模式。适用范围及收尾要求见 [打开与使用工作簿](../../references/spreadsheet-operations/guide.md#打开与使用工作簿)。
 
 `kind="openpyxl"` 的历史 API 故障事实（仅用于排查该后端，不是表格更新项目的推荐方式）：本机影刀 `workbook.close()` 曾报 Code 1259（`openpyxl目前不支持关闭操作`）；部分 Shopee XLSX 文件的样式定义使该后端读取时报 `could not read stylesheet`。这些故障不代表 WPS 打开相同文件时也会失败。
 
@@ -230,7 +230,7 @@ file_path = workbook.get_full_name()
 | `is_closed()` | 无 | 判断工作簿对象是否已关闭 |
 | `set_saved(True)` | `True` / `False` | 标记保存状态；常用于不保存关闭 |
 
-工作簿关闭及异常收尾统一遵守[项目开发规则](../../project-template/AGENTS.md)。以下为读取后关闭工作簿的非执行调用说明：
+工作簿关闭及异常收尾统一遵守[项目开发规则](../../SKILL.md)。以下为读取后关闭工作簿的非执行调用说明：
 
 ```text
 非执行调用说明（不可直接运行）：
@@ -699,7 +699,7 @@ workbook.workbook.Application.WindowState = -4137  # xlMaximized
 
 `workbook.workbook.Activate()` 用于激活当前工作簿；`workbook.workbook.Application.WindowState = -4137` 用于最大化 WPS 应用窗口。当前环境已验证这组用法可以正确最大化 WPS。
 
-表格更新项目的启动清理与窗口最大化要求见 [表格操作 Skill](../../project-template/.agents/skills/spreadsheet-operations/SKILL.md)。
+表格更新项目的启动清理与窗口最大化要求见 [表格操作 Skill](../../references/spreadsheet-operations/guide.md)。
 
 ### 16.5 WPS 图片嵌入单元格
 
