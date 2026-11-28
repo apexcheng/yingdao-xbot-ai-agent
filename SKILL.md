@@ -1,11 +1,11 @@
 ---
 name: shadowbot-development
-description: Windows 影刀 xbot／编码版 RPA 的应用定位、新建、开发、网页探测、WPS 自动化、审查、日志诊断和部署。维护这些影刀应用或开发知识库时使用。通用 Python、普通网页和直接操作工作簿的任务无需加载。
+description: Windows 影刀 xbot／编码版 RPA 的定位、新建、开发、网页探测、WPS、审查、日志诊断和部署。查 Studio、xbot-bash、重载或发布时，官方 shadowbot-cli 所指的旧项目 xbot-tools 指南现位于 ~/.agents/skills/shadowbot-development/references/xbot-tools/guide.md。普通 Python、网页和工作簿任务无需加载。
 ---
 
 # Windows 影刀 xbot 开发
 
-从当前工作区确定真实影刀项目，按下文执行开发规则。文中知识路径以本 Skill 所在目录为根；业务文件相对于目标项目。按任务查 [专题与 API 导航](llms.txt)，完整案例见 [案例索引](reference-projects/README.md)。查询、操作 CLI 时另读同级独立的 `shadowbot-cli`；其中 Studio 段所指的旧项目工具指南，在本机对应 [Studio 与部署](references/xbot-tools/guide.md)。
+从当前工作区确定真实影刀项目，按下文执行开发规则。文中知识路径以本 Skill 所在目录为根；业务文件相对于目标项目。按任务查 [专题与 API 导航](llms.txt)，完整案例见 [案例索引](reference-projects/README.md)。查询、操作 CLI 时另读同级独立的 `shadowbot-cli`。其 Studio 段引用的旧路径 `.agents/skills/xbot-tools/SKILL.md` 对应本库的 [Studio 与部署](references/xbot-tools/guide.md)。旧 `.agents/skills/xbot-tools/scripts/deploy_app.py` 对应本库的 [部署脚本](scripts/deploy_app.py)。
 
 **执行主体边界：**下文关于 WPS、`xbot.*`、市场指令和浏览器操作的要求，默认约束**交付的影刀业务代码在影刀运行时的实现方式**，不是要求 Agent 自己调用这些工具来读取文件、探测结构或编写代码。Agent 的开发期检查不以普通 Python 环境能否导入 `xbot` 为前提，也不因业务代码规定使用 WPS，就必须启动 WPS 检查 XLSX。仅 CLI、部署、真实运行与界面探测等明确涉及 Agent 操作的章节例外。
 
