@@ -46,7 +46,7 @@ element = browser.find_by_css('.item', timeout=10)
 | `xbot.web` | 普通网页自动化主线 | 原生 `WebBrowser` / `WebElement` |
 | `xbot_visual.web` | 影刀可视化组件内部 | 多数为原生对象 |
 
-单次等待元素出现使用原生 `find_by_xpath(..., timeout=...)`；项目已安装“增强工具2026”、且需要循环等待 XPath 出现或等待下载完成时，按 [增强工具 2026](extensions/xbot-enhance-tools.md) 使用对应公开函数。
+单次等待唯一元素出现使用原生 `find_by_xpath(..., timeout=...)`。按 [等待元素](#11-等待元素) 处理循环判断，按 [上传和下载](#21-上传和下载) 核对下载完成参数。
 
 需要跨 iframe XPath 定位时，项目安装对应市场指令后按 [`iframe2 / XPath跨域获取网页元素`](iframe2-extension.md) 的公开接口调用。
 
@@ -289,7 +289,7 @@ buttons = row.find_all_by_xpath('.//button[contains(@class, "action")]', timeout
 element = browser.find_by_xpath('//button[contains(., "查询")]', timeout=10)
 ```
 
-`find_by_xpath()` 自带超时等待，适合一次性等待并获取单个元素。需要循环刷新等待 XPath 出现直到总超时时，如果当前项目已安装“增强工具2026”，直接使用 `wait_appear_by_xpath()`；准确签名和返回值只在 [增强工具 2026](extensions/xbot-enhance-tools.md) 维护。
+`find_by_xpath()` 自带超时等待，适合一次性等待并获取单个元素。需要循环刷新或判断页面状态时，在业务循环中用 `find_all_by_xpath(..., timeout=1)` 短时查找，按返回列表判断，并用业务设定的总超时退出。
 
 ---
 
@@ -724,7 +724,7 @@ file_path = browser.dowload_url(
 
 方法名：`dowload_url`。
 
-项目已安装“增强工具2026”时，下载文件后等待结果优先按 [增强工具 2026](extensions/xbot-enhance-tools.md) 使用 `wait_download_file()`；未安装时继续使用本节原生下载接口的 `wait_complete` / `wait_complete_timeout`，不要仅为复用示例新增市场指令依赖。
+需要等待原生下载完成时，设置 `wait_complete` 和 `wait_complete_timeout`。如果点击触发的下载未直接返回可靠的本轮文件路径，按[下载等待模板](../../references/rpa-practices/references/feature-templates/download-wait.md)检查文件是否写完。
 
 ---
 
@@ -869,4 +869,4 @@ web.set_user_environment(
 |---|---|---|
 | 元素匹配多个 | 单元素查找要求唯一 | 改选择器，或用 `find_all*` 后自己取 |
 | 中文输入异常 | 输入法干扰 | 改用 `clipboard_input()` |
-| 下载后文件还没生成 | 没等下载完成 | 先使用原生下载等待参数；项目已有增强工具时可按其事实页使用 `wait_download_file()` |
+| 下载后文件还没生成 | 没等下载完成 | 先使用原生下载等待参数。点击下载未返回可靠路径时，按本轮下载时间检查文件写完 |

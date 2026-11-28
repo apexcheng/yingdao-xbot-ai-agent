@@ -735,7 +735,7 @@ cell_ex.InsertCellPicture(image_path)  # image_path 指向已有的本地图片
 真实工作簿以只读方式打开时，不要直接把原因判定为“他人占用”。常见排查顺序是：
 
 1. 先检查 `workbook.workbook.ReadOnly`。
-2. 如需排查共享文件占用者，可使用 `xbot_enhance_tools.excel_utils.get_wps_lock_user(workbook)`；其返回值见 [增强工具 2026](extensions/xbot-enhance-tools.md)。
+2. 排查具体占用者时，按 [WPS 只读判断的边界](../../references/rpa-practices/references/feature-templates/native-shortcuts.md#wps确认目标工作簿是否只读)核对当前 WPS 锁文件。仅凭 `ReadOnly` 无法确认占用原因或占用者。
 
 | 现象 | 常见原因 | 处理 |
 |---|---|---|

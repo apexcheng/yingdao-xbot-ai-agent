@@ -43,7 +43,7 @@
 - [代码质量专题](references/code-quality/guide.md)：一致性、简化、审查。
 - [影刀工具专题](references/xbot-tools/guide.md)：CLI、项目创建、同步、发布、项目诊断。
 - [开发经验专题](references/rpa-practices/guide.md)：网页、钉钉通知、跨轮状态及通用排错。
-- [功能模板索引](references/rpa-practices/references/feature-templates/README.md)：新项目直接复用站点登录、ntfy、下载等待、钉钉 Webhook 与原生写法，不再依赖「增强工具2026」；旧项目仍可查询原指令事实页。
+- [功能模板索引](references/rpa-practices/references/feature-templates/README.md)提供站点登录、ntfy、下载等待、钉钉 Webhook 和常用原生写法。
 - [表格操作专题](references/spreadsheet-operations/guide.md)：Excel/CSV 用 WPS 打开、更新、保存和关闭。
 
 - [影刀编码版编程风格详解](references/code-quality/references/coding-style.md)
@@ -69,7 +69,7 @@
 
 [市场指令索引](xbot-api-docs/docs/extension-instructions.md) 用于查找各指令的正式调用事实页，目前包括：
 
-- 钉钉 AI 表格，以及增强工具中的钉钉机器人消息。
+- 钉钉 AI 表格。
 - Excel 扩展操作、离线 OCR、广告处理和网页增强。
 - C-ERP 开发项目内 Python 报表下载模块、ERP 订单查询与字段翻译。
 - 登录扩展、iframe 和其他已核验扩展能力。
