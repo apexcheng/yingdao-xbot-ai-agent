@@ -45,12 +45,14 @@ ShadowBot.Common.PackageUnreadableException: 应用文件已损坏
 
 `package.sigstore` 与影刀项目文件内容有关。外部工具修改 `run.py`、其他 flow、`package.json` 等文件后，如果没有由影刀重新生成签名，就可能出现 Studio 拒绝打开。
 
+校验脚本需要能编译 `net8.0` 的 .NET SDK，可用 `dotnet --list-sdks` 核对。省略 `-RuntimePath` 时，脚本选择默认安装目录中版本最高的 `ShadowBot.Runtime.dll`。多版本并存且版本不一致时，核对实际影刀进程的安装目录，用 `-RuntimePath` 传入对应 DLL 的完整路径。
+
 修复时严格按这个顺序：
 
 1. 确认影刀当前没有正在运行该应用，也没有打开该项目 Studio。
 2. 保留现场；不要先删除 `package.sigstore`。
 3. 先核对 Code flow 注册与实际文件是否一致，发现差异时记录并报告，不在诊断时自动修改。根目录新增 / 删除 `.py` 所需的注册同步仅在明确要求“部署”时由 `deploy_app.py` 自动完成；只排查签名或修改现有文件时不执行部署。如需检查 Python 语法则单独检查。
-4. 先只校验，不写入：
+4. 先只校验项目签名。未传 `-Write` 时脚本不改项目签名，但仍会在 `%TEMP%` 创建、编译并清理临时工程：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File "$HOME/.agents/skills/shadowbot-development/scripts/repair_package_sigstore.ps1" -ProjectRoot .
@@ -102,6 +104,12 @@ Studio 按 `<活动代码>.<流程名>` 建 flow 字典，`package.json` 的 `fl
 5. 重新打开 Studio 验证日志中不再出现 `Failed to load app`。
 
 预防：新增项目根目录 `.py` 前，先确认文件名去扩展名后不与 `package.json` 中任何已有 flow 的 `name` 重复；不要新建 `init.py` 这类与既有 Visual flow 名相同的文件。
+
+### 5. 自带 Python 文件误登记为 Code Flow
+
+部署报 `Code Flow 同步后注册仍不一致`，且「残留」包含 `__init__` 或 `package` 时，检查 `package.json` 的 `flows` 是否将对应的 `filename` 登记为 `kind="Code"`。部署脚本扫描时排除影刀自带的 `__init__.py` 和 `package.py`。若文件仍在，常规同步会保留该旧登记，部署在 Git 和发布前停止。已用两份含 `__init__` 旧登记的清单离线复现。
+
+诊断时先核对启动流及 Visual / Code Flow 是否引用该条目。已获修复授权，且确认是无引用的误登记时，只移除该条目，保留磁盘上的自带文件。如果修改了 `package.json`，再按上文做最终 Sigstore 校验。
 
 ### 安全与输出
 

@@ -488,6 +488,10 @@ def deploy(args):
     try:
         git_result.update(deploy_git(project_dir, args, git_result))
     except (RuntimeError, OSError) as error:
+        if args.require_git_push:
+            commit = git_result["git_commit"]
+            local_head = f"（本地 Git HEAD {commit}）" if commit else ""
+            raise RuntimeError(f"Git 操作失败{local_head}，已停止影刀发布：{error}") from error
         git_result["git_error"] = str(error)
 
     try:
@@ -496,12 +500,14 @@ def deploy(args):
         git_status = f"Git 已推送（{git_result['git_commit']}）" if git_result["git_pushed"] else f"Git 未推送（{git_result['git_error']}）"
         raise RuntimeError(f"{git_status}，但影刀同步/发布未完成：{error}") from error
     result.update(git_result)
+    if git_result["git_error"] is not None:
+        result["message"] += "。Git 操作失败，详见 git_error"
     result["codeflows_synced"] = codeflows_synced
     return result
 
 
 def deploy_git(project_dir, args, result):
-    """Attempt Git operations without making them a prerequisite for publication."""
+    """Stage changes, commit when needed, and push the project."""
     repo_root = Path(git(project_dir, "rev-parse", "--show-toplevel")).resolve()
     if repo_root != project_dir:
         raise RuntimeError(f"影刀项目目录不是 Git 仓库根目录：{repo_root}")
@@ -534,6 +540,7 @@ def main():
     parser.add_argument("--project-dir", default=None, help="影刀项目目录，默认当前目录")
     parser.add_argument("--commit-message", default="", help="Git 提交信息，默认使用发布日志")
     parser.add_argument("--update-log", default="", help="影刀版本更新说明")
+    parser.add_argument("--require-git-push", action="store_true", help="Git 操作失败时停止影刀发布（用于“push 并部署”）")
     parser.add_argument("--add", action="append", default=[], help="额外纳入本次提交的新增文件，可重复传入")
     args = parser.parse_args()
     try:

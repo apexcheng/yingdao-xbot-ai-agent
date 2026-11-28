@@ -4,14 +4,13 @@
 
 ## 查找顺序
 
-1. 新项目实现登录、验证码、下载等待和通知，先查[功能模板](references/rpa-practices/references/feature-templates/README.md)，优先原生 xbot API 和 Python 标准库，不使用「增强工具2026」。需要影刀 xbot API、其他市场指令的入口、参数、返回值和用法时，再查对应正式知识页，不跳过知识库直接查源码。
-2. 项目专有的业务规则、配置、字段和当前行为仍从真实项目的正式 PRD、交接文档及相关代码确认；只读取完成当前任务所需的内容。
-3. Skill 与正式知识页都没有所需用法时，才按需核对公开源码，不能凭猜测实现；有正式知识时不额外查源码，也不复制市场指令源码到业务项目。
-4. **实际决定使用市场指令**且入口在项目中缺失时，提示检查、更新或重新安装相应指令；若市场尚无包含该入口的版本，应明确说明发布缺口，不擅自改写文档中的调用方式。功能模板的原生实现不以安装旧市场指令为前提。
+- 按 [xbot 与知识库](SKILL.md#xbot-与知识库) 选择功能模板或 API 事实页，核对市场指令调用、源码查证与安装排查的适用条件。
+- 项目专有的业务规则、配置、字段及当前行为，从真实项目的正式 PRD、交接文档和相关代码确认。按任务读取所需内容。
 
 ## 按任务直达
 
-- 站点登录（抖店手机号、拼多多、千牛、京麦、支付宝）、下载完成等待、ntfy 验证码、钉钉 Webhook、原生简写：[rpa-practices / 功能模板索引](references/rpa-practices/references/feature-templates/README.md)；未来新项目不使用「增强工具2026」
+- 站点登录（抖店手机号、拼多多、千牛、京麦、支付宝）、下载完成等待、ntfy 验证码、钉钉 Webhook、原生简写：[rpa-practices / 功能模板索引](references/rpa-practices/references/feature-templates/README.md)
+- 存量项目维护，查询已用的增强工具2026接口与版本边界：[旧版 API 事实页](xbot-api-docs/docs/extensions/xbot-enhance-tools.md)
 - 新建或补全影刀编码版项目：[xbot-tools / base 骨架](references/xbot-tools/references/base-project-skeleton.md)
 - 过程式主流程、文件职责、变量内联、函数边界和异常收尾的详细判断：[code-quality / 编程风格](references/code-quality/references/coding-style.md)
 - `config.py` 配置归属、凭据与示例脱敏、配置整改验收：[code-quality / 配置变更](references/code-quality/references/coding-style.md#配置变更的核对与验收)
@@ -19,12 +18,13 @@
 - 企业机器人通过手机号查询成员并发送带截图、@ 提醒的群互动卡片：[企业机器人互动卡片](references/rpa-practices/references/feature-templates/dingtalk-enterprise-card.md)
 - 影刀 RPA 通过 DWS 联调钉钉 A2UI 报告、表格、定向 @ 与发送回查：[DWS 钉钉通知](references/rpa-practices/references/feature-templates/dingtalk-dws-a2ui.md)
 - 中文业务上下文日志、关键节点与失败示例：[rpa-practices / 日志实践](references/rpa-practices/references/logging.md)
-- Excel / CSV 全部用 WPS、工作簿最大化、Sheet 区域更新、统一保存与关闭：[spreadsheet-operations](references/spreadsheet-operations/guide.md)
+- 影刀运行时 Excel / CSV 的 WPS 处理、区域更新和收尾，以及存量与测试适用范围：[spreadsheet-operations](references/spreadsheet-operations/guide.md)
 - 跨轮次处理状态示例、失败重试与通知状态区分：[rpa-practices / 跨轮次状态与重试](references/rpa-practices/references/cross-run-state-and-retries.md)
 - 网页网络响应优先取数、DOM 触发交互、后台异步导出与动态元素失效处理：[rpa-practices / Web](references/rpa-practices/references/web.md)
 - 网页 RPA 开发前按需复用或探测完整操作步骤及 XPath，衔接编码与静态验收；只读探测遵守用户限制：[web-workflow-extraction](references/web-workflow-extraction/guide.md)
 - Web、WPS、网络响应、HTTP API、多来源及钉钉如何组成完整表格更新流程（源码已冻结在知识库内）：[抖音经营报表真实案例](reference-projects/douyin-operating-report/README.md)
 - 跨数据、API、环境或市场指令的通用排错：[rpa-practices / 通用排错](references/rpa-practices/references/troubleshooting.md)
+- 调查某次影刀运行失败，核对任务、日志、版本和录屏：[专项日志查证与现场交付](references/rpa-practices/references/incident-log-investigation.md)
 - 项目级真实实现案例索引：[reference-projects](reference-projects/README.md)；其中库存监控 [源码快照](reference-projects/inventory-monitor/README.md) 可参考多店铺 SQLite 状态 / 重试、日志与通知，但不作为现行编码规范。
 - 代码一致性、简化与只读审查：[code-quality](references/code-quality/guide.md)
 - 影刀 CLI、应用创建与发布：[xbot-tools](references/xbot-tools/guide.md)

@@ -27,9 +27,11 @@ Do not pin commands to versioned directories such as `shadowbot-6.x.x`; ShadowBo
 
 已有可信项目路径或 App ID 时直接使用。需要发现时用 `console app` 搜索（自主开发应用为 `--app-type developed`，订阅应用为 `subscribed`）；以返回的 `appId` 为准，多条匹配时核对元数据，再根据当前子命令帮助查看详情或定位项目目录。
 
+定位本机自主开发应用的源码时，用 `auth current` 获取当前 `userId`，查找 `%LOCALAPPDATA%\ShadowBot\users\<userId>\apps\<appId>\xbot_robot`。读取该目录的 `package.json`，确认 `uuid` 与目标 `appId` 一致后再使用。此步骤适用于已有应用及刚创建的应用。搜索和详情命令见独立 `shadowbot-cli` 的「Find ShadowBot apps/projects」。
+
 ### Run and inspect tasks
 
-**只有用户明确要求运行时才启动应用或任务。** 运行不是只读检查；不能为了查看配置、字段、凭证等就实际执行。运行前按需核实应用和输入参数，再使用 `console task run`；默认同步执行并输出日志，仅在业务明确需要时使用 `--async`。任务查询与停止按需使用 `console task status/history/logs/stop`，参数以当前帮助为准。
+**只有用户明确要求运行时才启动应用或任务。** 运行不是只读检查；不能为了查看配置、字段、凭证等就实际执行。运行前按需核实应用和输入参数，再使用 `console task run`；默认同步执行并输出日志，仅在业务明确需要时使用 `--async`。查历史任务和日志见 [专项日志查证](../rpa-practices/references/incident-log-investigation.md)。单项状态及停止命令分别用 `console task status -h` 和 `console task stop -h` 查看帮助。
 
 项目任务触发失败按全局影刀开发规则停止并报告，即使报错为每日额度耗尽。Windows 全局说明中的桌面备用运行只适用于允许桌面回退的任务。
 
@@ -69,14 +71,14 @@ Console-only operations can return `not_supported` in Assistant mode. Check `sys
 
 市场指令或依赖未安装时的编码与交付边界，遵守全局影刀开发规则中“xbot 与知识库”的规则；不将安装排查提前为编码前置步骤。
 
-1. 用户说 **“push”** 时，Agent 正常调用 Git 完成 commit 和 push，不运行影刀部署。用户说 **“部署”** 或 **“push 并部署”** 时，在 PowerShell 中只执行一次 `python "$HOME/.agents/skills/shadowbot-development/scripts/deploy_app.py" --project-dir <项目目录> --commit-message "<提交说明>" --update-log "<发布说明>"`，由脚本自动完成必要的 Code Flow 元数据登记、Git 提交（无改动不产生空提交）和 push、Studio 重载/保存/同步、发布与线上版本校验；**不编辑 Visual Flow，不自动执行发布后的业务任务**。Agent 不再单独调用 Git、同步、发布和版本查询。
+1. 用户说 **“push”** 时，Agent 正常调用 Git 完成 commit 和 push，不运行影刀部署。用户说 **“部署”** 时，在 PowerShell 中只执行一次 `python "$HOME/.agents/skills/shadowbot-development/scripts/deploy_app.py" --project-dir <项目目录> --commit-message "<提交说明>" --update-log "<发布说明>"`。用户明确说 **“push 并部署”** 时，在同一次调用中加 `--require-git-push`。脚本负责必要的 Code Flow 元数据登记，尝试 Git 提交和 push，再根据第 3 项决定是否进入 Studio 重载、保存、同步、发布及线上版本校验。**不编辑 Visual Flow，不自动执行发布后的业务任务**。Agent 不再单独调用 Git、同步、发布和版本查询。
    **部署内容以当前项目工作区的完整代码状态为准。** 用户明确要求部署时，不因存在其他已完成但尚未提交的代码修改而自动 stash、隔离、恢复或拆分部署范围；这些已有修改允许随本次部署一起提交、push、同步和发布。只需避免把明显的临时文件、备份文件等无关新增文件纳入提交。
-2. 新增根目录 `.py` 会自动纳入 Git；其余已有跟踪文件的修改自动提交。为了防止将备份、临时文件等误推送，**其它新增文件默认不提交**，需在同一次部署命令中通过可重复的 `--add <相对路径>` 明确纳入。请在部署结果中关注 `untracked_skipped`。`--commit-message` 可指定 Git 提交信息；不传时使用发布说明生成。
-3. Git 为可选步骤：缺少 Git、仓库或远程仓库，以及 Git 操作失败时，记录 `git_error` 并继续部署；根据 `git_pushed` 和 `git_commit` 报告实际结果。影刀同步、发布或线上版本校验失败时返回 `status=failed` 与非零退出码；新版本成为线上版本并通过 `versionId` 校验后返回 `status=success`。若 Git 已推送但发布失败，必须报告部分完成，不能称为部署成功。
+2. Code Flow 登记依据项目根目录现有的 `*.py`，排除 `__init__.py` 和 `package.py`，不按 Git 忽略规则过滤。Git 提交包含已有暂存内容、已跟踪文件的改动和未被忽略的新增根目录 `.py`。其它未被忽略的新增文件默认不提交，需在同一次部署命令中通过可重复的 `--add <相对路径>` 明确纳入。`untracked_skipped` 和 `--add` 只描述 Git 部分。`--commit-message` 可指定 Git 提交信息，不传时用发布说明生成。无改动不产生空提交。
+3. 单说 **“部署”** 时，缺少 Git、仓库或远程仓库，以及其他 Git 操作失败，都记录 `git_error` 并继续影刀发布。即使发布成功，也须报告 Git 失败的原因及已知的本地提交。**“push 并部署”** 使用 `--require-git-push`。Git 失败时返回 `status=failed` 和非零退出码，报告 Git 错误，停止后续 Studio 同步与影刀发布。已完成的本地提交和 Code Flow 登记会保留。影刀同步、发布或线上版本校验失败时同样返回 `status=failed` 和非零退出码。新版本通过线上 `versionId` 校验后返回 `status=success`。汇报时按 `git_pushed` 和 `git_commit` 说明 Git 结果。若 Git 已推送但影刀发布失败，报告部分完成。
 4. 仅保留 `deploy_app.py` 一个部署脚本。脚本先核对登录账号对应的开发目录、影刀任务状态和已打开应用的保存状态，再变更 Code Flow 或推送 Git。`_Release` 和其它副本不能用来发起部署。到发布阶段，经 `xbot-bash` 重核目标应用及保存状态、从磁盘重载并保存编译，再用 CLI 同步关闭、发布并核对线上版本 ID。
 5. 脚本成功后 Agent **无需再次调用 `console app versions` 重复校验版本**；直接汇报版本和 Git 提交信息。线上 `versionId` 变化不等于已证明业务运行正确；只有用户明确要求实际运行时才再按任务状态与日志验收。
 6. 未经发布运行验证，不得假定 Code flow 可以直接作为应用的 `startup`；历史实验和验证边界见 [应用生命周期特殊案例](references/app-lifecycle-cases.md)。整应用复制的已知限制也在该参考文档中。
 
 ## 项目诊断
 
-排查应用文件损坏、Sigstore 校验失败、Flow 重名时，按需阅读 [项目诊断](references/project-diagnostics.md)。普通业务代码问题不触发该流程。
+排查应用文件损坏、Sigstore 校验失败、Flow 重名时，按需阅读 [项目诊断](references/project-diagnostics.md)。部署校验报告 `__init__` 或 `package` 残留时，见 [自带 Python 文件误登记](references/project-diagnostics.md#5-自带-python-文件误登记为-code-flow)。普通业务代码问题不触发该流程。

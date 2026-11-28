@@ -41,7 +41,7 @@ Check existing-project implementation consistency, simplify recent code changes 
 
 简化时优先让真实业务顺序直接可见，并遵守项目已有的函数边界、日志、异常处理和 xbot API 使用方式。
 
-表格更新 RPA 的独立 Sheet 失败继续、最后统一保存等固定规则，直接按 [表格操作专题](../spreadsheet-operations/guide.md) 执行，不额外添加重开和回滚流程。
+表格更新 RPA 的 Sheet 重试、RAW 清写异常和统一保存按 [表格操作专题](../spreadsheet-operations/guide.md) 执行，不额外添加重开和回滚流程。
 
 ### 保持行为不变
 

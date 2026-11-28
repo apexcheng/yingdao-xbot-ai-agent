@@ -96,14 +96,14 @@ git clone https://github.com/apexcheng/yingdao-xbot-ai-agent.git "$HOME/.agents/
 | --- | --- |
 | 项目根 `AGENTS.md` 的公共开发规则 | [SKILL.md](SKILL.md) |
 | 项目 `.agents/skills/<专题>/SKILL.md` | `references/<专题>/guide.md`，原专项资料仍在同专题的 `references/` 下 |
-| 项目 `.agents/skills/xbot-tools/scripts/` | [scripts/](scripts/)，运行时指定真实项目目录 |
+| 项目 `.agents/skills/xbot-tools/SKILL.md` 和 `.agents/skills/xbot-tools/scripts/` | [影刀工具指南](references/xbot-tools/guide.md) 和 [共享脚本](scripts/)，执行脚本时指定真实项目目录 |
 | 知识库的 API、完整案例 | [xbot-api-docs/docs/](xbot-api-docs/docs/) 和 [reference-projects/](reference-projects/) |
 | 模板中的 QMD 与 Codex 配置 | [integrations/](integrations/) 中保留可选接入样例 |
-| 跨项目规则同步脚本 | 更新这个独立仓库，各工作区从同一份 Skill 读取 |
+| 跨项目规则同步脚本 `scripts/sync_agent_rules.py` | 已退役。更新这个独立仓库，各工作区从同一份 Skill 读取 |
 
-[核心开发规则](SKILL.md) 与 [任务导航](llms.txt) 提供直达入口。也可在全局 Skill 根目录使用 QMD，首次安装或知识更新后执行 `qmd update`，再运行 `qmd search "Sigstore" -c yingdao-skills --full-path`。可选 QMD 接入样例和已有只读审查角色配置见 `integrations/`，使用样例时按实际安装位置设置路径。
+[核心开发规则](SKILL.md) 与 [任务导航](llms.txt) 提供直达入口。使用 QMD 时，将命令或 MCP 的工作目录设为全局 Skill 根目录，以选用本库的 [.qmd 配置](.qmd/index.yml)。首次安装或知识更新后执行 `qmd update`，用 `qmd collection list` 核对当前集合，再运行 `qmd search "Sigstore" -c yingdao-skills --full-path`，确认命中本库现行诊断页。若命中旧路径，先检查实际选用的索引及其集合，再回读当前正文。可选接入样例和只读审查角色见 [integrations/](integrations/)。按本机安装位置配置，仅按需合并所用设置。
 
-影刀官方 CLI 的账户、控制台及任务查询由独立 `shadowbot-cli` 提供。[影刀工具指南](references/xbot-tools/guide.md) 记录 Studio 的版本差异、项目定位、诊断和部署。单独 “push” 时只提交推送 Git；要求影刀部署时，从全局脚本传入真实项目路径，单次完成 Git、必要的 Code Flow 登记、Studio 同步、发布及线上版本核验。
+影刀官方 CLI 的账户、控制台及任务查询由独立 `shadowbot-cli` 提供。应用定位和 Studio 版本差异见 [影刀工具指南](references/xbot-tools/guide.md)，Git push 和影刀发布的执行边界、脚本及结果字段见 [应用开发闭环](references/xbot-tools/guide.md#应用开发闭环)。
 
 ## 开发与维护风格
 

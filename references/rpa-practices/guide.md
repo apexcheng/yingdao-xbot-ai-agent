@@ -18,6 +18,6 @@ Apply proven ShadowBot/Yingdao RPA practices for Web automation, Chinese busines
 
 ## 使用边界
 
-- 表格更新的独立 Sheet 失败继续、最后统一保存等规则见 [spreadsheet-operations](../spreadsheet-operations/guide.md)；完整业务项目案例统一从知识库 `reference-projects/README.md` 按需检索，本专题不再保存完整项目 Demo。
+- 表格更新的 Sheet 重试、RAW 清写异常和统一保存见 [spreadsheet-operations](../spreadsheet-operations/guide.md)。完整业务项目案例统一从知识库 `reference-projects/README.md` 按需检索。
 - 钉钉通知的文案与排版从上述经验页读取；发送消息的函数、参数、返回值仍查 `xbot-api-docs/` 的对应正式事实页。
 - 通用排错只在局部 API 排错不足以解决或故障跨层时使用，不把全部检查清单强加给普通小改。

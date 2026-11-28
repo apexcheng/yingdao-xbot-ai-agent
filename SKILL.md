@@ -1,11 +1,11 @@
 ---
 name: shadowbot-development
-description: Windows 影刀 xbot／编码版 RPA 的定位、新建、开发、网页探测、WPS、审查、日志诊断和部署。查 Studio、xbot-bash、重载或发布时，官方 shadowbot-cli 所指的旧项目 xbot-tools 指南现位于 ~/.agents/skills/shadowbot-development/references/xbot-tools/guide.md。普通 Python、网页和工作簿任务无需加载。
+description: Windows 影刀 xbot／编码版 RPA 的定位、新建、开发、网页探测、WPS、审查、日志诊断和部署。Studio、xbot-bash、重载与发布见 references/xbot-tools/guide.md。普通 Python、网页和工作簿任务无需加载。
 ---
 
 # Windows 影刀 xbot 开发
 
-从当前工作区确定真实影刀项目，按下文执行开发规则。文中知识路径以本 Skill 所在目录为根；业务文件相对于目标项目。按任务查 [专题与 API 导航](llms.txt)，完整案例见 [案例索引](reference-projects/README.md)。查询、操作 CLI 时另读同级独立的 `shadowbot-cli`。其 Studio 段引用的旧路径 `.agents/skills/xbot-tools/SKILL.md` 对应本库的 [Studio 与部署](references/xbot-tools/guide.md)。旧 `.agents/skills/xbot-tools/scripts/deploy_app.py` 对应本库的 [部署脚本](scripts/deploy_app.py)。
+从当前工作区确定真实影刀项目，按下文执行开发规则。文中知识路径以本 Skill 所在目录为根；业务文件相对于目标项目。按任务查 [专题与 API 导航](llms.txt)，完整案例见 [案例索引](reference-projects/README.md)。查询、操作 CLI 时另读同级独立的 `shadowbot-cli`，Studio 与部署从 [影刀工具指南](references/xbot-tools/guide.md) 进入。旧项目入口见 [迁移表](README.md#查找知识与使用工具)。
 
 **执行主体边界：**下文关于 WPS、`xbot.*`、市场指令和浏览器操作的要求，默认约束**交付的影刀业务代码在影刀运行时的实现方式**，不是要求 Agent 自己调用这些工具来读取文件、探测结构或编写代码。Agent 的开发期检查不以普通 Python 环境能否导入 `xbot` 为前提，也不因业务代码规定使用 WPS，就必须启动 WPS 检查 XLSX。仅 CLI、部署、真实运行与界面探测等明确涉及 Agent 操作的章节例外。
 
@@ -24,13 +24,13 @@ description: Windows 影刀 xbot／编码版 RPA 的定位、新建、开发、�
 
 ## 项目分析与执行边界
 
-**专项查影刀日志：** 用户明确要求调查某次运行的日志或故障时，按 [专项日志查证与现场交付](references/rpa-practices/references/incident-log-investigation.md) 执行，录屏只交付到该规范所指的私有配置目录；本条不适用于 RPA 晨检或日报。
+**专项查影刀日志：** 用户明确要求调查某次运行的日志或故障时，按 [专项日志查证与现场交付](references/rpa-practices/references/incident-log-investigation.md) 执行，录屏的授权与目录按专项规定；本条不适用于 RPA 晨检或日报。
 
 **Agent 开发与影刀运行边界：**默认只负责业务代码编写、静态检查及必要文档；代码完成后即交付，不自行启动影刀任务、操作 Studio / 影刀可视化界面或为验收追加真实运行。市场指令安装、项目 Python 包安装、Visual Flow 可视化编辑等由用户处理；依赖未安装时仍按知识库正式 API 写代码，只说明用户需要安装的内容，不主动安装、排查安装环境或绕行操作。只有用户明确要求运行、部署或操作影刀时，才按相应授权执行；当前工具无法可靠完成的可视化步骤交由用户，不为追求自动化反复绕行。**部署授权只包含既定发布流程所需的 Code Flow 登记、Studio 同步和发布，不等于授权修改 Visual Flow 或运行业务任务。**
 
 ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明确指定，否则不得启动影刀主程序。
 
-**CLI 触发失败必须停止：** 通过 ShadowBot CLI 触发影刀任务时，只要 CLI 报告触发失败或拒绝执行，无论是应用正在编辑、模式冲突、连接异常还是其他原因，都立即停止触发尝试，把 CLI 返回的具体错误和「任务未启动」的事实反馈给用户。**不得绕过 CLI**，包括改用 GUI、Studio 运行按钮、直接运行代码或其他接口；也不得为了继续触发而擅自关闭编辑器、切换模式、解除占用或另找执行入口。后续操作由用户另行决定。
+**CLI 触发失败必须停止：** 通过 ShadowBot CLI 触发影刀任务时，CLI 报告触发失败或拒绝执行后立即停止触发尝试，并报告具体错误。已有证据确认任务未创建时写「任务未启动」。连接异常、超时等导致结果不明时写「启动未确认」。**不得绕过 CLI**，包括改用 GUI、Studio 运行按钮、直接运行代码或其他接口；也不得为了继续触发而擅自关闭编辑器、切换模式、解除占用或另找执行入口。后续操作由用户另行决定。
 
 **Agent 开发期浏览器工具：**开发、调试影刀 RPA 时，如需实际操作网页或探测 DOM / XPath，按实际操作环境选工具：通过 Windows DevSpace 操作用 `browser-control`；Windows 本机 Codex 直接操作用原生浏览器能力；其他环境遵循其适用的浏览器规则。这不改变下文影刀运行时代码默认使用 `xbot.web` 的要求。浏览器探测步骤及现场保留规则见 `references/web-workflow-extraction/guide.md`。
 
@@ -41,7 +41,7 @@ ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明
 1. 自动化默认保持自上而下、业务顺序可见；固定任务直接依次执行。`run.py` 保留影刀 Code 流入口 `main(args)`。仅实现当前确定需要的行为，不为未来假设增加抽象或选项。
 2. Python 模块的 `import` / `from ... import ...` 统一放在文件顶层，不在函数、分支或异常处理中延迟导入，使依赖缺失能在应用或模块加载时暴露。
 3. 数据获取层返回实际结果并传播技术异常；空值、重复结果以及失败后停止、跳过或继续，由当前业务规则决定，不在底层代为选择。
-4. **未经确认不新增可选防御。** 按已确认的业务流程与 API 契约完成必要检查，保留既有保护并让失败如实传播；额外前置校验、重试、回退、兜底、预检、重复读取和状态管理等，若改变业务行为或扩大范围，应先询问。典型反例：对写入侧已保证唯一的数据，在读取 / 回填侧再建去重或 visited 集合——这类记忆状态属于未确认的可选防御，不得默认添加。未要求的可选防御直接不做，仅报告影响本次验收的已知限制。
+4. **未经确认不新增可选防御。** 按已确认的业务流程与 API 契约完成必要检查，保留既有保护并让失败如实传播；额外前置校验、重试、回退、兜底、预检、重复读取和状态管理等，若改变业务行为或扩大范围，应先询问。未要求的可选防御直接不做，仅报告影响本次验收的已知限制。读取 / 回填的去重反例见 [编码标准](references/code-quality/references/coding-style.md#4-函数与类)。
 5. 对已确认由工作簿公式完成业务计算的项目，RPA 负责模拟用户操作、获取并搬运 RAW / 事实数据；除用户明确要求外，不自行增加表头一致性、业务数据有效性或公式核对，也不因空文件或只有表头拒绝按约定覆盖。具体读取、空结果覆盖和文本保护规则见 `references/spreadsheet-operations/guide.md`。
 
 **编码标准按需读取：** 需要决定单 Page 函数边界、变量 / XPath、配置传递、异常收尾或日志封装时，读取 `references/code-quality/references/coding-style.md` 的对应节；代码审查也以该文件为编码标准。新增或调整网页操作流程时，编码前须读取其中「变量与内联」一节，交付前核查本次新增常量、变量及配置项。普通明确小改不必加载全文。
@@ -49,12 +49,12 @@ ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明
 ## xbot 与知识库
 
 1. 新项目优先使用影刀原生 API、Python 标准库与知识库[功能模板](references/rpa-practices/references/feature-templates/README.md)直接完成业务，**不安装或调用「增强工具2026」**。模板未涵盖的复杂功能先核实原生/标准接口、补足实现，不静默降级；等待 XPath、异常堆栈等原生即可完成的操作不再封装同义工具。旧项目已有的市场指令依赖不因此强制改造。Agent 不知道影刀代码怎么写或需要查询 API / 其他市场指令用法时，**先查 Skill 和知识库**；只有其中没有所需内容，才查源码。禁止跳过知识库直接查源码，也不根据通用 Python 经验或旧项目记忆猜 API。已有项目代码不能推翻正式 API 事实。
-2. 通过知识库 `llms.txt` 或 QMD 定位相关 Skill 和正式文档；搜索摘要不能替代正式正文。
+2. 用 [知识导航](llms.txt) 或 [QMD](README.md#查找知识与使用工具) 定位正文。QMD 须从共享 Skill 根目录执行，或将 MCP 工作目录设为该目录。搜索摘要不能替代正式正文。
 3. 仅对确需使用的市场指令，使用 `from ... import ...` 导入公开方法并调用，**禁止在当前项目复制或重写市场指令源码，也禁止直接修改项目安装的市场指令包（`xbot_extensions`）中的代码、资源与元数据**。这些包是影刀市场指令的安装副本，更新市场指令会覆盖本地修改。功能修正应在当前项目业务代码中处理，或在市场指令源项目修复并发布更新。缺少必要的市场指令或依赖时，仍按知识库公开 API 完成编码；不将本地安装核查作为编码前置条件，不复制或重写指令实现，只在交付时说明安装要求和实际验证限制。安装、更新排查用于处理实际运行错误。调用任何市场指令（`xbot_extensions`）时，在调用点紧邻添加功能和参数含义注释；含义以正式事实页为准，不猜测。
 4. 网页业务默认使用 `xbot.web`；所有 Page 新建、跳转、刷新等加载完成后，先 `page.wait_load_completed(...)`，再统一 `time.sleep(1)`，然后开始业务操作，避免 JS 仍在初始化。需要等待异步业务结果时仍须检查实际状态，不用不断叠加固定等待。
-   程序开始运行时先获取所有浏览器 Page，只关闭 `all_page[:-1]`，保留最后一个 Page，避免 Chrome 进程退出。业务执行到一半异常中断时，不关闭正在操作的 Page，方便排查。
+   普通开页直接创建 Page。需要清理时只关闭本流程接管的 Page。专用 Chrome Profile 的全部 Page 均由本流程接管时，清理时保留最后一页，避免 Chrome 退出。异常中断时保留正在操作的 Page，方便排查。枚举条件见 [Browser API](xbot-api-docs/docs/browser.md) 的 `get_all()`。
    **业务事实数据**优先从网络响应获取；登录状态、当前店铺身份、按钮状态等**页面状态**可直接通过已确认的 DOM / XPath 读取，不套用业务数据的网络优先规则。用户提供用于提取业务事实数据的 XPath 时，先询问是否确认采用 DOM 取数；用于页面状态核验或交互的 XPath 直接使用。详情见 `references/rpa-practices/references/web.md`。
-   网页 RPA 开发优先复用用户提供的 XPath、已验证的页面步骤和现有实现；截图与参考项目只能提供线索，不能证明当前 DOM 结构。缺少可靠定位时先按需探测真实页面，**不得猜测 XPath、元素属性或编写基于猜测的 JavaScript 扫描来冒充定位**；无法自行访问、探测或确认时，暂停依赖该元素的开发并请用户提供 XPath 或页面证据，不影响其他可独立完成的步骤。已提供可靠 XPath 的步骤不重复探测。用户说“探测”默认包含后续开发；明确要求只读、不修改或不使用浏览器时遵守限制。细则见 `references/web-workflow-extraction/guide.md`。
+   网页 RPA 开发使用已确认的定位依据，缺少时按需探测，禁止猜测 XPath。按 [网页探测指南](references/web-workflow-extraction/guide.md) 复用证据、处理阻塞并完成静态验收，遵守用户对只读、改动和浏览器使用的限制。
 5. 影刀日志使用 `from xbot.app import logging`；动态内容使用完整 f-string，异常堆栈使用 `traceback.format_exc()`。业务日志默认采用简洁的中文上下文格式，记录业务对象、动作和必要结果；示例见 `references/rpa-practices/references/logging.md`。
    **已配置执行结果通知的 RPA 必须具备运维追溯价值**：多业务对象逐对象说明成功、正常跳过、异常或未执行的真实状态、实际成果与未完成原因；已成功的部分不得因后续失败而被抹除。通知内容和状态口径统一按 `references/rpa-practices/references/dingtalk.md` 执行，不强制原本没有通知需求的项目新增钉钉通知。
 6. **严格禁止 Agent 直接修改 `selectorsV2.xml`**：不得创建、编辑、格式化、覆盖或补丁修改该文件。需要增删或调整元素库时，Agent 只能提示用户自行通过影刀编辑器修改，不得代替用户修改文件；业务代码只读取并使用项目中已有的元素库名称。
@@ -67,7 +67,7 @@ ShadowBot CLI 只用于影刀自身运行和生命周期操作。除非用户明
 
 1. 按风险做最小必要验证；默认不新增测试或运行无关全量检查。高风险写入前提示具体数据风险和可能影响，不默认设计回退方案。
 2. 新增项目根目录 `.py` 文件时，文件名去扩展名后不得与 `package.json` 中已有 flow 的 `name` 重复，例如已有名为 `init` 的 Visual flow 时不能新建 `init.py`；撞名登记后 Studio 打开项目可能报“应用文件已损坏”，排查与修复见 `references/xbot-tools/references/project-diagnostics.md`。
-3. 用户说“部署”或“push 并部署”时，按 `references/xbot-tools/guide.md` 直接单次调用 `scripts/deploy_app.py`，传入 Commit / 版本说明，自动完成 Git、必要的 Code flow 注册、Studio 同步、发布及线上版本核验，不重复手动拆步执行。
+3. 按 [部署流程](references/xbot-tools/guide.md#应用开发闭环) 单次调用共享部署脚本。单说“部署”时，Git 失败可以继续发布并明确报告原因。明确要求“push 并部署”时加 `--require-git-push`，Git 失败就停止发布。分别报告 Git 与影刀发布结果，不重复手动拆步执行。
 4. 用户单独说“push”时，Agent 正常执行 git commit 并 push 到 GitHub / Gitee 远程仓库，不部署影刀。执行前确认有改动需要提交，并使用清晰的 commit 信息。
 
 ## 安全与汇报

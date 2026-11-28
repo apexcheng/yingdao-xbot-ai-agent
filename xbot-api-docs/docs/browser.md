@@ -112,7 +112,7 @@ browsers = web.get_all(mode="chrome")
 
 长期运行的多 Profile 自动化通常还需要在收尾时清理残留页面。清理某个 Profile 前同样先切换用户环境；日常目标如果只是防止页面越积越多，应保留该 Profile 的最后一个页面，避免把对应 Chrome 实例一起完全关闭，影响后续复用登录状态：
 
-下例仅适用于对应 Profile 的全部页面已由当前流程接管的情况。Profile 中混有用户工作页时，不能直接按 `get_all()[:-1]` 清理，应只关闭当前流程已确认接管的页面。
+下例适用于对应 Profile 的全部页面已由当前流程接管，且无待保留的故障页的情况。Profile 中混有用户工作页时，不能直接按 `get_all()[:-1]` 清理，应只关闭当前流程已确认接管的页面。
 
 ```text
 非执行调用说明（不可直接运行）：
@@ -719,10 +719,16 @@ file_path = browser.dowload_url(
 | `file_folder` | `str` | 必填 | 保存目录 |
 | `file_name` | `str` / `None` | `None` | 保存文件名 |
 | `overwrite` | `bool` | `True` | 同名是否覆盖 |
-| `wait_complete` | `bool` | `False` | 是否等待下载完成 |
-| `wait_complete_timeout` | `int` / `float` | `300` | 下载完成超时 |
 
-方法名：`dowload_url`。
+以下默认值按影刀 6.4.14 的内置接口声明核对，未做下载运行验证。`wait_complete`（`bool`）控制是否等待下载完成，`wait_complete_timeout`（`int` / `float`）为完成等待的秒数。
+
+| 下载方法 | `wait_complete` | `wait_complete_timeout` |
+|---|---|---|
+| `web.handle_save_dialog()` | `False` | `300` |
+| `WebElement.download()` | `True` | `300` |
+| `Browser.dowload_url()` | `False` | `60` |
+
+按下载地址下载的方法名为 `dowload_url`，调用时保留此拼写。
 
 需要等待原生下载完成时，设置 `wait_complete` 和 `wait_complete_timeout`。如果点击触发的下载未直接返回可靠的本轮文件路径，按[下载等待模板](../../references/rpa-practices/references/feature-templates/download-wait.md)检查文件是否写完。
 

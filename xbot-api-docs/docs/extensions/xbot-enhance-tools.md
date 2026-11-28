@@ -109,7 +109,7 @@ Webhook 群 Markdown：send_dingtalk_group("markdown", message, title="任务结
 企业私聊图片：send_dingtalk_private("image", image_path, app_key=app_key, app_secret=app_secret, user_ids=[user_id])
 ```
 
-本地开发项目已具备这些模块；市场版尚未发布包含钉钉能力的新版。其他项目出现 `ModuleNotFoundError` 或缺少入口时，说明其安装版本尚不包含该能力；待新版发布后更新增强工具，无需改写以上导入路径。
+本地开发源码已有上述入口。2026-11-28 核对应用版本记录，`26.10.1` 已发布。其分发包包含哪些钉钉公开入口尚未核验。存量项目报 `ModuleNotFoundError` 或缺少入口时，按[市场指令版本核验](../extension-instructions.md#调查版本差异或维护事实页)确认项目所装版本和公开入口，确认发布包已包含所需入口后再更新。
 
 **适用场景：**
 - Agent 编码场景里只有 XPath 字符串，没有元素库选择器

@@ -34,7 +34,7 @@
 | 自动检查 | `kind="auto_check"` | 优先 Office，失败再尝试 WPS |
 | WPS 插件 | `kind="wps_addon"` | WPS 插件方式 |
 
-以上仅记录 API 支持的参数值。影刀表格更新程序统一使用 WPS，具体开发规则见 [表格操作 Skill](../../references/spreadsheet-operations/guide.md)。
+以上是 API 支持的参数值。影刀运行时的 WPS 选用范围、存量项目和测试例外见 [表格操作指南](../../references/spreadsheet-operations/guide.md)。
 
 ---
 
@@ -463,7 +463,7 @@ sheet.clear()
 sheet.clear_range(begin_row_num=1, begin_column_name="E", end_row_num=first_free_row, end_column_name=first_free_column, target="content")
 ```
 
-`clear_range()` 用于清空指定区域，真实项目已确认的参数如下：
+`clear_range()` 用于清空指定区域。影刀 6.4.14 的 COM 工作表接口声明中，省略 `target` 时默认 `"all"`，会清除内容和格式。仅清数据时须显式指定 `"content"`。参数如下：
 
 | 参数 | 类型 | 示例 | 说明 |
 |---|---|---|---|
@@ -471,17 +471,17 @@ sheet.clear_range(begin_row_num=1, begin_column_name="E", end_row_num=first_free
 | `begin_column_name` | `str` | `"E"` | 起始列 |
 | `end_row_num` | `int` | `20000` | 结束行 |
 | `end_column_name` | `str` | `"AA"` | 结束列 |
-| `target` | `str` | `"content"` | 清空目标；清数据时使用 `"content"` |
+| `target` | `str` | `"content"` | `"content"` 仅清内容。默认 `"all"` 清内容及格式 |
 
 也可按位置传参：
 
 ```text
 非执行调用说明（不可直接运行）：
 
-sheet.clear_range(1, "E", 20000, "AA")
+sheet.clear_range(1, "E", 20000, "AA", "content")
 ```
 
-清空或覆盖目标数据前，先成功读取本次写入所需的源数据，并按当前业务契约确认必需字段、数据范围、目标区域及空结果是否允许覆盖；不满足约定时停止写入，不清空旧数据。只检查本次真实路径所需内容，不重复读取或校验已由正常流程确认的结果。
+业务代码清空或覆盖 RAW 的读写顺序、空结果和失败处理见 [表格操作指南](../../references/spreadsheet-operations/guide.md)。
 
 清空旧数据是后续写入正确性的前提时，不要静默忽略 `clear_range()` 异常。
 
@@ -622,7 +622,9 @@ workbook.export_to_pdf(r"C:\path\demo.pdf", sheet_name="Sheet1", all_sheets=Fals
 
 ## 16. 推荐模板
 
-### 16.1 只读数据
+### 16.1 读取数据（OpenPyXL 后端示例）
+
+此片段供仍使用 `kind="openpyxl"` 的项目参考，仅在当前版本已确认支持该后端的 `close()` 时采用末行。若关闭时出现 Code 1259，核对[已知后端故障](#5-打开-excelxbotexcelopen)。
 
 ```text
 非执行调用说明（不可直接运行）：
